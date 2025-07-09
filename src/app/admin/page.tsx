@@ -1,10 +1,39 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Trash2, LogOut } from "lucide-react";
+import { Save, Trash2, LogOut, Eye } from "lucide-react";
 import { Job } from "@/types/job";
 import { jobsService } from "@/lib/jobs";
 import { supabase } from "@/lib/supabase";
+import JobCard from "@/components/JobCard";
+import Card from "@/components/ui/Card";
+
+function LoadingSpinner() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-white/80 z-50">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin"></div>
+        <span className="text-[#011640] text-lg font-semibold animate-pulse">Loading...</span>
+      </div>
+    </div>
+  );
+}
+
+function PreviewModal({ open, onClose, job }: { open: boolean; onClose: () => void; job: Job }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative animate-fade-in">
+        <button onClick={onClose} className="absolute top-4 right-4 text-[#0476D9] hover:text-[#011640] text-xl font-bold">×</button>
+        <h2 className="text-2xl font-bold text-[#011640] mb-6 text-center">Job Page Preview</h2>
+        <div className="overflow-y-auto max-h-[70vh]">
+          {/* Reaproveite o JobCard para preview, ou pode importar o layout da página de detalhes se quiser */}
+          <JobCard job={job} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminPage() {
   const [formData, setFormData] = useState({
@@ -24,6 +53,9 @@ export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loginError, setLoginError] = useState("");
+
+  // Preview modal
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     const getSession = async () => {
@@ -94,12 +126,7 @@ export default function AdminPage() {
         type: 'full-time',
         category: 'other',
         experience: undefined,
-        salary: {
-          min: undefined,
-          max: undefined,
-          currency: undefined,
-          period: undefined
-        },
+        salary: undefined,
         description: formData.description,
         requirements: [],
         benefits: [],
@@ -132,14 +159,38 @@ export default function AdminPage() {
     }
   };
 
+  // Monta um objeto Job para preview
+  const previewJob: Job = {
+    id: "preview",
+    title: formData.title || "Senior Frontend Developer",
+    company: formData.company || "TechCorp",
+    location: formData.location || "Remote",
+    type: 'full-time',
+    category: 'other',
+    experience: undefined,
+    salary: undefined,
+    description: formData.description || "Job description preview...",
+    requirements: [],
+    benefits: [],
+    isRemote: false,
+    isFeatured: false,
+    isActive: true,
+    applicationUrl: formData.applicationUrl || "https://company.com/apply",
+    tags: formData.tags
+      ? formData.tags.split(",").map((tag) => tag.trim()).filter((tag) => tag.length > 0)
+      : ["React", "TypeScript"],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
   if (authLoading) {
-    return <div className="min-h-screen flex items-center justify-center text-xl">Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <form onSubmit={handleLogin} className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl space-y-6 border border-slate-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F3F7FA] to-[#E5EAF1]">
+        <form onSubmit={handleLogin} className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl space-y-6 border border-slate-100 animate-fade-in">
           <h2 className="text-2xl font-bold text-[#011640] mb-4 text-center">Admin Login</h2>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email</label>
@@ -149,7 +200,7 @@ export default function AdminPage() {
               name="email"
               value={loginData.email}
               onChange={handleLoginChange}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
               required
             />
           </div>
@@ -161,11 +212,11 @@ export default function AdminPage() {
               name="password"
               value={loginData.password}
               onChange={handleLoginChange}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
               required
             />
           </div>
-          {loginError && <div className="text-red-600 text-sm text-center">{loginError}</div>}
+          {loginError && <div className="text-red-600 text-sm text-center animate-fade-in">{loginError}</div>}
           <button
             type="submit"
             className="btn-primary w-full text-lg py-3 flex items-center justify-center"
@@ -178,208 +229,163 @@ export default function AdminPage() {
     );
   }
 
-  // Painel admin normal
+  // Painel admin melhorado
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-[#F3F7FA] to-[#E5EAF1]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-slate-900 mb-4">Post a New Job</h1>
-            <p className="text-xl text-slate-600">Fill out the form below to publish a new opportunity</p>
+            <h1 className="text-4xl font-bold text-[#011640] mb-2">Post a New Job</h1>
+            <p className="text-lg text-[#0476D9]">Fill out the form below to publish a new opportunity</p>
           </div>
-          <button onClick={handleLogout} className="btn-outline flex items-center gap-2">
+          <button onClick={handleLogout} className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA]">
             <LogOut className="w-5 h-5" /> Logout
           </button>
         </div>
-        <div className="card">
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Title */}
-            <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-slate-700 mb-3"
-              >
-                Job Title *
-              </label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="e.g. Senior Frontend Developer"
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
-                required
-              />
-            </div>
-            {/* Company and Location */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="company"
-                  className="block text-sm font-medium text-slate-700 mb-3"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+          {/* Formulário */}
+          <Card className="md:col-span-2 p-8 shadow-lg rounded-2xl border border-[#E5EAF1] bg-white animate-fade-in">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid grid-cols-1 gap-6">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-[#011640] mb-2">Job Title *</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    placeholder="e.g. Senior Frontend Developer"
+                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="company" className="block text-sm font-medium text-[#011640] mb-2">Company *</label>
+                  <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleInputChange}
+                    placeholder="e.g. TechCorp"
+                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="location" className="block text-sm font-medium text-[#011640] mb-2">Location *</label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    placeholder="e.g. Remote, San Francisco, CA"
+                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="tags" className="block text-sm font-medium text-[#011640] mb-2">Skills (comma-separated)</label>
+                  <input
+                    type="text"
+                    id="tags"
+                    name="tags"
+                    value={formData.tags}
+                    onChange={handleInputChange}
+                    placeholder="e.g. React, TypeScript, Remote, Frontend"
+                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
+                  />
+                  <p className="text-xs text-[#0476D9] mt-1">Skills help candidates find your job more easily</p>
+                </div>
+                <div>
+                  <label htmlFor="applicationUrl" className="block text-sm font-medium text-[#011640] mb-2">Application Link *</label>
+                  <input
+                    type="url"
+                    id="applicationUrl"
+                    name="applicationUrl"
+                    value={formData.applicationUrl}
+                    onChange={handleInputChange}
+                    placeholder="https://your-company.com/careers/job"
+                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium text-[#011640] mb-2">Job Description *</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    rows={10}
+                    placeholder={`# Job Title\n\nDescribe the opportunity and responsibilities...\n\n## Responsibilities:\n- Item 1\n- Item 2\n- Item 3\n\n## Requirements:\n- Item 1\n- Item 2\n- Item 3\n\n## Benefits:\n- Item 1\n- Item 2\n- Item 3`}
+                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent font-mono text-sm"
+                    required
+                  />
+                  <p className="text-xs text-[#0476D9] mt-1">Use Markdown to format the description. Supports headings, lists, bold text, etc.</p>
+                </div>
+              </div>
+              {message && (
+                <div className={`p-4 rounded-xl text-center mt-4 ${message.includes("successfully") ? "bg-green-50 text-green-800 border border-green-200" : "bg-red-50 text-red-800 border border-red-200"} animate-fade-in`}>
+                  {message}
+                </div>
+              )}
+              <div className="flex items-center justify-between pt-8 border-t border-[#E5EAF1] mt-8 gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({
+                      title: "",
+                      company: "",
+                      location: "",
+                      tags: "",
+                      description: "",
+                      applicationUrl: "",
+                    });
+                    setMessage("");
+                  }}
+                  className="btn-secondary inline-flex items-center"
+                  disabled={isSubmitting}
                 >
-                  Company *
-                </label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleInputChange}
-                  placeholder="e.g. TechCorp"
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="location"
-                  className="block text-sm font-medium text-slate-700 mb-3"
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Clear Form
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn-primary inline-flex items-center text-lg px-8 py-4"
                 >
-                  Location *
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  placeholder="e.g. San Francisco, CA"
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
-                  required
-                />
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Publishing...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5 mr-2" />
+                      Publish Job
+                    </>
+                  )}
+                </button>
               </div>
-            </div>
-            {/* Tags */}
-            <div>
-              <label
-                htmlFor="tags"
-                className="block text-sm font-medium text-slate-700 mb-3"
-              >
-                Skills (comma-separated)
-              </label>
-              <input
-                type="text"
-                id="tags"
-                name="tags"
-                value={formData.tags}
-                onChange={handleInputChange}
-                placeholder="e.g. React, TypeScript, Remote, Frontend"
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
-              />
-              <p className="text-sm text-slate-500 mt-2">
-                Skills help candidates find your job more easily
-              </p>
-            </div>
-            {/* Apply URL */}
-            <div>
-              <label
-                htmlFor="applyUrl"
-                className="block text-sm font-medium text-slate-700 mb-3"
-              >
-                Application Link *
-              </label>
-              <input
-                type="url"
-                id="applicationUrl"
-                name="applicationUrl"
-                value={formData.applicationUrl}
-                onChange={handleInputChange}
-                placeholder="https://your-company.com/careers/job"
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
-                required
-              />
-            </div>
-            {/* Description */}
-            <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-slate-700 mb-3"
-              >
-                Job Description *
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows={16}
-                placeholder={`# Job Title\n\nDescribe the opportunity and responsibilities...\n\n## Responsibilities:\n- Item 1\n- Item 2\n- Item 3\n\n## Requirements:\n- Item 1\n- Item 2\n- Item 3\n\n## Benefits:\n- Item 1\n- Item 2\n- Item 3`}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent font-mono text-sm"
-                required
-              />
-              <p className="text-sm text-slate-500 mt-2">
-                Use Markdown to format the description. Supports headings,
-                lists, bold text, etc.
-              </p>
-            </div>
-            {/* Message */}
-            {message && (
-              <div
-                className={`p-6 rounded-xl ${
-                  message.includes("successfully")
-                    ? "bg-green-50 text-green-800 border border-green-200"
-                    : "bg-red-50 text-red-800 border border-red-200"
-                }`}
-              >
-                {message}
-              </div>
-            )}
-            {/* Submit Button */}
-            <div className="flex items-center justify-between pt-8 border-t border-slate-200">
-              <button
-                type="button"
-                onClick={() => {
-                  setFormData({
-                    title: "",
-                    company: "",
-                    location: "",
-                    tags: "",
-                    description: "",
-                    applicationUrl: "",
-                  });
-                  setMessage("");
-                }}
-                className="btn-secondary inline-flex items-center"
-                disabled={isSubmitting}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Clear Form
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="btn-primary inline-flex items-center text-lg px-8 py-4"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Publishing...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-5 h-5 mr-2" />
-                    Publish Job
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
+            </form>
+          </Card>
+          {/* Preview do Card */}
+          <div className="hidden md:block">
+            <h3 className="text-lg font-semibold text-[#011640] mb-4">Live Card Preview</h3>
+            <JobCard job={previewJob} />
+            <button
+              onClick={() => setShowPreview(true)}
+              className="mt-4 btn-outline w-full flex items-center justify-center gap-2 border-[#0476D9] text-[#0476D9] hover:bg-[#F3F7FA]"
+            >
+              <Eye className="w-5 h-5" /> Preview Full Page
+            </button>
+          </div>
         </div>
-        {/* Help Section */}
-        <div className="mt-12 card">
-          <h3 className="text-xl font-semibold text-slate-900 mb-6">
-            Tips for a great job description
-          </h3>
-          <ul className="space-y-3 text-slate-600">
-            <li>• Be clear about responsibilities and requirements</li>
-            <li>• Mention company benefits and differentiators</li>
-            <li>• Use relevant skills to help with search</li>
-            <li>• Include information about contract type and work mode</li>
-            <li>• Keep a professional but welcoming tone</li>
-          </ul>
-        </div>
+        {/* Modal de preview da página */}
+        <PreviewModal open={showPreview} onClose={() => setShowPreview(false)} job={previewJob} />
       </div>
     </div>
   );
