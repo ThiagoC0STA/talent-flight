@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Menu, X, Plane } from 'lucide-react';
+import { useState } from "react";
+import Link from "next/link";
+import { Menu, X, Plane } from "lucide-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,17 +27,23 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/jobs" 
+            <Link
+              href="/jobs"
               className="text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
             >
               Jobs
             </Link>
-            <Link 
-              href="/about" 
+            <Link
+              href="/about"
               className="text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
             >
               About
+            </Link>
+            <Link
+              href="/contact"
+              className="text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
+            >
+              Contact
             </Link>
           </nav>
 
@@ -73,7 +79,20 @@ export default function Header() {
               >
                 About
               </Link>
-
+              <Link
+                href="/contact"
+                className="block px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
+              </Link>
+              <Link
+                href="/admin"
+                className="block px-3 py-2 bg-[#0476D9] text-white hover:bg-[#011640] rounded-lg font-medium transition-colors mt-4"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Post a Job
+              </Link>
             </div>
           </div>
         )}

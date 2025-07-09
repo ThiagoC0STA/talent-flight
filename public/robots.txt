@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# Host
+Host: https://talentflight.com
+
+# Sitemaps
+Sitemap: https://talentflight.com/sitemap.xml

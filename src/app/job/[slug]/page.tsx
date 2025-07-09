@@ -233,7 +233,7 @@ export default async function JobPage({ params }: any) {
                 </p>
               </div>
 
-              {/* Company Info */}
+              {/* Company Info */}  
               <div
                 className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
                 style={{ animationDelay: "0.1s" }}
