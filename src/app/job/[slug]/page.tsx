@@ -12,13 +12,7 @@ import Markdown from "markdown-it";
 
 const md = new Markdown();
 
-interface JobPageProps {
-  params: {
-    slug: string;
-  };
-}
-
-export default function JobPage({ params }: JobPageProps) {
+export default function JobPage({ params }: any) {
   const job = getJobBySlug(params.slug);
 
   if (!job) {

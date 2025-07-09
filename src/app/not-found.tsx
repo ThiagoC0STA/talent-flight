@@ -22,7 +22,7 @@ export default function NotFound() {
         </h2>
         
         <p className="text-xl text-slate-600 mb-12 max-w-md mx-auto leading-relaxed">
-          Looks like you tried to access a page that doesn't exist. 
+          Looks like you tried to access a page that doesn&apos;t exist. 
           How about exploring our available opportunities?
         </p>
         

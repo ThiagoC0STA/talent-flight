@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, MapPin, Filter, X } from 'lucide-react';
+import { Search, Filter, X } from 'lucide-react';
 import JobCard from '@/components/JobCard';
 import { getAllJobs } from '@/data/jobs';
-import { Job, JobFilters } from '@/types/job';
+import { JobFilters } from '@/types/job';
 
 export default function JobsPage() {
   const allJobs = getAllJobs();
@@ -145,7 +145,7 @@ export default function JobsPage() {
               <div className="flex flex-wrap gap-2 mt-3">
                 {searchTerm && (
                   <span className="px-3 py-1 bg-slate-100 text-slate-800 text-sm rounded-full">
-                    Search: "{searchTerm}"
+                    Search: &quot;{searchTerm}&quot;
                   </span>
                 )}
                 {filters.location && (

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Plane, Search } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
 import Hero from '@/components/Hero';
 import JobCard from '@/components/JobCard';
 import { getFeaturedJobs } from '@/data/jobs';
