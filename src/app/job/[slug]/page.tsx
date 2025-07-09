@@ -25,7 +25,7 @@ interface JobPageProps {
 
 export default async function JobPage({ params }: JobPageProps) {
   const job = await jobsService.getJobById(params.slug);
-
+  console.log(job);
   if (!job) {
     notFound();
   }
@@ -78,12 +78,16 @@ export default async function JobPage({ params }: JobPageProps) {
               <div className="flex items-start justify-between mb-6">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
-                    {job.companyLogo && (
+                    {job.companyLogo ? (
                       <img
                         src={job.companyLogo}
                         alt={`${job.company} logo`}
-                        className="w-16 h-16 rounded-xl object-cover border border-[#E5EAF1]"
+                        className="w-16 h-16 rounded-xl object-cover border border-[#E5EAF1] bg-white"
                       />
+                    ) : (
+                      <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
+                        <Building2 className="w-8 h-8 text-gray-400" />
+                      </div>
                     )}
                     <div>
                       <h1 className="text-3xl font-bold text-[#011640] mb-2">
