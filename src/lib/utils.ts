@@ -59,3 +59,14 @@ export function generateSlug(text: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 }
+
+export function htmlToText(html: string): string {
+  if (typeof window === "undefined") {
+    // SSR: regex simples
+    return html.replace(/<[^>]+>/g, "");
+  } else {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  }
+}

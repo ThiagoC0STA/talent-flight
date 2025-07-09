@@ -1,32 +1,51 @@
-import { MapPin, Clock, DollarSign, Building2, Calendar, ExternalLink, Users, CheckCircle, ArrowLeft } from 'lucide-react';
-import { Job } from '@/types/job';
-import { formatSalary, formatDate } from '@/lib/utils';
-import Button from '@/components/ui/Button';
-import Link from 'next/link';
+import {
+  MapPin,
+  Clock,
+  DollarSign,
+  Building2,
+  Calendar,
+  ExternalLink,
+  Users,
+  CheckCircle,
+  ArrowLeft,
+} from "lucide-react";
+import { Job } from "@/types/job";
+import { formatSalary, formatDate } from "@/lib/utils";
+import Button from "@/components/ui/Button";
+import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 
-export default function JobPagePreview({ job, onBack }: { job: Job; onBack?: () => void }) {
+export default function JobPagePreview({
+  job,
+  onBack,
+}: {
+  job: Job;
+  onBack?: () => void;
+}) {
   const getExperienceColor = (experience?: string) => {
     const colors = {
-      entry: 'bg-green-100 text-green-800',
-      junior: 'bg-blue-100 text-blue-800',
-      mid: 'bg-yellow-100 text-yellow-800',
-      senior: 'bg-purple-100 text-purple-800',
-      lead: 'bg-orange-100 text-orange-800',
-      executive: 'bg-red-100 text-red-800'
+      entry: "bg-green-100 text-green-800",
+      junior: "bg-blue-100 text-blue-800",
+      mid: "bg-yellow-100 text-yellow-800",
+      senior: "bg-purple-100 text-purple-800",
+      lead: "bg-orange-100 text-orange-800",
+      executive: "bg-red-100 text-red-800",
     };
-    if (!experience) return 'bg-gray-100 text-gray-800';
-    return colors[experience as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    if (!experience) return "bg-gray-100 text-gray-800";
+    return (
+      colors[experience as keyof typeof colors] || "bg-gray-100 text-gray-800"
+    );
   };
 
   const getTypeColor = (type: string) => {
     const colors = {
-      'full-time': 'bg-[#0476D9] text-white',
-      'part-time': 'bg-[#0487D9] text-white',
-      'contract': 'bg-[#011640] text-white',
-      'internship': 'bg-[#010D26] text-white',
-      'freelance': 'bg-[#00070D] text-white'
+      "full-time": "bg-[#0476D9] text-white",
+      "part-time": "bg-[#0487D9] text-white",
+      contract: "bg-[#011640] text-white",
+      internship: "bg-[#010D26] text-white",
+      freelance: "bg-[#00070D] text-white",
     };
-    return colors[type as keyof typeof colors] || 'bg-gray-500 text-white';
+    return colors[type as keyof typeof colors] || "bg-gray-500 text-white";
   };
 
   return (
@@ -34,7 +53,10 @@ export default function JobPagePreview({ job, onBack }: { job: Job; onBack?: () 
       <div className="max-w-4xl mx-auto px-2 py-6">
         {/* Back Button */}
         {onBack && (
-          <button onClick={onBack} className="inline-flex items-center text-[#0476D9] hover:text-[#011640] transition-colors font-medium mb-6">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center text-[#0476D9] hover:text-[#011640] transition-colors font-medium mb-6"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </button>
@@ -76,11 +98,15 @@ export default function JobPagePreview({ job, onBack }: { job: Job; onBack?: () 
                     </div>
                     <div className="flex items-center gap-2 text-[#010D26]">
                       <Clock className="w-5 h-5 text-[#0476D9]" />
-                      <span className="capitalize">{job.type.replace('-', ' ')}</span>
+                      <span className="capitalize">
+                        {job.type.replace("-", " ")}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-[#010D26]">
                       <DollarSign className="w-5 h-5 text-[#0476D9]" />
-                      <span className="font-medium">{formatSalary(job.salary)}</span>
+                      <span className="font-medium">
+                        {formatSalary(job.salary)}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-[#010D26]">
                       <Calendar className="w-5 h-5 text-[#0476D9]" />
@@ -89,13 +115,22 @@ export default function JobPagePreview({ job, onBack }: { job: Job; onBack?: () 
                   </div>
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-6">
-                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${getExperienceColor(job.experience)}`}>
+                    <span
+                      className={`text-sm font-medium px-3 py-1 rounded-full ${getExperienceColor(
+                        job.experience
+                      )}`}
+                    >
                       {job.experience
-                        ? job.experience.charAt(0).toUpperCase() + job.experience.slice(1)
-                        : 'N/A'}
+                        ? job.experience.charAt(0).toUpperCase() +
+                          job.experience.slice(1)
+                        : "N/A"}
                     </span>
-                    <span className={`text-sm font-medium px-3 py-1 rounded-full ${getTypeColor(job.type)}`}>
-                      {job.type.replace('-', ' ')}
+                    <span
+                      className={`text-sm font-medium px-3 py-1 rounded-full ${getTypeColor(
+                        job.type
+                      )}`}
+                    >
+                      {job.type.replace("-", " ")}
                     </span>
                     {job.isFeatured && (
                       <span className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] text-white text-sm font-medium px-3 py-1 rounded-full">
@@ -122,10 +157,10 @@ export default function JobPagePreview({ job, onBack }: { job: Job; onBack?: () 
               <h2 className="text-2xl font-bold text-[#011640] mb-6">
                 Job Description
               </h2>
-              <div className="prose prose-lg max-w-none">
-                <p className="text-[#010D26] leading-relaxed mb-6">
+              <div className="prose prose-lg max-w-none text-[#010D26] leading-relaxed mb-6">
+                <ReactMarkdown remarkPlugins={[remarkBreaks]}>
                   {job.description}
-                </p>
+                </ReactMarkdown>
               </div>
             </div>
             {/* Requirements */}
@@ -182,7 +217,10 @@ export default function JobPagePreview({ job, onBack }: { job: Job; onBack?: () 
                 </p>
               </div>
               {/* Company Info */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in" style={{ animationDelay: '0.1s' }}>
+              <div
+                className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
+                style={{ animationDelay: "0.1s" }}
+              >
                 <h3 className="text-lg font-semibold text-[#011640] mb-4">
                   About {job.company}
                 </h3>
@@ -204,26 +242,37 @@ export default function JobPagePreview({ job, onBack }: { job: Job; onBack?: () 
                 </div>
               </div>
               {/* Job Summary */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in" style={{ animationDelay: '0.2s' }}>
+              <div
+                className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
+                style={{ animationDelay: "0.2s" }}
+              >
                 <h3 className="text-lg font-semibold text-[#011640] mb-4">
                   Job Summary
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-[#010D26]">Experience:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">{job.experience ? job.experience : 'N/A'}</span>
+                    <span className="font-medium text-[#0476D9] capitalize">
+                      {job.experience ? job.experience : "N/A"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#010D26]">Type:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">{job.type.replace('-', ' ')}</span>
+                    <span className="font-medium text-[#0476D9] capitalize">
+                      {job.type.replace("-", " ")}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#010D26]">Category:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">{job.category}</span>
+                    <span className="font-medium text-[#0476D9] capitalize">
+                      {job.category}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#010D26]">Salary:</span>
-                    <span className="font-medium text-[#0476D9]">{formatSalary(job.salary)}</span>
+                    <span className="font-medium text-[#0476D9]">
+                      {formatSalary(job.salary)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -233,4 +282,4 @@ export default function JobPagePreview({ job, onBack }: { job: Job; onBack?: () 
       </div>
     </div>
   );
-} 
+}

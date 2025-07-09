@@ -170,11 +170,10 @@ export default async function JobPage({ params }: JobPageProps) {
               <h2 className="text-2xl font-bold text-[#011640] mb-6">
                 Job Description
               </h2>
-              <div className="prose prose-lg max-w-none text-[#010D26] leading-relaxed mb-6">
-                <ReactMarkdown remarkPlugins={[remarkBreaks]}>
-                  {job.description}
-                </ReactMarkdown>
-              </div>
+              <div
+                className="prose prose-lg max-w-none text-[#010D26] leading-relaxed mb-6"
+                dangerouslySetInnerHTML={{ __html: job.description }}
+              />
             </div>
 
             {/* Requirements */}

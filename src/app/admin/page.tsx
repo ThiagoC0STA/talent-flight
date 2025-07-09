@@ -7,6 +7,8 @@ import { jobsService } from "@/lib/jobs";
 import { supabase } from "@/lib/supabase";
 import JobCard from "@/components/JobCard";
 import Card from "@/components/ui/Card";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 function LoadingSpinner() {
   return (
@@ -14,22 +16,6 @@ function LoadingSpinner() {
       <div className="flex flex-col items-center gap-4">
         <div className="w-12 h-12 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin"></div>
         <span className="text-[#011640] text-lg font-semibold animate-pulse">Loading...</span>
-      </div>
-    </div>
-  );
-}
-
-function PreviewModal({ open, onClose, job }: { open: boolean; onClose: () => void; job: Job }) {
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative animate-fade-in">
-        <button onClick={onClose} className="absolute top-4 right-4 text-[#0476D9] hover:text-[#011640] text-xl font-bold">×</button>
-        <h2 className="text-2xl font-bold text-[#011640] mb-6 text-center">Job Page Preview</h2>
-        <div className="overflow-y-auto max-h-[70vh]">
-          {/* Reaproveite o JobCard para preview, ou pode importar o layout da página de detalhes se quiser */}
-          <JobCard job={job} />
-        </div>
       </div>
     </div>
   );
@@ -53,9 +39,6 @@ export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loginError, setLoginError] = useState("");
-
-  // Preview modal
-  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     const getSession = async () => {
@@ -119,6 +102,15 @@ export default function AdminPage() {
       ) {
         throw new Error("All required fields must be filled");
       }
+      // Converter Markdown para HTML e sanitizar
+      let rawHtml: string;
+      const parsed = marked.parse(formData.description);
+      if (parsed instanceof Promise) {
+        rawHtml = await parsed;
+      } else {
+        rawHtml = parsed as string;
+      }
+      const safeHtml = DOMPurify.sanitize(rawHtml);
       const newJob: Omit<Job, "id" | "createdAt" | "updatedAt"> = {
         title: formData.title,
         company: formData.company,
@@ -127,7 +119,7 @@ export default function AdminPage() {
         category: 'other',
         experience: undefined,
         salary: undefined,
-        description: formData.description,
+        description: safeHtml, // Salva HTML sanitizado!
         requirements: [],
         benefits: [],
         isRemote: false,
@@ -376,16 +368,8 @@ export default function AdminPage() {
           <div className="hidden md:block">
             <h3 className="text-lg font-semibold text-[#011640] mb-4">Live Card Preview</h3>
             <JobCard job={previewJob} />
-            <button
-              onClick={() => setShowPreview(true)}
-              className="mt-4 btn-outline w-full flex items-center justify-center gap-2 border-[#0476D9] text-[#0476D9] hover:bg-[#F3F7FA]"
-            >
-              <Eye className="w-5 h-5" /> Preview Full Page
-            </button>
           </div>
         </div>
-        {/* Modal de preview da página */}
-        <PreviewModal open={showPreview} onClose={() => setShowPreview(false)} job={previewJob} />
       </div>
     </div>
   );

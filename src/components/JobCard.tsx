@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { MapPin, Clock, DollarSign, Building2, Calendar } from "lucide-react";
-import { Job } from "@/types/job";
-import { formatSalary, formatDate, truncateText } from "@/lib/utils";
+import {
+  htmlToText,
+  formatSalary,
+  formatDate,
+  truncateText,
+} from "@/lib/utils";
 import Card from "@/components/ui/Card";
+import { Job } from "@/types/job";
 
 interface JobCardProps {
   job: Job;
@@ -50,7 +55,9 @@ export default function JobCard({ job, className }: JobCardProps) {
               <h3 className="text-lg font-semibold text-[#011640] -mt-1 transition-colors">
                 <Link href={`/job/${job.id}`}>{job.title}</Link>
               </h3>
-              <p className="text-[#0476D9] font-medium text-xs">{job.company}</p>
+              <p className="text-[#0476D9] font-medium text-xs">
+                {job.company}
+              </p>
             </div>
           </div>
         </div>
@@ -88,15 +95,17 @@ export default function JobCard({ job, className }: JobCardProps) {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        <span
-          className={`text-xs font-medium px-2 py-1 rounded-full ${getExperienceColor(
-            job.experience
-          )}`}
-        >
-          {job.experience
-            ? job.experience.charAt(0).toUpperCase() + job.experience.slice(1)
-            : "N/A"}
-        </span>
+        {job.experience && (
+          <span
+            className={`text-xs font-medium px-2 py-1 rounded-full ${getExperienceColor(
+              job.experience
+            )}`}
+          >
+            {job.experience
+              ? job.experience.charAt(0).toUpperCase() + job.experience.slice(1)
+              : "N/A"}
+          </span>
+        )}
         <span
           className={`text-xs font-medium px-2 py-1 rounded-full ${getTypeColor(
             job.type
@@ -107,11 +116,11 @@ export default function JobCard({ job, className }: JobCardProps) {
       </div>
 
       <p className="text-[#010D26] text-sm mb-4 leading-relaxed">
-        {truncateText(job.description, 120)}
+        {truncateText(htmlToText(job.description), 120)}
       </p>
 
       <div className="flex flex-wrap gap-1 mb-4">
-        {(job.tags ?? []).slice(0, 3).map((tag, index) => (
+        {(job.tags ?? []).slice(0, 3).map((tag: string, index: number) => (
           <span
             key={index}
             className="bg-[#F3F7FA] text-[#0476D9] text-xs px-2 py-1 rounded-full"
