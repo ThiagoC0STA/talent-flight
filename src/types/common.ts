@@ -35,6 +35,7 @@ export interface ButtonProps {
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   href?: string;
+  target?: string;
 }
 
 export interface InputProps {

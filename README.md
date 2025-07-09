@@ -104,8 +104,8 @@ src/
    ```
 
 3. **Execute em desenvolvimento**
-   ```bash
-   npm run dev
+```bash
+npm run dev
    ```
 
 4. **Acesse no navegador**
