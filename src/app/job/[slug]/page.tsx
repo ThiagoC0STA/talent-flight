@@ -222,6 +222,7 @@ export default async function JobPage({ params }: any) {
                   href={job.applicationUrl}
                   className="w-full mb-4"
                   size="lg"
+                  target="_blank"
                 >
                   Apply Now
                   <ExternalLink className="w-4 h-4 ml-2" />
