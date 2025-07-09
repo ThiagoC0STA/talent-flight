@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { ArrowRight, Search } from 'lucide-react';
 import Hero from '@/components/Hero';
 import JobCard from '@/components/JobCard';
-import { getFeaturedJobs } from '@/data/jobs';
+import { jobsService } from '@/lib/jobs';
 
-export default function HomePage() {
-  const featuredJobs = getFeaturedJobs();
+export default async function HomePage() {
+  const featuredJobs = await jobsService.getFeaturedJobs();
 
   return (
     <div className="min-h-screen bg-white">

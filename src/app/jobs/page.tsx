@@ -1,69 +1,54 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Briefcase } from 'lucide-react';
 import JobCard from '@/components/JobCard';
 import SearchFilters from '@/components/SearchFilters';
-import { getAllJobs } from '@/data/jobs';
-import { JobFilters } from '@/types/job';
+import { jobsService } from '@/lib/jobs';
+import { Job, JobFilters } from '@/types/job';
 
 export default function JobsPage() {
-  const allJobs = getAllJobs();
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [filters, setFilters] = useState<JobFilters>({});
+  const [loading, setLoading] = useState(true);
 
-  // Filter jobs based on filters
-  const filteredJobs = useMemo(() => {
-    return allJobs.filter(job => {
-      // Query filter
-      if (filters.query) {
-        const queryLower = filters.query.toLowerCase();
-        const matchesQuery = 
-          job.title.toLowerCase().includes(queryLower) ||
-          job.company.toLowerCase().includes(queryLower) ||
-          job.location.toLowerCase().includes(queryLower) ||
-          job.tags.some(tag => tag.toLowerCase().includes(queryLower));
-        if (!matchesQuery) return false;
+  // Load jobs from Supabase
+  useEffect(() => {
+    const loadJobs = async () => {
+      try {
+        const allJobs = await jobsService.getAllJobs();
+        setJobs(allJobs);
+        setFilteredJobs(allJobs);
+      } catch (error) {
+        console.error('Error loading jobs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadJobs();
+  }, []);
+
+  // Filter jobs when filters change
+  useEffect(() => {
+    const applyFilters = async () => {
+      if (Object.keys(filters).length === 0) {
+        setFilteredJobs(jobs);
+        return;
       }
 
-      // Location filter
-      if (filters.location && !job.location.toLowerCase().includes(filters.location.toLowerCase())) {
-        return false;
+      try {
+        const filtered = await jobsService.searchJobs(filters);
+        setFilteredJobs(filtered);
+      } catch (error) {
+        console.error('Error filtering jobs:', error);
+        setFilteredJobs(jobs);
       }
+    };
 
-      // Category filter
-      if (filters.category && filters.category.length > 0) {
-        if (!filters.category.includes(job.category)) {
-          return false;
-        }
-      }
-
-      // Type filter
-      if (filters.type && filters.type.length > 0) {
-        if (!filters.type.includes(job.type)) {
-          return false;
-        }
-      }
-
-      // Experience filter
-      if (filters.experience && filters.experience.length > 0) {
-        if (!filters.experience.includes(job.experience)) {
-          return false;
-        }
-      }
-
-      // Remote filter
-      if (filters.isRemote && !job.isRemote) {
-        return false;
-      }
-
-      // Featured filter
-      if (filters.isFeatured && !job.isFeatured) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [allJobs, filters]);
+    applyFilters();
+  }, [filters, jobs]);
 
   return (
     <div className="min-h-screen bg-[#F3F7FA]">
@@ -93,7 +78,7 @@ export default function JobsPage() {
         <div className="mb-8 animate-fade-in">
           <div className="flex items-center justify-between">
             <p className="text-[#010D26] text-lg font-medium">
-              {filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''} found
+              {loading ? 'Loading...' : `${filteredJobs.length} job${filteredJobs.length !== 1 ? 's' : ''} found`}
             </p>
             <div className="flex items-center gap-2 text-sm text-[#0476D9]">
               <Search className="w-4 h-4" />

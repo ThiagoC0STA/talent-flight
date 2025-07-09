@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { MapPin, Clock, DollarSign, Building2, Calendar, ExternalLink, ArrowLeft, Users, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import { getJobById } from '@/data/jobs';
+import { jobsService } from '@/lib/jobs';
 import { formatSalary, formatDate } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 
@@ -11,14 +11,14 @@ interface JobPageProps {
   };
 }
 
-export default function JobPage({ params }: JobPageProps) {
-  const job = getJobById(params.slug);
+export default async function JobPage({ params }: JobPageProps) {
+  const job = await jobsService.getJobById(params.slug);
 
   if (!job) {
     notFound();
   }
 
-  const getExperienceColor = (experience: string) => {
+  const getExperienceColor = (experience?: string) => {
     const colors = {
       entry: 'bg-green-100 text-green-800',
       junior: 'bg-blue-100 text-blue-800',
@@ -27,6 +27,7 @@ export default function JobPage({ params }: JobPageProps) {
       lead: 'bg-orange-100 text-orange-800',
       executive: 'bg-red-100 text-red-800'
     };
+    if (!experience) return 'bg-gray-100 text-gray-800';
     return colors[experience as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
@@ -108,7 +109,9 @@ export default function JobPage({ params }: JobPageProps) {
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-6">
                     <span className={`text-sm font-medium px-3 py-1 rounded-full ${getExperienceColor(job.experience)}`}>
-                      {job.experience.charAt(0).toUpperCase() + job.experience.slice(1)}
+                      {job.experience
+                        ? job.experience.charAt(0).toUpperCase() + job.experience.slice(1)
+                        : 'N/A'}
                     </span>
                     <span className={`text-sm font-medium px-3 py-1 rounded-full ${getTypeColor(job.type)}`}>
                       {job.type.replace('-', ' ')}
@@ -122,7 +125,7 @@ export default function JobPage({ params }: JobPageProps) {
 
                   {/* Skills */}
                   <div className="flex flex-wrap gap-2">
-                    {job.tags.map((tag, index) => (
+                    {(job.tags ?? []).map((tag, index) => (
                       <span
                         key={index}
                         className="bg-[#F3F7FA] text-[#0476D9] text-sm px-3 py-1 rounded-full border border-[#E5EAF1]"
@@ -234,7 +237,7 @@ export default function JobPage({ params }: JobPageProps) {
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-[#010D26]">Experience:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">{job.experience}</span>
+                    <span className="font-medium text-[#0476D9] capitalize">{job.experience ? job.experience : 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#010D26]">Type:</span>

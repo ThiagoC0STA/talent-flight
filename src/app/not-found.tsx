@@ -1,13 +1,9 @@
 import Link from 'next/link';
 import { Plane, Home, Search } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-white">
-      <Header />
-      
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
         <div className="w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl">
           <Plane className="w-12 h-12 text-white" />
@@ -37,8 +33,6 @@ export default function NotFound() {
           </Link>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 } 

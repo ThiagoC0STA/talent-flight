@@ -10,7 +10,7 @@ interface JobCardProps {
 }
 
 export default function JobCard({ job, className }: JobCardProps) {
-  const getExperienceColor = (experience: string) => {
+  const getExperienceColor = (experience?: string) => {
     const colors = {
       entry: "bg-green-100 text-green-800",
       junior: "bg-blue-100 text-blue-800",
@@ -19,6 +19,7 @@ export default function JobCard({ job, className }: JobCardProps) {
       lead: "bg-orange-100 text-orange-800",
       executive: "bg-red-100 text-red-800",
     };
+    if (!experience) return "bg-gray-100 text-gray-800";
     return (
       colors[experience as keyof typeof colors] || "bg-gray-100 text-gray-800"
     );
@@ -92,7 +93,9 @@ export default function JobCard({ job, className }: JobCardProps) {
             job.experience
           )}`}
         >
-          {job.experience.charAt(0).toUpperCase() + job.experience.slice(1)}
+          {job.experience
+            ? job.experience.charAt(0).toUpperCase() + job.experience.slice(1)
+            : "N/A"}
         </span>
         <span
           className={`text-xs font-medium px-2 py-1 rounded-full ${getTypeColor(
@@ -108,7 +111,7 @@ export default function JobCard({ job, className }: JobCardProps) {
       </p>
 
       <div className="flex flex-wrap gap-1 mb-4">
-        {job.tags.slice(0, 3).map((tag, index) => (
+        {(job.tags ?? []).slice(0, 3).map((tag, index) => (
           <span
             key={index}
             className="bg-[#F3F7FA] text-[#0476D9] text-xs px-2 py-1 rounded-full"
@@ -116,7 +119,7 @@ export default function JobCard({ job, className }: JobCardProps) {
             {tag}
           </span>
         ))}
-        {job.tags.length > 3 && (
+        {job.tags && job.tags.length > 3 && (
           <span className="text-[#0476D9] text-xs px-2 py-1">
             +{job.tags.length - 3} more
           </span>

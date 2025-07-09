@@ -256,6 +256,6 @@ export function searchJobs(query: string): Job[] {
       job.title.toLowerCase().includes(lowercaseQuery) ||
       job.company.toLowerCase().includes(lowercaseQuery) ||
       job.location.toLowerCase().includes(lowercaseQuery) ||
-      job.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
+      job.tags?.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
   );
 }

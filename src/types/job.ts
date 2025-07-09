@@ -6,17 +6,17 @@ export interface Job extends BaseEntity {
   location: string;
   type: JobType;
   category: JobCategory;
-  experience: ExperienceLevel;
-  salary: SalaryRange;
+  experience?: ExperienceLevel;
+  salary?: SalaryRange;
   description: string;
-  requirements: string[];
-  benefits: string[];
-  isRemote: boolean;
-  isFeatured: boolean;
-  isActive: boolean;
+  requirements?: string[];
+  benefits?: string[];
+  isRemote?: boolean;
+  isFeatured?: boolean;
+  isActive?: boolean;
   applicationUrl?: string;
   companyLogo?: string;
-  tags: string[];
+  tags?: string[];
 }
 
 export type JobType =
@@ -47,10 +47,10 @@ export type ExperienceLevel =
   | "executive";
 
 export interface SalaryRange {
-  min: number;
-  max: number;
-  currency: string;
-  period: "hourly" | "monthly" | "yearly";
+  min?: number;
+  max?: number;
+  currency?: string;
+  period?: "hourly" | "monthly" | "yearly";
 }
 
 export interface JobFilters {

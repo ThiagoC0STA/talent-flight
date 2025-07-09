@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Save, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Save, Trash2, LogOut } from "lucide-react";
 import { Job } from "@/types/job";
+import { jobsService } from "@/lib/jobs";
+import { supabase } from "@/lib/supabase";
 
 export default function AdminPage() {
   const [formData, setFormData] = useState({
@@ -16,6 +18,49 @@ export default function AdminPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Auth state
+  const [authLoading, setAuthLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [loginError, setLoginError] = useState("");
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user ?? null);
+      setAuthLoading(false);
+    };
+    getSession();
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => { listener.subscription.unsubscribe(); };
+  }, []);
+
+  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLoginData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+    setAuthLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: loginData.email,
+      password: loginData.password,
+    });
+    if (error) {
+      setLoginError(error.message);
+    }
+    setAuthLoading(false);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -33,7 +78,6 @@ export default function AdminPage() {
     setMessage("");
 
     try {
-      // Validate required fields
       if (
         !formData.title ||
         !formData.company ||
@@ -43,20 +87,18 @@ export default function AdminPage() {
       ) {
         throw new Error("All required fields must be filled");
       }
-
-      // Create new job object
       const newJob: Omit<Job, "id" | "createdAt" | "updatedAt"> = {
         title: formData.title,
         company: formData.company,
         location: formData.location,
         type: 'full-time',
         category: 'other',
-        experience: 'mid',
+        experience: undefined,
         salary: {
-          min: 50000,
-          max: 100000,
-          currency: 'USD',
-          period: 'yearly'
+          min: undefined,
+          max: undefined,
+          currency: undefined,
+          period: undefined
         },
         description: formData.description,
         requirements: [],
@@ -70,16 +112,11 @@ export default function AdminPage() {
           .map((tag) => tag.trim())
           .filter((tag) => tag.length > 0),
       };
-
-      // In a real app, this would be an API call
-      console.log("New job to be saved:", newJob);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      const createdJob = await jobsService.createJob(newJob);
+      if (!createdJob) {
+        throw new Error("Failed to create job");
+      }
       setMessage("Job created successfully!");
-
-      // Reset form
       setFormData({
         title: "",
         company: "",
@@ -95,20 +132,65 @@ export default function AdminPage() {
     }
   };
 
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-xl">Loading...</div>;
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <form onSubmit={handleLogin} className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl space-y-6 border border-slate-100">
+          <h2 className="text-2xl font-bold text-[#011640] mb-4 text-center">Admin Login</h2>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={loginData.email}
+              onChange={handleLoginChange}
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={loginData.password}
+              onChange={handleLoginChange}
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
+              required
+            />
+          </div>
+          {loginError && <div className="text-red-600 text-sm text-center">{loginError}</div>}
+          <button
+            type="submit"
+            className="btn-primary w-full text-lg py-3 flex items-center justify-center"
+            disabled={authLoading}
+          >
+            {authLoading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  // Painel admin normal
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Page Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
-            Post a New Job
-          </h1>
-          <p className="text-xl text-slate-600">
-            Fill out the form below to publish a new opportunity
-          </p>
+        <div className="mb-12 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-900 mb-4">Post a New Job</h1>
+            <p className="text-xl text-slate-600">Fill out the form below to publish a new opportunity</p>
+          </div>
+          <button onClick={handleLogout} className="btn-outline flex items-center gap-2">
+            <LogOut className="w-5 h-5" /> Logout
+          </button>
         </div>
-
-        {/* Form */}
         <div className="card">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Title */}
@@ -130,7 +212,6 @@ export default function AdminPage() {
                 required
               />
             </div>
-
             {/* Company and Location */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -151,7 +232,6 @@ export default function AdminPage() {
                   required
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="location"
@@ -171,7 +251,6 @@ export default function AdminPage() {
                 />
               </div>
             </div>
-
             {/* Tags */}
             <div>
               <label
@@ -193,7 +272,6 @@ export default function AdminPage() {
                 Skills help candidates find your job more easily
               </p>
             </div>
-
             {/* Apply URL */}
             <div>
               <label
@@ -202,18 +280,17 @@ export default function AdminPage() {
               >
                 Application Link *
               </label>
-                              <input
-                  type="url"
-                  id="applicationUrl"
-                  name="applicationUrl"
-                  value={formData.applicationUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://your-company.com/careers/job"
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
-                  required
-                />
+              <input
+                type="url"
+                id="applicationUrl"
+                name="applicationUrl"
+                value={formData.applicationUrl}
+                onChange={handleInputChange}
+                placeholder="https://your-company.com/careers/job"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
+                required
+              />
             </div>
-
             {/* Description */}
             <div>
               <label
@@ -228,24 +305,7 @@ export default function AdminPage() {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={16}
-                placeholder={`# Job Title
-
-Describe the opportunity and responsibilities...
-
-## Responsibilities:
-- Item 1
-- Item 2
-- Item 3
-
-## Requirements:
-- Item 1
-- Item 2
-- Item 3
-
-## Benefits:
-- Item 1
-- Item 2
-- Item 3`}
+                placeholder={`# Job Title\n\nDescribe the opportunity and responsibilities...\n\n## Responsibilities:\n- Item 1\n- Item 2\n- Item 3\n\n## Requirements:\n- Item 1\n- Item 2\n- Item 3\n\n## Benefits:\n- Item 1\n- Item 2\n- Item 3`}
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent font-mono text-sm"
                 required
               />
@@ -254,7 +314,6 @@ Describe the opportunity and responsibilities...
                 lists, bold text, etc.
               </p>
             </div>
-
             {/* Message */}
             {message && (
               <div
@@ -267,7 +326,6 @@ Describe the opportunity and responsibilities...
                 {message}
               </div>
             )}
-
             {/* Submit Button */}
             <div className="flex items-center justify-between pt-8 border-t border-slate-200">
               <button
@@ -289,7 +347,6 @@ Describe the opportunity and responsibilities...
                 <Trash2 className="w-4 h-4 mr-2" />
                 Clear Form
               </button>
-
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -310,7 +367,6 @@ Describe the opportunity and responsibilities...
             </div>
           </form>
         </div>
-
         {/* Help Section */}
         <div className="mt-12 card">
           <h3 className="text-xl font-semibold text-slate-900 mb-6">
@@ -325,7 +381,6 @@ Describe the opportunity and responsibilities...
           </ul>
         </div>
       </div>
-
     </div>
   );
 }
