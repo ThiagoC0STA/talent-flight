@@ -11,7 +11,7 @@ export default function AdminPage() {
     location: "",
     tags: "",
     description: "",
-    applyUrl: "",
+    applicationUrl: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,22 +39,36 @@ export default function AdminPage() {
         !formData.company ||
         !formData.location ||
         !formData.description ||
-        !formData.applyUrl
+        !formData.applicationUrl
       ) {
         throw new Error("All required fields must be filled");
       }
 
       // Create new job object
-      const newJob: Omit<Job, "id" | "createdAt" | "slug"> = {
+      const newJob: Omit<Job, "id" | "createdAt" | "updatedAt"> = {
         title: formData.title,
         company: formData.company,
         location: formData.location,
+        type: 'full-time',
+        category: 'other',
+        experience: 'mid',
+        salary: {
+          min: 50000,
+          max: 100000,
+          currency: 'USD',
+          period: 'yearly'
+        },
+        description: formData.description,
+        requirements: [],
+        benefits: [],
+        isRemote: false,
+        isFeatured: false,
+        isActive: true,
+        applicationUrl: formData.applicationUrl,
         tags: formData.tags
           .split(",")
           .map((tag) => tag.trim())
           .filter((tag) => tag.length > 0),
-        description: formData.description,
-        applyUrl: formData.applyUrl,
       };
 
       // In a real app, this would be an API call
@@ -72,7 +86,7 @@ export default function AdminPage() {
         location: "",
         tags: "",
         description: "",
-        applyUrl: "",
+        applicationUrl: "",
       });
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Error creating job");
@@ -188,16 +202,16 @@ export default function AdminPage() {
               >
                 Application Link *
               </label>
-              <input
-                type="url"
-                id="applyUrl"
-                name="applyUrl"
-                value={formData.applyUrl}
-                onChange={handleInputChange}
-                placeholder="https://your-company.com/careers/job"
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
-                required
-              />
+                              <input
+                  type="url"
+                  id="applicationUrl"
+                  name="applicationUrl"
+                  value={formData.applicationUrl}
+                  onChange={handleInputChange}
+                  placeholder="https://your-company.com/careers/job"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-transparent text-lg"
+                  required
+                />
             </div>
 
             {/* Description */}
@@ -265,7 +279,7 @@ Describe the opportunity and responsibilities...
                     location: "",
                     tags: "",
                     description: "",
-                    applyUrl: "",
+                    applicationUrl: "",
                   });
                   setMessage("");
                 }}
