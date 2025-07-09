@@ -14,16 +14,9 @@ import Link from "next/link";
 import { jobsService } from "@/lib/jobs";
 import { formatSalary, formatDate } from "@/lib/utils";
 import Button from "@/components/ui/Button";
-import ReactMarkdown from "react-markdown";
-import remarkBreaks from "remark-breaks";
+import Image from "next/image";
 
-interface JobPageProps {
-  params: {
-    slug: string;
-  };
-}
-
-export default async function JobPage({ params }: JobPageProps) {
+export default async function JobPage({ params }: any) {
   const job = await jobsService.getJobById(params.slug);
   console.log(job);
   if (!job) {
@@ -79,7 +72,9 @@ export default async function JobPage({ params }: JobPageProps) {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
                     {job.companyLogo ? (
-                      <img
+                      <Image
+                        width={64}
+                        height={64}
                         src={job.companyLogo}
                         alt={`${job.company} logo`}
                         className="w-16 h-16 rounded-xl object-cover border border-[#E5EAF1] bg-white"
@@ -232,7 +227,8 @@ export default async function JobPage({ params }: JobPageProps) {
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
                 <p className="text-sm text-[#010D26] text-center">
-                  You'll be redirected to the company's application page
+                  You&apos;ll be redirected to the company&apos;s application
+                  page
                 </p>
               </div>
 

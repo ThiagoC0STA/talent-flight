@@ -14,6 +14,7 @@ import { formatSalary, formatDate } from "@/lib/utils";
 import Button from "@/components/ui/Button";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
+import Image from "next/image";
 
 export default function JobPagePreview({
   job,
@@ -70,7 +71,9 @@ export default function JobPagePreview({
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
                     {job.companyLogo && (
-                      <img
+                      <Image
+                        width={64}
+                        height={64}
                         src={job.companyLogo}
                         alt={`${job.company} logo`}
                         className="w-16 h-16 rounded-xl object-cover border border-[#E5EAF1]"
@@ -213,7 +216,7 @@ export default function JobPagePreview({
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
                 <p className="text-sm text-[#010D26] text-center">
-                  You'll be redirected to the company's application page
+                  You&apos;ll be redirected to the company&apos;s application page
                 </p>
               </div>
               {/* Company Info */}

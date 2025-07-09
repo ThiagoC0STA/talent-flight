@@ -13,7 +13,7 @@ export default function AboutPage() {
             About TalentFlight
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed animate-slide-in-left">
-            We're on a mission to connect exceptional talent with extraordinary opportunities, 
+            We&apos;re on a mission to connect exceptional talent with extraordinary opportunities, 
             making career growth accessible to everyone.
           </p>
         </div>
@@ -29,12 +29,12 @@ export default function AboutPage() {
               </h2>
               <p className="text-lg text-[#010D26] mb-6 leading-relaxed">
                 TalentFlight was born from a simple belief: everyone deserves access to opportunities 
-                that can transform their career. We're building the most trusted platform for 
+                that can transform their career. We&apos;re building the most trusted platform for 
                 professionals to discover and connect with companies that share their values and ambitions.
               </p>
               <p className="text-lg text-[#010D26] leading-relaxed">
-                Whether you're a seasoned professional looking for your next challenge or a recent 
-                graduate starting your journey, we're here to help you take flight.
+                Whether you&apos;re a seasoned professional looking for your next challenge or a recent 
+                graduate starting your journey, we&apos;re here to help you take flight.
               </p>
             </div>
             <div className="animate-slide-in-right">

@@ -8,6 +8,7 @@ import {
 } from "@/lib/utils";
 import Card from "@/components/ui/Card";
 import { Job } from "@/types/job";
+import Image from "next/image";
 
 interface JobCardProps {
   job: Job;
@@ -49,7 +50,9 @@ export default function JobCard({ job, className }: JobCardProps) {
         <div className="flex-1">
           <div className="flex items-start gap-2 mb-2">
             {job.companyLogo ? (
-              <img
+              <Image
+                width={40}
+                height={40}
                 src={job.companyLogo}
                 alt={`${job.company} logo`}
                 className="w-10 h-10 rounded-lg object-cover border border-[#E5EAF1] bg-white"

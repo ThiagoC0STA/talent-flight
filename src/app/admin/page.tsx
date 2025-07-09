@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Trash2, LogOut, Eye } from "lucide-react";
+import { Save, Trash2, LogOut } from "lucide-react";
 import { Job } from "@/types/job";
 import { jobsService } from "@/lib/jobs";
 import { supabase } from "@/lib/supabase";
