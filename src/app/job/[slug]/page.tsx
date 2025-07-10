@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import {
   MapPin,
   Clock,
@@ -15,6 +16,38 @@ import { jobsService } from "@/lib/jobs";
 import { formatSalary, formatDate } from "@/lib/utils";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
+
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const job = await jobsService.getJobById(params.slug);
+  if (!job) return {};
+  const url = `https://talentflight.com/job/${params.slug}`;
+  return {
+    title: `${job.title} at ${job.company} | TalentFlight`,
+    description: job.description?.replace(/<[^>]+>/g, '').slice(0, 160) || 'Job opportunity at TalentFlight',
+    keywords: [job.title, job.company, job.location, ...(job.tags || [])].join(", "),
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${job.title} at ${job.company} | TalentFlight`,
+      description: job.description?.replace(/<[^>]+>/g, '').slice(0, 160) || '',
+      url,
+      siteName: "TalentFlight",
+      images: job.companyLogo ? [{ url: job.companyLogo, width: 400, height: 400, alt: `${job.company} logo` }] : [],
+      locale: "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${job.title} at ${job.company} | TalentFlight`,
+      description: job.description?.replace(/<[^>]+>/g, '').slice(0, 160) || '',
+      images: job.companyLogo ? [job.companyLogo] : [],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true },
+    },
+  };
+}
 
 export default async function JobPage({ params }: any) {
   const job = await jobsService.getJobById(params.slug);
@@ -49,248 +82,298 @@ export default async function JobPage({ params }: any) {
     return colors[type as keyof typeof colors] || "bg-gray-500 text-white";
   };
 
+  // Schema.org JobPosting JSON-LD
+  const jobPosting = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.title,
+    description: job.description?.replace(/<[^>]+>/g, ''),
+    datePosted: job.createdAt,
+    employmentType: job.type?.replace(/-/g, ' '),
+    hiringOrganization: {
+      "@type": "Organization",
+      name: job.company,
+      logo: job.companyLogo || undefined,
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: job.location,
+        addressCountry: "BR", // ajuste se necessário
+      },
+    },
+    baseSalary: job.salary ? {
+      "@type": "MonetaryAmount",
+      currency: job.salary.currency || "USD",
+      value: {
+        "@type": "QuantitativeValue",
+        minValue: job.salary.min,
+        maxValue: job.salary.max,
+        unitText: job.salary.period?.toUpperCase() || "YEAR",
+      },
+    } : undefined,
+    directApply: true,
+    identifier: job.id,
+    url: `https://talentflight.com/job/${params.slug}`,
+    skills: job.tags,
+    industry: job.category,
+    experienceRequirements: job.experience,
+    qualifications: job.requirements?.join(", "),
+    incentives: job.benefits?.join(", "),
+    remote: job.isRemote,
+  };
+
   return (
-    <div className="min-h-screen bg-[#F3F7FA]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Back Button */}
-        <div className="mb-8">
-          <Link
-            href="/jobs"
-            className="inline-flex items-center text-[#0476D9] hover:text-[#011640] transition-colors font-medium"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Jobs
-          </Link>
-        </div>
+    <>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPosting) }}
+        />
+      </head>
+      <div className="min-h-screen bg-[#F3F7FA]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Back Button */}
+          <div className="mb-8">
+            <Link
+              href="/jobs"
+              className="inline-flex items-center text-[#0476D9] hover:text-[#011640] transition-colors font-medium"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Jobs
+            </Link>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {/* Job Header */}
-            <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-fade-in">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-4">
-                    {job.companyLogo ? (
-                      <Image
-                        width={64}
-                        height={64}
-                        src={job.companyLogo}
-                        alt={`${job.company} logo`}
-                        className="w-16 h-16 rounded-xl object-cover border border-[#E5EAF1] bg-white"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
-                        <Building2 className="w-8 h-8 text-gray-400" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2">
+              {/* Job Header */}
+              <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-fade-in">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-4">
+                      {job.companyLogo ? (
+                        <Image
+                          width={64}
+                          height={64}
+                          src={job.companyLogo}
+                          alt={`${job.company} logo`}
+                          className="w-16 h-16 rounded-xl object-cover border border-[#E5EAF1] bg-white"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center">
+                          <Building2 className="w-8 h-8 text-gray-400" />
+                        </div>
+                      )}
+                      <div>
+                        <h1 className="text-3xl font-bold text-[#011640] mb-2">
+                          {job.title}
+                        </h1>
+                        <p className="text-xl text-[#0476D9] font-medium">
+                          {job.company}
+                        </p>
                       </div>
-                    )}
-                    <div>
-                      <h1 className="text-3xl font-bold text-[#011640] mb-2">
-                        {job.title}
-                      </h1>
-                      <p className="text-xl text-[#0476D9] font-medium">
-                        {job.company}
-                      </p>
                     </div>
-                  </div>
 
-                  {/* Job Meta */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="flex items-center gap-2 text-[#010D26]">
-                      <MapPin className="w-5 h-5 text-[#0476D9]" />
-                      <span>{job.location}</span>
-                      {job.isRemote && (
-                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                          Remote
+                    {/* Job Meta */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                      <div className="flex items-center gap-2 text-[#010D26]">
+                        <MapPin className="w-5 h-5 text-[#0476D9]" />
+                        <span>{job.location}</span>
+                        {job.isRemote && (
+                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                            Remote
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-[#010D26]">
+                        <Clock className="w-5 h-5 text-[#0476D9]" />
+                        <span className="capitalize">
+                          {job.type.replace("-", " ")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[#010D26]">
+                        <DollarSign className="w-5 h-5 text-[#0476D9]" />
+                        <span className="font-medium">
+                          {formatSalary(job.salary)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[#010D26]">
+                        <Calendar className="w-5 h-5 text-[#0476D9]" />
+                        <span>Posted {formatDate(job.createdAt)}</span>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      <span
+                        className={`text-sm font-medium px-3 py-1 rounded-full ${getExperienceColor(
+                          job.experience
+                        )}`}
+                      >
+                        {job.experience
+                          ? job.experience.charAt(0).toUpperCase() +
+                            job.experience.slice(1)
+                          : "N/A"}
+                      </span>
+                      <span
+                        className={`text-sm font-medium px-3 py-1 rounded-full ${getTypeColor(
+                          job.type
+                        )}`}
+                      >
+                        {job.type.replace("-", " ")}
+                      </span>
+                      {job.isFeatured && (
+                        <span className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] text-white text-sm font-medium px-3 py-1 rounded-full">
+                          Featured
                         </span>
                       )}
                     </div>
+
+                    {/* Skills */}
+                    <div className="flex flex-wrap gap-2">
+                      {(job.tags ?? []).map((tag, index) => (
+                        <span
+                          key={index}
+                          className="bg-[#F3F7FA] text-[#0476D9] text-sm px-3 py-1 rounded-full border border-[#E5EAF1]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Job Description */}
+              <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-slide-in-left">
+                <h2 className="text-2xl font-bold text-[#011640] mb-6">
+                  Job Description
+                </h2>
+                <div
+                  className="prose prose-lg max-w-none text-[#010D26] leading-relaxed mb-6"
+                  dangerouslySetInnerHTML={{ __html: job.description }}
+                />
+              </div>
+
+              {/* Requirements */}
+              {job.requirements && job.requirements.length > 0 && (
+                <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-slide-in-left">
+                  <h2 className="text-2xl font-bold text-[#011640] mb-6">
+                    Requirements
+                  </h2>
+                  <ul className="space-y-3">
+                    {job.requirements.map((requirement, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-[#0476D9] mt-0.5 flex-shrink-0" />
+                        <span className="text-[#010D26]">{requirement}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Benefits */}
+              {job.benefits && job.benefits.length > 0 && (
+                <div className="bg-white rounded-2xl p-8 shadow-sm animate-slide-in-left">
+                  <h2 className="text-2xl font-bold text-[#011640] mb-6">
+                    Benefits
+                  </h2>
+                  <ul className="space-y-3">
+                    {job.benefits.map((benefit, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-[#0476D9] rounded-full mt-2 flex-shrink-0"></div>
+                        <span className="text-[#010D26]">{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24 space-y-6">
+                {/* Apply Button */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in">
+                  <h3 className="text-lg font-semibold text-[#011640] mb-4">
+                    Apply for this position
+                  </h3>
+                  <Button
+                    href={job.applicationUrl}
+                    className="w-full mb-4"
+                    size="lg"
+                    target="_blank"
+                  >
+                    Apply Now
+                    <ExternalLink className="w-4 h-4 ml-2" />
+                  </Button>
+                  <p className="text-sm text-[#010D26] text-center">
+                    You&apos;ll be redirected to the company&apos;s application
+                    page
+                  </p>
+                </div>
+
+                {/* Company Info */}
+                <div
+                  className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
+                  style={{ animationDelay: "0.1s" }}
+                >
+                  <h3 className="text-lg font-semibold text-[#011640] mb-4">
+                    About {job.company}
+                  </h3>
+                  <div className="space-y-3">
                     <div className="flex items-center gap-2 text-[#010D26]">
-                      <Clock className="w-5 h-5 text-[#0476D9]" />
-                      <span className="capitalize">
+                      <Building2 className="w-4 h-4 text-[#0476D9]" />
+                      <span className="text-sm">{job.company}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#010D26]">
+                      <MapPin className="w-4 h-4 text-[#0476D9]" />
+                      <span className="text-sm">{job.location}</span>
+                    </div>
+                    {job.isRemote && (
+                      <div className="flex items-center gap-2 text-[#010D26]">
+                        <Users className="w-4 h-4 text-[#0476D9]" />
+                        <span className="text-sm">Remote-friendly</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Job Summary */}
+                <div
+                  className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
+                  style={{ animationDelay: "0.2s" }}
+                >
+                  <h3 className="text-lg font-semibold text-[#011640] mb-4">
+                    Job Summary
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-[#010D26]">Experience:</span>
+                      <span className="font-medium text-[#0476D9] capitalize">
+                        {job.experience ? job.experience : "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#010D26]">Type:</span>
+                      <span className="font-medium text-[#0476D9] capitalize">
                         {job.type.replace("-", " ")}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-[#010D26]">
-                      <DollarSign className="w-5 h-5 text-[#0476D9]" />
-                      <span className="font-medium">
+                    <div className="flex justify-between">
+                      <span className="text-[#010D26]">Category:</span>
+                      <span className="font-medium text-[#0476D9] capitalize">
+                        {job.category}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#010D26]">Salary:</span>
+                      <span className="font-medium text-[#0476D9]">
                         {formatSalary(job.salary)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-[#010D26]">
-                      <Calendar className="w-5 h-5 text-[#0476D9]" />
-                      <span>Posted {formatDate(job.createdAt)}</span>
-                    </div>
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    <span
-                      className={`text-sm font-medium px-3 py-1 rounded-full ${getExperienceColor(
-                        job.experience
-                      )}`}
-                    >
-                      {job.experience
-                        ? job.experience.charAt(0).toUpperCase() +
-                          job.experience.slice(1)
-                        : "N/A"}
-                    </span>
-                    <span
-                      className={`text-sm font-medium px-3 py-1 rounded-full ${getTypeColor(
-                        job.type
-                      )}`}
-                    >
-                      {job.type.replace("-", " ")}
-                    </span>
-                    {job.isFeatured && (
-                      <span className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] text-white text-sm font-medium px-3 py-1 rounded-full">
-                        Featured
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Skills */}
-                  <div className="flex flex-wrap gap-2">
-                    {(job.tags ?? []).map((tag, index) => (
-                      <span
-                        key={index}
-                        className="bg-[#F3F7FA] text-[#0476D9] text-sm px-3 py-1 rounded-full border border-[#E5EAF1]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Job Description */}
-            <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-slide-in-left">
-              <h2 className="text-2xl font-bold text-[#011640] mb-6">
-                Job Description
-              </h2>
-              <div
-                className="prose prose-lg max-w-none text-[#010D26] leading-relaxed mb-6"
-                dangerouslySetInnerHTML={{ __html: job.description }}
-              />
-            </div>
-
-            {/* Requirements */}
-            {job.requirements && job.requirements.length > 0 && (
-              <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-slide-in-left">
-                <h2 className="text-2xl font-bold text-[#011640] mb-6">
-                  Requirements
-                </h2>
-                <ul className="space-y-3">
-                  {job.requirements.map((requirement, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-[#0476D9] mt-0.5 flex-shrink-0" />
-                      <span className="text-[#010D26]">{requirement}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Benefits */}
-            {job.benefits && job.benefits.length > 0 && (
-              <div className="bg-white rounded-2xl p-8 shadow-sm animate-slide-in-left">
-                <h2 className="text-2xl font-bold text-[#011640] mb-6">
-                  Benefits
-                </h2>
-                <ul className="space-y-3">
-                  {job.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#0476D9] rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-[#010D26]">{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
-              {/* Apply Button */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in">
-                <h3 className="text-lg font-semibold text-[#011640] mb-4">
-                  Apply for this position
-                </h3>
-                <Button
-                  href={job.applicationUrl}
-                  className="w-full mb-4"
-                  size="lg"
-                  target="_blank"
-                >
-                  Apply Now
-                  <ExternalLink className="w-4 h-4 ml-2" />
-                </Button>
-                <p className="text-sm text-[#010D26] text-center">
-                  You&apos;ll be redirected to the company&apos;s application
-                  page
-                </p>
-              </div>
-
-              {/* Company Info */}  
-              <div
-                className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
-                style={{ animationDelay: "0.1s" }}
-              >
-                <h3 className="text-lg font-semibold text-[#011640] mb-4">
-                  About {job.company}
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-[#010D26]">
-                    <Building2 className="w-4 h-4 text-[#0476D9]" />
-                    <span className="text-sm">{job.company}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[#010D26]">
-                    <MapPin className="w-4 h-4 text-[#0476D9]" />
-                    <span className="text-sm">{job.location}</span>
-                  </div>
-                  {job.isRemote && (
-                    <div className="flex items-center gap-2 text-[#010D26]">
-                      <Users className="w-4 h-4 text-[#0476D9]" />
-                      <span className="text-sm">Remote-friendly</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Job Summary */}
-              <div
-                className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
-                style={{ animationDelay: "0.2s" }}
-              >
-                <h3 className="text-lg font-semibold text-[#011640] mb-4">
-                  Job Summary
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-[#010D26]">Experience:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">
-                      {job.experience ? job.experience : "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#010D26]">Type:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">
-                      {job.type.replace("-", " ")}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#010D26]">Category:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">
-                      {job.category}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#010D26]">Salary:</span>
-                    <span className="font-medium text-[#0476D9]">
-                      {formatSalary(job.salary)}
-                    </span>
                   </div>
                 </div>
               </div>
@@ -298,6 +381,6 @@ export default async function JobPage({ params }: any) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
