@@ -83,6 +83,41 @@ export interface Database {
           updated_at?: string;
         };
       };
+      job_clicks: {
+        Row: {
+          id: string;
+          job_id: string;
+          application_url: string;
+          clicked_at: string;
+          user_agent: string | null;
+          ip_address: string | null;
+          referrer: string | null;
+          is_valid: boolean;
+          error_message: string | null;
+        };
+        Insert: {
+          id?: string;
+          job_id: string;
+          application_url: string;
+          clicked_at?: string;
+          user_agent?: string | null;
+          ip_address?: string | null;
+          referrer?: string | null;
+          is_valid?: boolean;
+          error_message?: string | null;
+        };
+        Update: {
+          id?: string;
+          job_id?: string;
+          application_url?: string;
+          clicked_at?: string;
+          user_agent?: string | null;
+          ip_address?: string | null;
+          referrer?: string | null;
+          is_valid?: boolean;
+          error_message?: string | null;
+        };
+      };
     };
   };
 }

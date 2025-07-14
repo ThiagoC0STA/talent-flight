@@ -6,7 +6,6 @@ import {
   DollarSign,
   Building2,
   Calendar,
-  ExternalLink,
   ArrowLeft,
   Users,
   CheckCircle,
@@ -14,8 +13,8 @@ import {
 import Link from "next/link";
 import { jobsService } from "@/lib/jobs";
 import { formatSalary, formatDate } from "@/lib/utils";
-import Button from "@/components/ui/Button";
 import Image from "next/image";
+import ApplyButton from "@/components/ApplyButton";
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
   const job = await jobsService.getJobById(params.slug);
@@ -300,15 +299,12 @@ export default async function JobPage({ params }: any) {
                   <h3 className="text-lg font-semibold text-[#011640] mb-4">
                     Apply for this position
                   </h3>
-                  <Button
-                    href={job.applicationUrl}
+                  <ApplyButton
+                    jobId={job.id}
+                    applicationUrl={job.applicationUrl || ""}
                     className="w-full mb-4"
                     size="lg"
-                    target="_blank"
-                  >
-                    Apply Now
-                    <ExternalLink className="w-4 h-4 ml-2" />
-                  </Button>
+                  />
                   <p className="text-sm text-[#010D26] text-center">
                     You&apos;ll be redirected to the company&apos;s application
                     page

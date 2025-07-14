@@ -234,3 +234,141 @@ export const jobsService = {
     return true;
   },
 };
+
+// Tracking de cliques
+export const trackingService = {
+  async trackClick(jobId: string, applicationUrl: string) {
+    try {
+      const { error } = await supabase.from("job_clicks").insert({
+        job_id: jobId,
+        application_url: applicationUrl,
+        clicked_at: new Date().toISOString(),
+        user_agent:
+          typeof window !== "undefined" ? window.navigator.userAgent : null,
+        referrer: typeof window !== "undefined" ? document.referrer : null,
+        is_valid: true,
+      });
+
+      if (error) {
+        console.error("Erro ao registrar clique:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Erro ao registrar clique:", error);
+      return false;
+    }
+  },
+
+  async getClickStats(jobId?: string) {
+    try {
+      let query = supabase
+        .from("job_clicks")
+        .select(
+          `
+          *,
+          jobs (
+            title,
+            company
+          )
+        `
+        )
+        .order("clicked_at", { ascending: false });
+
+      if (jobId) {
+        query = query.eq("job_id", jobId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Erro ao buscar estatísticas:", error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error("Erro ao buscar estatísticas:", error);
+      return [];
+    }
+  },
+
+  async getClickSummary() {
+    try {
+      const { data, error } = await supabase.from("job_clicks").select(`
+          job_id,
+          jobs (
+            title,
+            company
+          ),
+          is_valid,
+          clicked_at
+        `);
+
+      if (error) {
+        console.error("Erro ao buscar resumo:", error);
+        return {
+          totalClicks: 0,
+          validClicks: 0,
+          invalidClicks: 0,
+          clicksByJob: [],
+        };
+      }
+
+      const clicks = data || [];
+      const totalClicks = clicks.length;
+      const validClicks = clicks.filter((click) => click.is_valid).length;
+      const invalidClicks = totalClicks - validClicks;
+
+      // Agrupar por vaga
+      const clicksByJob = clicks.reduce((acc, click) => {
+        const jobTitle = click.jobs?.[0]?.title || "Unknown";
+        const jobCompany = click.jobs?.[0]?.company || "Unknown";
+        const key = `${jobTitle} at ${jobCompany}`;
+
+        if (!acc[key]) {
+          acc[key] = {
+            jobTitle,
+            jobCompany,
+            totalClicks: 0,
+            validClicks: 0,
+            invalidClicks: 0,
+            lastClick: null,
+          };
+        }
+
+        acc[key].totalClicks++;
+        if (click.is_valid) {
+          acc[key].validClicks++;
+        } else {
+          acc[key].invalidClicks++;
+        }
+
+        if (
+          !acc[key].lastClick ||
+          new Date(click.clicked_at) > new Date(acc[key].lastClick)
+        ) {
+          acc[key].lastClick = click.clicked_at;
+        }
+
+        return acc;
+      }, {} as Record<string, any>);
+
+      return {
+        totalClicks,
+        validClicks,
+        invalidClicks,
+        clicksByJob: Object.values(clicksByJob),
+      };
+    } catch (error) {
+      console.error("Erro ao buscar resumo:", error);
+      return {
+        totalClicks: 0,
+        validClicks: 0,
+        invalidClicks: 0,
+        clicksByJob: [],
+      };
+    }
+  },
+};

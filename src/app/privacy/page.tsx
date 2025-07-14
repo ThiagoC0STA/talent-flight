@@ -268,7 +268,7 @@ export default function PrivacyPage() {
             </h2>
             <p className="mb-6 leading-relaxed">
               If you have questions about this privacy policy or how we handle your data, 
-              please don't hesitate to contact us.
+              please don&apos;t hesitate to contact us.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Trash2, LogOut } from "lucide-react";
+import { Save, Trash2, LogOut, BarChart3 } from "lucide-react";
 import { Job } from "@/types/job";
 import { jobsService } from "@/lib/jobs";
 import { supabase } from "@/lib/supabase";
@@ -365,12 +365,20 @@ export default function AdminPage() {
               Fill out the form below to publish a new opportunity
             </p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA]"
-          >
-            <LogOut className="w-5 h-5" /> Logout
-          </button>
+          <div className="flex items-center gap-4">
+            <a
+              href="/admin/analytics"
+              className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA]"
+            >
+              <BarChart3 className="w-5 h-5" /> Analytics
+            </a>
+            <button
+              onClick={handleLogout}
+              className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA]"
+            >
+              <LogOut className="w-5 h-5" /> Logout
+            </button>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
           {/* Formulário */}

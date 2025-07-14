@@ -23,7 +23,7 @@ export default function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-xl text-[#0476D9] max-w-2xl mx-auto">
-            We're here to help you find the best career opportunities
+            We&apos;re here to help you find the best career opportunities
           </p>
         </div>
 
