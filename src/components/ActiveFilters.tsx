@@ -128,7 +128,7 @@ export default function ActiveFilters({
                   clipRule="evenodd"
                 />
               </svg>
-              <span>"{filters.query}"</span>
+              <span>&quot;{filters.query}&quot;</span>
               <button
                 onClick={() =>
                   onFiltersChange({ ...filters, query: undefined })

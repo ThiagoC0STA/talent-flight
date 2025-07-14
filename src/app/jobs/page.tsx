@@ -8,6 +8,7 @@ import SearchBar from "@/components/SearchBar";
 import JobFilters from "@/components/JobFilters";
 import ActiveFilters from "@/components/ActiveFilters";
 import ViewToggle from "@/components/ViewToggle";
+import AnimatedCounter from "@/components/AnimatedCounter";
 import { jobsService } from "@/lib/jobs";
 import { Job, JobFilters as JobFiltersType } from "@/types/job";
 import Button from "@/components/ui/Button";
@@ -19,14 +20,34 @@ export default function JobsPage() {
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [stats, setStats] = useState({
+    totalJobs: 0,
+    totalCompanies: 0,
+    remoteJobs: 0,
+  });
+  const [animationKey, setAnimationKey] = useState(0);
 
-  // Load jobs from Supabase
+  // Load jobs and stats from Supabase
   useEffect(() => {
-    const loadJobs = async () => {
+    const loadJobsAndStats = async () => {
       try {
         const allJobs = await jobsService.getAllJobs();
         setJobs(allJobs);
         setFilteredJobs(allJobs);
+
+        // Calculate stats
+        const uniqueCompanies = new Set(allJobs.map((job) => job.company)).size;
+        const remoteJobsCount = allJobs.filter((job) => job.isRemote).length;
+
+        const newStats = {
+          totalJobs: allJobs.length,
+          totalCompanies: uniqueCompanies,
+          remoteJobs: remoteJobsCount,
+        };
+
+        setStats(newStats);
+        // Start animation after stats are set
+        setTimeout(() => setAnimationKey((prev) => prev + 1), 100);
       } catch (error) {
         console.error("Error loading jobs:", error);
       } finally {
@@ -34,7 +55,7 @@ export default function JobsPage() {
       }
     };
 
-    loadJobs();
+    loadJobsAndStats();
   }, []);
 
   // Filter jobs when filters change
@@ -61,17 +82,69 @@ export default function JobsPage() {
     <div className="min-h-screen bg-[#F3F7FA]">
       <div className="max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="w-16 h-16 bg-gradient-to-br from-[#011640] to-[#0476D9] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <Briefcase className="w-8 h-8 text-white" />
+        <div className="relative mb-12 animate-fade-in overflow-hidden">
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 rounded-3xl"></div>
+
+          {/* Main Content */}
+          <div className="relative p-8 text-center">
+            {/* Icon Container */}
+            <div className="relative mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#011640] to-[#0476D9] rounded-2xl flex items-center justify-center mx-auto shadow-xl">
+                <Briefcase className="w-10 h-10 text-white" />
+              </div>
+            </div>
+
+            {/* Title */}
+            <h1 className="heading-responsive font-bold text-[#011640] mb-6 leading-tight">
+              Find Your Next Opportunity
+            </h1>
+
+            {/* Description */}
+            <p className="text-responsive text-[#6B7280] max-w-3xl mx-auto leading-relaxed mb-8">
+              Discover thousands of job opportunities and find the perfect match
+              for your career goals. From startups to Fortune 500 companies.
+            </p>
+
+            {/* Stats */}
+            <div className="flex justify-center items-center gap-8 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-[#10B981] rounded-full"></div>
+                <span className="text-[#6B7280]">Live Jobs</span>
+                <span className="font-semibold text-[#011640]">
+                  <AnimatedCounter
+                    value={stats.totalJobs}
+                    duration={2500}
+                    key={animationKey}
+                  />
+                </span>
+              </div>
+              <div className="w-px h-4 bg-[#E5EAF1]"></div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-[#F59E0B] rounded-full"></div>
+                <span className="text-[#6B7280]">Companies</span>
+                <span className="font-semibold text-[#011640]">
+                  <AnimatedCounter
+                    value={stats.totalCompanies}
+                    duration={2000}
+                    key={animationKey}
+                  />
+                </span>
+              </div>
+              <div className="w-px h-4 bg-[#E5EAF1]"></div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-[#8B5CF6] rounded-full"></div>
+                <span className="text-[#6B7280]">Remote</span>
+                <span className="font-semibold text-[#011640]">
+                  <AnimatedCounter
+                    value={stats.remoteJobs}
+                    duration={2200}
+                    key={animationKey}
+                  />
+                </span>
+              </div>
+            </div>
           </div>
-          <h1 className="heading-responsive font-bold text-[#011640] mb-4">
-            Find Your Next Opportunity
-          </h1>
-          <p className="text-responsive text-[#0476D9] max-w-2xl mx-auto leading-relaxed">
-            Discover thousands of job opportunities and find the perfect match
-            for your career goals
-          </p>
         </div>
 
         {/* Search Bar */}

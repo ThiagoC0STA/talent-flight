@@ -1,13 +1,12 @@
 "use client";
 
-import { X, Filter, ChevronDown, ChevronRight } from "lucide-react";
+import { Filter, ChevronDown, ChevronRight } from "lucide-react";
 import {
   JobFilters as JobFiltersType,
   JobCategory,
   JobType,
   ExperienceLevel,
 } from "@/types/job";
-import Button from "@/components/ui/Button";
 import { useState } from "react";
 
 interface JobFiltersProps {
@@ -32,9 +31,9 @@ export default function JobFilters({
   });
 
   const toggleSection = (section: keyof typeof openSections) => {
-    setOpenSections(prev => ({
+    setOpenSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
   const handleCategoryChange = (category: JobCategory) => {
@@ -71,10 +70,6 @@ export default function JobFilters({
       ...filters,
       experience: newExperiences.length > 0 ? newExperiences : undefined,
     });
-  };
-
-  const clearFilters = () => {
-    onFiltersChange({});
   };
 
   const categories: { value: JobCategory; label: string }[] = [
@@ -144,7 +139,6 @@ export default function JobFilters({
   );
 
   const FilterCheckbox = ({
-    value,
     label,
     checked,
     onChange,
@@ -236,10 +230,10 @@ export default function JobFilters({
         </div>
 
         {/* Categories */}
-        <FilterSection 
+        <FilterSection
           title="Categories"
           isOpen={openSections.categories}
-          onToggle={() => toggleSection('categories')}
+          onToggle={() => toggleSection("categories")}
         >
           <div className="space-y-2">
             {categories.map(({ value, label }) => (
@@ -255,10 +249,10 @@ export default function JobFilters({
         </FilterSection>
 
         {/* Job Types */}
-        <FilterSection 
+        <FilterSection
           title="Job Type"
           isOpen={openSections.types}
-          onToggle={() => toggleSection('types')}
+          onToggle={() => toggleSection("types")}
         >
           <div className="space-y-2">
             {types.map(({ value, label }) => (
@@ -274,10 +268,10 @@ export default function JobFilters({
         </FilterSection>
 
         {/* Experience Levels */}
-        <FilterSection 
+        <FilterSection
           title="Experience Level"
           isOpen={openSections.experience}
-          onToggle={() => toggleSection('experience')}
+          onToggle={() => toggleSection("experience")}
         >
           <div className="space-y-2">
             {experiences.map(({ value, label }) => (
