@@ -22,6 +22,7 @@ import AnalyticsCard from "@/components/admin/AnalyticsCard";
 import JobTable from "@/components/admin/JobTable";
 import JobForm from "@/components/admin/JobForm";
 import AnalyticsCharts from "@/components/admin/AnalyticsCharts";
+import GA4Analytics from "@/components/admin/GA4Analytics";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import JobFilters from "@/components/admin/JobFilters";
@@ -585,6 +586,10 @@ export default function AdminPage() {
             </div>
             {/* Gráficos de Analytics */}
             <AnalyticsCharts jobs={jobs} />
+            
+            {/* Google Analytics 4 */}
+            <GA4Analytics />
+            
             {/* Recent Jobs */}
             <Card className="p-6">
               <h3 className="text-xl font-semibold text-[#011640] mb-4">

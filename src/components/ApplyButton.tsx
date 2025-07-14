@@ -4,34 +4,50 @@ import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { linkValidator } from "@/lib/linkValidator";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 interface ApplyButtonProps {
   jobId: string;
   applicationUrl: string;
+  jobTitle?: string;
+  company?: string;
   className?: string;
   size?: "sm" | "md" | "lg";
 }
 
-export default function ApplyButton({ jobId, applicationUrl, className = "", size = "lg" }: ApplyButtonProps) {
+export default function ApplyButton({
+  jobId,
+  applicationUrl,
+  jobTitle,
+  company,
+  className = "",
+  size = "lg",
+}: ApplyButtonProps) {
   const [isTracking, setIsTracking] = useState(false);
+  const { trackApply } = useAnalytics();
 
   const handleClick = async () => {
     if (isTracking) return;
-    
+
     setIsTracking(true);
-    
+
     try {
       // Registrar o clique e validar o link
       await linkValidator.validateAndUpdateClick(jobId, applicationUrl);
+
+      // Track no Google Analytics
+      if (jobTitle && company) {
+        trackApply(jobTitle, company);
+      }
     } catch (error) {
-      console.error('Erro ao processar clique:', error);
+      console.error("Erro ao processar clique:", error);
       // Mesmo com erro, continuar
     } finally {
       setIsTracking(false);
     }
-    
+
     // Sempre abrir o link, independente do tracking
-    window.open(applicationUrl, '_blank', 'noopener,noreferrer');
+    window.open(applicationUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -45,4 +61,4 @@ export default function ApplyButton({ jobId, applicationUrl, className = "", siz
       <ExternalLink className="w-4 h-4 ml-2" />
     </Button>
   );
-} 
+}

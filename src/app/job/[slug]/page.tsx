@@ -22,22 +22,35 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
   const url = `https://talentflight.com/job/${slug}`;
   return {
     title: `${job.title} at ${job.company} | TalentFlight`,
-    description: job.description?.replace(/<[^>]+>/g, '').slice(0, 160) || 'Job opportunity at TalentFlight',
-    keywords: [job.title, job.company, job.location, ...(job.tags || [])].join(", "),
+    description:
+      job.description?.replace(/<[^>]+>/g, "").slice(0, 160) ||
+      "Job opportunity at TalentFlight",
+    keywords: [job.title, job.company, job.location, ...(job.tags || [])].join(
+      ", "
+    ),
     alternates: { canonical: url },
     openGraph: {
       title: `${job.title} at ${job.company} | TalentFlight`,
-      description: job.description?.replace(/<[^>]+>/g, '').slice(0, 160) || '',
+      description: job.description?.replace(/<[^>]+>/g, "").slice(0, 160) || "",
       url,
       siteName: "TalentFlight",
-      images: job.companyLogo ? [{ url: job.companyLogo, width: 400, height: 400, alt: `${job.company} logo` }] : [],
+      images: job.companyLogo
+        ? [
+            {
+              url: job.companyLogo,
+              width: 400,
+              height: 400,
+              alt: `${job.company} logo`,
+            },
+          ]
+        : [],
       locale: "en_US",
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: `${job.title} at ${job.company} | TalentFlight`,
-      description: job.description?.replace(/<[^>]+>/g, '').slice(0, 160) || '',
+      description: job.description?.replace(/<[^>]+>/g, "").slice(0, 160) || "",
       images: job.companyLogo ? [job.companyLogo] : [],
     },
     robots: {
@@ -86,9 +99,9 @@ export default async function JobPage({ params }: any) {
     "@context": "https://schema.org",
     "@type": "JobPosting",
     title: job.title,
-    description: job.description?.replace(/<[^>]+>/g, ''),
+    description: job.description?.replace(/<[^>]+>/g, ""),
     datePosted: job.createdAt,
-    employmentType: job.type?.replace(/-/g, ' '),
+    employmentType: job.type?.replace(/-/g, " "),
     hiringOrganization: {
       "@type": "Organization",
       name: job.company,
@@ -102,16 +115,18 @@ export default async function JobPage({ params }: any) {
         addressCountry: "BR", // ajuste se necessário
       },
     },
-    baseSalary: job.salary ? {
-      "@type": "MonetaryAmount",
-      currency: job.salary.currency || "USD",
-      value: {
-        "@type": "QuantitativeValue",
-        minValue: job.salary.min,
-        maxValue: job.salary.max,
-        unitText: job.salary.period?.toUpperCase() || "YEAR",
-      },
-    } : undefined,
+    baseSalary: job.salary
+      ? {
+          "@type": "MonetaryAmount",
+          currency: job.salary.currency || "USD",
+          value: {
+            "@type": "QuantitativeValue",
+            minValue: job.salary.min,
+            maxValue: job.salary.max,
+            unitText: job.salary.period?.toUpperCase() || "YEAR",
+          },
+        }
+      : undefined,
     directApply: true,
     identifier: job.id,
     url: `https://talentflight.com/job/${slug}`,
@@ -134,11 +149,11 @@ export default async function JobPage({ params }: any) {
       <div className="min-h-screen bg-[#F3F7FA]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Breadcrumbs */}
-          <Breadcrumbs 
+          <Breadcrumbs
             items={[
               { label: "Jobs", href: "/jobs" },
-              { label: `${job.title} at ${job.company}` }
-            ]} 
+              { label: `${job.title} at ${job.company}` },
+            ]}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -296,9 +311,12 @@ export default async function JobPage({ params }: any) {
                   <h3 className="text-lg font-semibold text-[#011640] mb-4">
                     Apply for this position
                   </h3>
+
                   <ApplyButton
                     jobId={job.id}
                     applicationUrl={job.applicationUrl || ""}
+                    jobTitle={job.title}
+                    company={job.company}
                     className="w-full mb-4"
                     size="lg"
                   />
