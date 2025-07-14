@@ -25,12 +25,13 @@ export default function JobPagePreview({
 }) {
   const getExperienceColor = (experience?: string) => {
     const colors = {
-      entry: "bg-green-100 text-green-800",
+      intern: "bg-green-100 text-green-800",
       junior: "bg-blue-100 text-blue-800",
+      "junior-mid": "bg-cyan-100 text-cyan-800",
       mid: "bg-yellow-100 text-yellow-800",
+      "mid-senior": "bg-orange-100 text-orange-800",
       senior: "bg-purple-100 text-purple-800",
-      lead: "bg-orange-100 text-orange-800",
-      executive: "bg-red-100 text-red-800",
+      between: "bg-gray-100 text-gray-800",
     };
     if (!experience) return "bg-gray-100 text-gray-800";
     return (

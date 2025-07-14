@@ -198,6 +198,10 @@ export const jobsService = {
 
   // Atualizar vaga
   async updateJob(id: string, updates: Partial<Job>): Promise<Job | null> {
+    console.log("=== UPDATE JOB DEBUG ===");
+    console.log("ID recebido:", id);
+    console.log("Updates recebidos:", updates);
+
     const supabaseUpdates: any = {};
 
     if (updates.title) supabaseUpdates.title = updates.title;
@@ -235,21 +239,43 @@ export const jobsService = {
       )}`;
     }
 
-    const { error: updateError } = await supabase
+    console.log("Payload para Supabase:", supabaseUpdates);
+    console.log("Campos que serão atualizados:", Object.keys(supabaseUpdates));
+
+    const { data: updateData, error: updateError } = await supabase
       .from("jobs")
       .update(supabaseUpdates)
-      .eq("id", id);
+      .eq("id", id)
+      .select();
+
+    console.log("Resposta do Supabase UPDATE:", { updateData, updateError });
 
     if (updateError) {
       console.error("Error updating job:", updateError);
+      console.error("Detalhes do erro:", {
+        message: updateError.message,
+        details: updateError.details,
+        hint: updateError.hint,
+        code: updateError.code,
+      });
       return null;
     }
 
+    console.log("Update realizado com sucesso. Dados retornados:", updateData);
+
+    // Se o update retornou dados, usar eles diretamente
+    if (updateData && updateData.length > 0) {
+      return mapSupabaseJobToJob(updateData[0]);
+    }
+
+    // Se não retornou dados, buscar novamente
     const { data, error } = await supabase
       .from("jobs")
       .select("*")
       .eq("id", id)
       .single();
+
+    console.log("Busca após update:", { data, error });
 
     if (error) {
       console.error("Error fetching updated job:", error);

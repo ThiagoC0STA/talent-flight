@@ -39,12 +39,13 @@ export type JobCategory =
   | "other";
 
 export type ExperienceLevel =
-  | "entry"
+  | "intern"
   | "junior"
+  | "junior-mid"
   | "mid"
+  | "mid-senior"
   | "senior"
-  | "lead"
-  | "executive";
+  | "between";
 
 export interface SalaryRange {
   min?: number;

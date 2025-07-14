@@ -1,6 +1,22 @@
 import { Edit, Eye, Trash2 } from "lucide-react";
 import { Job } from "@/types/job";
 
+function getExperienceColor(experience?: string) {
+  const colors = {
+    intern: "bg-green-100 text-green-800",
+    junior: "bg-blue-100 text-blue-800",
+    "junior-mid": "bg-cyan-100 text-cyan-800",
+    mid: "bg-yellow-100 text-yellow-800",
+    "mid-senior": "bg-orange-100 text-orange-800",
+    senior: "bg-purple-100 text-purple-800",
+    between: "bg-gray-100 text-gray-800",
+  };
+  if (!experience) return "bg-gray-100 text-gray-800";
+  return (
+    colors[experience as keyof typeof colors] || "bg-gray-100 text-gray-800"
+  );
+}
+
 interface JobTableProps {
   jobs: Job[];
   onEdit: (job: Job) => void;
@@ -48,6 +64,9 @@ export default function JobTable({
                 Company
               </th>
               <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">
+                Experience
+              </th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">
                 Status
               </th>
               <th className="px-6 py-4 text-left text-sm font-medium text-gray-900">
@@ -80,6 +99,15 @@ export default function JobTable({
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
                   {job.company}
+                </td>
+                <td className="px-6 py-4">
+                  {job.experience ? (
+                    <span className={`inline-flex text-nowrap px-2 py-1 text-xs font-medium rounded-full capitalize ${getExperienceColor(job.experience)}`}>
+                      {job.experience}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-gray-400">-</span>
+                  )}
                 </td>
                 <td className="px-6 py-4">
                   <span

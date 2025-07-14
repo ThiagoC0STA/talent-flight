@@ -232,6 +232,27 @@ export default function JobForm({
               </select>
             </div>
           </div>
+          {/* Experience */}
+          <div className="mb-2">
+            <label className="block text-sm font-medium text-[#011640] mb-2">
+              Experience Level
+            </label>
+            <select
+              name="experience"
+              value={formData.experience}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+            >
+              <option value="">Select...</option>
+              <option value="intern">Intern</option>
+              <option value="junior">Junior</option>
+              <option value="junior-mid">Junior-Mid</option>
+              <option value="mid">Mid</option>
+              <option value="mid-senior">Mid-Senior</option>
+              <option value="senior">Senior</option>
+              <option value="between">Between Levels</option>
+            </select>
+          </div>
 
           {/* Created Date */}
           <div>

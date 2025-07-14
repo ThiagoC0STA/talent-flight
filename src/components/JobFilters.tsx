@@ -94,12 +94,13 @@ export default function JobFilters({
   ];
 
   const experiences: { value: ExperienceLevel; label: string }[] = [
-    { value: "entry", label: "Entry Level" },
+    { value: "intern", label: "Intern" },
     { value: "junior", label: "Junior" },
-    { value: "mid", label: "Mid Level" },
+    { value: "junior-mid", label: "Junior-Mid" },
+    { value: "mid", label: "Mid" },
+    { value: "mid-senior", label: "Mid-Senior" },
     { value: "senior", label: "Senior" },
-    { value: "lead", label: "Lead" },
-    { value: "executive", label: "Executive" },
+    { value: "between", label: "Between Levels" },
   ];
 
   const FilterSection = ({

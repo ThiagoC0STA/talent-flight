@@ -203,7 +203,7 @@ export const jobs: Job[] = [
     location: "Chicago, IL",
     type: "full-time",
     category: "sales",
-    experience: "entry",
+    experience: "junior",
     salary: {
       min: 45000,
       max: 65000,

@@ -6,6 +6,7 @@ interface JobFiltersProps {
     status: string;
     type: string;
     category: string;
+    experience: string;
     remote: string;
     featured: string;
   };
@@ -88,6 +89,26 @@ export default function JobFilters({
               {cat}
             </option>
           ))}
+        </select>
+      </div>
+      {/* Experiência */}
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Experience
+        </label>
+        <select
+          value={filters.experience}
+          onChange={(e) => onChange({ ...filters, experience: e.target.value })}
+          className="px-3 py-2 border border-gray-200 rounded-lg text-sm"
+        >
+          <option value="">All</option>
+          <option value="intern">Intern</option>
+          <option value="junior">Junior</option>
+          <option value="junior-mid">Junior-Mid</option>
+          <option value="mid">Mid</option>
+          <option value="mid-senior">Mid-Senior</option>
+          <option value="senior">Senior</option>
+          <option value="between">Between Levels</option>
         </select>
       </div>
       {/* Remoto */}

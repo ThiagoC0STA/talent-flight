@@ -19,12 +19,13 @@ interface JobCardProps {
 export default function JobCard({ job, className }: JobCardProps) {
   const getExperienceColor = (experience?: string) => {
     const colors = {
-      entry: "bg-green-100 text-green-800",
+      intern: "bg-green-100 text-green-800",
       junior: "bg-blue-100 text-blue-800",
+      "junior-mid": "bg-cyan-100 text-cyan-800",
       mid: "bg-yellow-100 text-yellow-800",
+      "mid-senior": "bg-orange-100 text-orange-800",
       senior: "bg-purple-100 text-purple-800",
-      lead: "bg-orange-100 text-orange-800",
-      executive: "bg-red-100 text-red-800",
+      between: "bg-gray-100 text-gray-800",
     };
     if (!experience) return "bg-gray-100 text-gray-800";
     return (
@@ -65,7 +66,9 @@ export default function JobCard({ job, className }: JobCardProps) {
             )}
             <div>
               <h3 className="text-lg font-semibold text-[#011640] -mt-1 transition-colors">
-                <Link href={`/job/${generateJobSlug(job.title, job.company)}`}>{job.title}</Link>
+                <Link href={`/job/${generateJobSlug(job.title, job.company)}`}>
+                  {job.title}
+                </Link>
               </h3>
               <p className="text-[#0476D9] font-medium text-xs">
                 {job.company}

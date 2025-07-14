@@ -285,9 +285,9 @@ export default function JobsPage() {
           </div>
         )}
 
-        <div className="flex gap-8">
+        <div className="flex gap-7">
           {/* Desktop Sidebar Filters */}
-          <div className="hidden lg:block w-80 flex-shrink-0 max-w-[300px]">
+          <div className="hidden lg:block w-80 flex-shrink-0 max-w-[280px]">
             <div className="sticky top-8 ">
               <JobFilters filters={filters} onFiltersChange={setFilters} />
             </div>
@@ -336,7 +336,7 @@ export default function JobsPage() {
               </div>
             ) : filteredJobs.length > 0 ? (
               viewMode === "grid" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 animate-fade-in">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 animate-fade-in">
                   {filteredJobs.map((job, index) => (
                     <div
                       key={job.id}
