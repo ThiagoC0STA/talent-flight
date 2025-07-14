@@ -9,6 +9,16 @@ interface JobTableProps {
   loading?: boolean;
 }
 
+function slugify(str: string) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "")
+    .replace(/-+/g, "-");
+}
+
 export default function JobTable({
   jobs,
   onEdit,
@@ -54,7 +64,18 @@ export default function JobTable({
               <tr key={job.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4">
                   <div>
-                    <p className="font-medium text-gray-900">{job.title}</p>
+                    <p className="font-medium text-gray-900">
+                      <a
+                        href={`/job/${slugify(job.title)}-at-${slugify(
+                          job.company
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline text-[#0476D9] cursor-pointer"
+                      >
+                        {job.title}
+                      </a>
+                    </p>
                     <p className="text-sm text-gray-500">{job.location}</p>
                   </div>
                 </td>
@@ -84,13 +105,15 @@ export default function JobTable({
                     >
                       <Edit className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => onToggleActive(job)}
+                    <a
+                      href={job.applicationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
-                      title={job.isActive ? "Deactivate job" : "Activate job"}
+                      title="Ver link da vaga"
                     >
                       <Eye className="w-4 h-4" />
-                    </button>
+                    </a>
                     <button
                       onClick={() => onDelete(job.id)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
