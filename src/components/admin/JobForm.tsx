@@ -150,6 +150,30 @@ export default function JobForm({
               />
             </div>
           </div>
+          {/* Company Logo */}
+          <div className="mb-2">
+            <label className="block text-sm font-medium text-[#011640] mb-2">
+              Company Logo URL
+            </label>
+            <input
+              type="text"
+              name="company_logo"
+              value={formData.company_logo}
+              onChange={handleInputChange}
+              placeholder="https://..."
+              className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+            />
+            {formData.company_logo && (
+              <div className="mt-2">
+                <img
+                  src={formData.company_logo}
+                  alt="Logo Preview"
+                  className="h-12 rounded-xl border border-[#E5EAF1] bg-white"
+                  style={{ maxWidth: 120, objectFit: 'contain' }}
+                />
+              </div>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>

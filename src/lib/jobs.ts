@@ -54,6 +54,16 @@ const mapJobToSupabaseJob = (
   tags: job.tags,
 });
 
+function slugify(str: string) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "")
+    .replace(/-+/g, "-");
+}
+
 export const jobsService = {
   async getAllJobs(): Promise<Job[]> {
     const { data, error } = await supabase
@@ -89,35 +99,24 @@ export const jobsService = {
 
   // Buscar vaga por ID ou slug
   async getJobById(idOrSlug: string): Promise<Job | null> {
-    // Primeiro tenta buscar pelo ID direto (para compatibilidade)
+    // Primeiro tenta buscar pelo slug
     let { data, error } = await supabase
       .from("jobs")
       .select("*")
-      .eq("id", idOrSlug)
+      .eq("slug", idOrSlug)
       .eq("is_active", true)
       .single();
 
-    // Se não encontrou, tenta buscar por slug
+    // Se não encontrou, tenta buscar pelo ID direto (para compatibilidade)
     if (error && !data) {
-      // Busca por título e empresa baseado no slug
-      const slugParts = idOrSlug.split("-at-");
-      if (slugParts.length === 2) {
-        const titleSlug = slugParts[0];
-        const companySlug = slugParts[1];
-
-        // Busca por jobs que correspondem ao slug
-        const result = await supabase
-          .from("jobs")
-          .select("*")
-          .eq("is_active", true)
-          .ilike("title", `%${titleSlug.replace(/-/g, " ")}%`)
-          .ilike("company", `%${companySlug.replace(/-/g, " ")}%`)
-          .limit(1)
-          .single();
-
-        data = result.data;
-        error = result.error;
-      }
+      const result = await supabase
+        .from("jobs")
+        .select("*")
+        .eq("id", idOrSlug)
+        .eq("is_active", true)
+        .single();
+      data = result.data;
+      error = result.error;
     }
 
     if (error) {
@@ -179,7 +178,9 @@ export const jobsService = {
   async createJob(
     job: Omit<Job, "id" | "createdAt" | "updatedAt">
   ): Promise<Job | null> {
-    const supabaseJob = mapJobToSupabaseJob(job);
+    // Gerar slug
+    const slug = `${slugify(job.title)}-at-${slugify(job.company)}`;
+    const supabaseJob = { ...mapJobToSupabaseJob(job), slug };
 
     const { data, error } = await supabase
       .from("jobs")
@@ -227,6 +228,12 @@ export const jobsService = {
       supabaseUpdates.company_logo = updates.companyLogo;
     if (updates.tags) supabaseUpdates.tags = updates.tags;
     if (updates.createdAt) supabaseUpdates.created_at = updates.createdAt;
+    // Gerar slug atualizado
+    if (updates.title && updates.company) {
+      supabaseUpdates.slug = `${slugify(updates.title)}-at-${slugify(
+        updates.company
+      )}`;
+    }
 
     const { error: updateError } = await supabase
       .from("jobs")
