@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Save, Trash2 } from "lucide-react";
+import { Save } from "lucide-react";
 import Card from "@/components/ui/Card";
 import JobCard from "@/components/JobCard";
 import { Job } from "@/types/job";

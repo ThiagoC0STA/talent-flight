@@ -288,6 +288,7 @@ export default function AdminPage() {
         setToast("Vaga deletada com sucesso!");
         await loadJobs();
       } catch (error) {
+        console.error("Erro ao deletar vaga:", error);
         setToast("Erro ao deletar vaga");
       }
     }
@@ -299,6 +300,7 @@ export default function AdminPage() {
       setToast(`Vaga ${job.isActive ? "desativada" : "ativada"} com sucesso!`);
       await loadJobs();
     } catch (error) {
+      console.error("Erro ao alterar status da vaga:", error);
       setToast("Erro ao alterar status da vaga");
     }
   };
