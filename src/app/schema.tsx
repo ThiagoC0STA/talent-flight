@@ -8,17 +8,16 @@ export default function Schema() {
     "description": "Your launchpad for professional opportunities. We connect exceptional talent with innovative companies that drive career growth.",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Av. Paulista, 1000",
-      "addressLocality": "São Paulo",
-      "addressRegion": "SP",
-      "postalCode": "01310-100",
-      "addressCountry": "BR"
+      "streetAddress": "123 Main Street",
+      "addressLocality": "San Francisco",
+      "addressRegion": "CA",
+      "postalCode": "94105",
+      "addressCountry": "US"
     },
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+55-11-99999-9999",
       "contactType": "customer service",
-      "email": "contato@talentflight.com",
+      "email": "hello@talentflight.com",
       "availableLanguage": "English"
     },
     "sameAs": [
@@ -30,7 +29,21 @@ export default function Schema() {
     "numberOfEmployees": "10-50",
     "serviceArea": {
       "@type": "Country",
-      "name": "Brazil"
+      "name": "United States"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Job Opportunities",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Job Board",
+            "description": "Professional job opportunities and career growth platform"
+          }
+        }
+      ]
     }
   };
 

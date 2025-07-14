@@ -60,8 +60,6 @@ module.exports = {
     };
   },
   additionalPaths: async (config) => {
-    // Add dynamic job pages here if needed
-    // You can fetch jobs from your database and add them
     const result = [
       {
         loc: '/privacy',
@@ -83,16 +81,33 @@ module.exports = {
       },
     ];
 
-    // Example: Add dynamic job pages
-    // const jobs = await fetchJobs(); // Your function to fetch jobs
-    // jobs.forEach((job) => {
-    //   result.push({
-    //     loc: `/job/${job.slug}`,
-    //     changefreq: 'weekly',
-    //     priority: 0.8,
-    //     lastmod: job.updatedAt,
-    //   });
-    // });
+    // Add dynamic job pages
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      );
+
+      const { data: jobs } = await supabase
+        .from('jobs')
+        .select('id, title, company, updated_at')
+        .eq('is_active', true);
+
+      if (jobs) {
+        jobs.forEach((job) => {
+          const slug = `${job.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-at-${job.company.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+          result.push({
+            loc: `/job/${slug}`,
+            changefreq: 'weekly',
+            priority: 0.8,
+            lastmod: job.updated_at,
+          });
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching jobs for sitemap:', error);
+    }
 
     return result;
   },

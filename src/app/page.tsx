@@ -1,8 +1,28 @@
 import Link from 'next/link';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight, Search, Briefcase, MapPin, Users, TrendingUp } from 'lucide-react';
 import Hero from '@/components/Hero';
 import JobCard from '@/components/JobCard';
 import { jobsService } from '@/lib/jobs';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "TalentFlight - Your talent, ready for takeoff",
+  description: "Connect with exciting job opportunities. Your launchpad for professional growth. Find remote jobs, tech careers, and career opportunities.",
+  keywords: "jobs, careers, opportunities, professional growth, recruitment, hiring, remote jobs, tech jobs, career opportunities",
+  openGraph: {
+    title: "TalentFlight - Your talent, ready for takeoff",
+    description: "Connect with exciting job opportunities. Your launchpad for professional growth.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TalentFlight - Your talent, ready for takeoff",
+    description: "Connect with exciting job opportunities. Your launchpad for professional growth.",
+  },
+  alternates: {
+    canonical: "https://talentflight.com",
+  },
+};
 
 export default async function HomePage() {
   const allJobs = await jobsService.getAllJobs();
@@ -33,6 +53,54 @@ export default async function HomePage() {
             View All Jobs
             <ArrowRight className="w-5 h-5 ml-2" />
           </Link>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-[#011640] mb-4">
+              Why Choose TalentFlight?
+            </h2>
+            <p className="text-xl text-[#0476D9] max-w-2xl mx-auto leading-relaxed">
+              Join thousands of professionals who trust us for their career growth
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#011640] to-[#0476D9] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Briefcase className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[#011640] mb-2">378+</h3>
+              <p className="text-[#0476D9]">Active Jobs</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#011640] to-[#0476D9] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <MapPin className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[#011640] mb-2">50+</h3>
+              <p className="text-[#0476D9]">Countries</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#011640] to-[#0476D9] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[#011640] mb-2">10K+</h3>
+              <p className="text-[#0476D9]">Professionals</p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#011640] to-[#0476D9] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-[#011640] mb-2">95%</h3>
+              <p className="text-[#0476D9]">Success Rate</p>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -1,4 +1,24 @@
 import { Users, Target, Award, Globe } from 'lucide-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "About Us - TalentFlight",
+  description: "Learn about TalentFlight's mission to connect exceptional talent with extraordinary opportunities. Discover our values, impact, and commitment to career growth.",
+  keywords: "about talentflight, mission, values, career growth, job opportunities, professional development",
+  openGraph: {
+    title: "About Us - TalentFlight",
+    description: "Learn about TalentFlight's mission to connect exceptional talent with extraordinary opportunities.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us - TalentFlight",
+    description: "Learn about TalentFlight's mission to connect exceptional talent with extraordinary opportunities.",
+  },
+  alternates: {
+    canonical: "https://talentflight.com/about",
+  },
+};
 
 export default function AboutPage() {
   return (

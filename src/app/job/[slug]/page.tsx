@@ -15,6 +15,7 @@ import { jobsService } from "@/lib/jobs";
 import { formatSalary, formatDate } from "@/lib/utils";
 import Image from "next/image";
 import ApplyButton from "@/components/ApplyButton";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
   const slug = await params.slug;
@@ -134,16 +135,13 @@ export default async function JobPage({ params }: any) {
       </head>
       <div className="min-h-screen bg-[#F3F7FA]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Back Button */}
-          <div className="mb-8">
-            <Link
-              href="/jobs"
-              className="inline-flex items-center text-[#0476D9] hover:text-[#011640] transition-colors font-medium"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Jobs
-            </Link>
-          </div>
+          {/* Breadcrumbs */}
+          <Breadcrumbs 
+            items={[
+              { label: "Jobs", href: "/jobs" },
+              { label: `${job.title} at ${job.company}` }
+            ]} 
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
