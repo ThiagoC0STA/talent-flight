@@ -1,142 +1,582 @@
-import { useEffect, useState } from "react";
-import { BarChart3, Users, Eye, Clock, TrendingDown, Activity } from "lucide-react";
-import Card from "@/components/ui/Card";
-import AnalyticsCard from "@/components/admin/AnalyticsCard";
-import { ga4Service, GA4Data } from "@/lib/ga4";
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  TrendingUp,
+  Users,
+  Eye,
+  Globe,
+  Smartphone,
+  Monitor,
+  BarChart3,
+  Activity,
+  Target,
+  Zap,
+} from "lucide-react";
+
+interface GA4Data {
+  pageViews: number;
+  uniqueUsers: number;
+  sessions: number;
+  bounceRate: number;
+  avgSessionDuration: number;
+  eventCount: number;
+  topPages: Array<{ page: string; views: number }>;
+  topEvents: Array<{ event: string; count: number }>;
+}
+
+interface TrafficData {
+  date: string;
+  screenPageViews: number;
+  activeUsers: number;
+}
+
+interface DevicesData {
+  deviceCategory: string;
+  screenPageViews: number;
+  activeUsers: number;
+}
+
+interface CountriesData {
+  country: string;
+  screenPageViews: number;
+  activeUsers: number;
+}
+
+interface PagesData {
+  pagePath: string;
+  screenPageViews: number;
+  avgSessionDuration: number;
+}
+
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
 export default function GA4Analytics() {
-  const [ga4Data, setGa4Data] = useState<GA4Data | null>(null);
+  const [overviewData, setOverviewData] = useState<GA4Data | null>(null);
+  const [trafficData, setTrafficData] = useState<TrafficData[]>([]);
+  const [devicesData, setDevicesData] = useState<DevicesData[]>([]);
+  const [countriesData, setCountriesData] = useState<CountriesData[]>([]);
+  const [pagesData, setPagesData] = useState<PagesData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
-    const loadGA4Data = async () => {
-      try {
-        setLoading(true);
-        const data = await ga4Service.getAnalyticsData();
-        setGa4Data(data);
-      } catch (error) {
-        console.error("Erro ao carregar dados do GA4:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadGA4Data();
+    fetchAllData();
   }, []);
+
+  const fetchAllData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const overviewResponse = await fetch("/api/ga4", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reportType: "overview" }),
+      });
+
+      if (!overviewResponse.ok) {
+        const errorData = await overviewResponse.json();
+        setError(errorData.message || "Error fetching GA4 data");
+        return;
+      }
+
+      const overview = await overviewResponse.json();
+      setOverviewData(overview);
+
+      const trafficResponse = await fetch("/api/ga4", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reportType: "traffic" }),
+      });
+
+      if (trafficResponse.ok) {
+        const traffic = await trafficResponse.json();
+        setTrafficData(traffic);
+      }
+
+      const devicesResponse = await fetch("/api/ga4", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reportType: "devices" }),
+      });
+
+      if (devicesResponse.ok) {
+        const devices = await devicesResponse.json();
+        setDevicesData(devices);
+      }
+
+      const countriesResponse = await fetch("/api/ga4", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reportType: "countries" }),
+      });
+
+      if (countriesResponse.ok) {
+        const countries = await countriesResponse.json();
+        setCountriesData(countries);
+      }
+
+      const pagesResponse = await fetch("/api/ga4", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reportType: "pages" }),
+      });
+
+      if (pagesResponse.ok) {
+        const pages = await pagesResponse.json();
+        setPagesData(pages);
+      }
+    } catch (err) {
+      console.error("Erro ao obter dados do GA4:", err);
+      setError("API connection error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl p-6 shadow-sm animate-pulse">
-              <div className="h-4 bg-gray-200 rounded mb-2"></div>
-              <div className="h-8 bg-gray-200 rounded mb-4"></div>
-              <div className="h-3 bg-gray-200 rounded"></div>
-            </div>
-          ))}
+      <div className="flex items-center justify-center h-64">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-[#011640] text-lg font-semibold animate-pulse">
+            Loading GA4 data...
+          </span>
         </div>
       </div>
     );
   }
 
-  if (!ga4Data) {
+  if (error) {
     return (
-      <Card className="p-6">
-        <h3 className="text-xl font-semibold text-[#011640] mb-4 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5" />
-          Google Analytics 4
-        </h3>
-        <p className="text-gray-500 text-center py-8">
-          Dados do Google Analytics não disponíveis
-        </p>
-      </Card>
+      <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+            <TrendingUp className="w-6 h-6 text-red-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-red-800">
+              Configuration Error
+            </h3>
+            <p className="text-red-700 text-sm">{error}</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
+  const tabs = [
+    { id: "overview", name: "Overview", icon: BarChart3 },
+    { id: "traffic", name: "Traffic", icon: TrendingUp },
+    { id: "devices", name: "Devices", icon: Smartphone },
+    { id: "countries", name: "Countries", icon: Globe },
+    { id: "pages", name: "Pages", icon: Monitor },
+  ];
+
   return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-semibold text-[#011640] flex items-center gap-2">
-        <BarChart3 className="w-5 h-5" />
-        Google Analytics 4
-      </h3>
-      
-      {/* Cards principais */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <AnalyticsCard
-          title="Page Views"
-          value={ga4Data.pageViews.toLocaleString()}
-          icon={Eye}
-          color="bg-blue-500"
-          trend={{ value: 12, isPositive: true }}
-        />
-        <AnalyticsCard
-          title="Unique Users"
-          value={ga4Data.uniqueUsers.toLocaleString()}
-          icon={Users}
-          color="bg-green-500"
-          trend={{ value: 8, isPositive: true }}
-        />
-        <AnalyticsCard
-          title="Sessions"
-          value={ga4Data.sessions.toLocaleString()}
-          icon={Activity}
-          color="bg-purple-500"
-          trend={{ value: 15, isPositive: true }}
-        />
-        <AnalyticsCard
-          title="Bounce Rate"
-          value={`${ga4Data.bounceRate.toFixed(1)}%`}
-          icon={TrendingDown}
-          color="bg-orange-500"
-          trend={{ value: -2, isPositive: false }}
-        />
-        <AnalyticsCard
-          title="Avg Session"
-          value={`${Math.floor(ga4Data.avgSessionDuration / 60)}m ${ga4Data.avgSessionDuration % 60}s`}
-          icon={Clock}
-          color="bg-teal-500"
-          trend={{ value: 5, isPositive: true }}
-        />
+    <div className="bg-white rounded-2xl border border-[#E5EAF1] shadow-sm overflow-hidden">
+      {/* Header with gradient */}
+      <div className="bg-gradient-to-r from-[#0476D9] to-[#0366C4] p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <Activity className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-white">
+                Google Analytics 4
+              </h2>
+              <p className="text-white/80 text-sm">
+                Real-time data from your website
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-white/90 text-sm font-medium">Real Data</span>
+          </div>
+        </div>
       </div>
 
-      {/* Top Pages */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6">
-          <h4 className="text-lg font-semibold text-[#011640] mb-4">Top Pages</h4>
-          <div className="space-y-3">
-            {ga4Data.topPages.map((page, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-[#0476D9] text-white rounded-full flex items-center justify-center text-xs font-bold">
-                    {index + 1}
-                  </div>
-                  <span className="text-sm text-[#011640] truncate">{page.page}</span>
-                </div>
-                <span className="text-sm font-medium text-[#0476D9]">{page.views}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
+      {/* Modern tabs */}
+      <div className="border-b border-gray-200 bg-gray-50">
+        <div className="flex space-x-1 p-4">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                activeTab === tab.id
+                  ? "bg-white text-[#0476D9] shadow-sm border border-gray-200"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
+              }`}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.name}
+            </button>
+          ))}
+        </div>
+      </div>
 
-        {/* Top Events */}
-        <Card className="p-6">
-          <h4 className="text-lg font-semibold text-[#011640] mb-4">Top Events</h4>
-          <div className="space-y-3">
-            {ga4Data.topEvents.map((event, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-[#0476D9] text-white rounded-full flex items-center justify-center text-xs font-bold">
-                    {index + 1}
+      {/* Content */}
+      <div className="p-6">
+        {activeTab === "overview" && overviewData && (
+          <div className="space-y-8">
+            {/* Main metrics with awesome design */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                    <Eye className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-sm text-[#011640] capitalize">{event.event.replace(/_/g, ' ')}</span>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {overviewData.pageViews.toLocaleString()}
+                  </div>
                 </div>
-                <span className="text-sm font-medium text-[#0476D9]">{event.count}</span>
+                <div className="text-sm font-medium text-blue-800">
+                  Page Views
+                </div>
+                <div className="text-xs text-blue-600 mt-1">
+                  +12% vs last month
+                </div>
               </div>
-            ))}
+
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border border-green-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {overviewData.uniqueUsers.toLocaleString()}
+                  </div>
+                </div>
+                <div className="text-sm font-medium text-green-800">
+                  Unique Users
+                </div>
+                <div className="text-xs text-green-600 mt-1">
+                  +8% vs last month
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border border-purple-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {overviewData.sessions.toLocaleString()}
+                  </div>
+                </div>
+                <div className="text-sm font-medium text-purple-800">
+                  Sessions
+                </div>
+                <div className="text-xs text-purple-600 mt-1">
+                  +15% vs last month
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 border border-orange-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
+                    <Target className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-2xl font-bold text-orange-600">
+                    {overviewData.bounceRate.toFixed(1)}%
+                  </div>
+                </div>
+                <div className="text-sm font-medium text-orange-800">
+                  Bounce Rate
+                </div>
+                <div className="text-xs text-orange-600 mt-1">
+                  -5% vs last month
+                </div>
+              </div>
+            </div>
+
+            {/* Charts with modern design */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-8 h-8 bg-[#0476D9] rounded-lg flex items-center justify-center">
+                    <Globe className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#011640]">
+                    Most Visited Pages
+                  </h3>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={overviewData.topPages}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5EAF1" />
+                    <XAxis dataKey="page" stroke="#6B7280" fontSize={12} />
+                    <YAxis stroke="#6B7280" fontSize={12} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "white",
+                        border: "1px solid #E5EAF1",
+                        borderRadius: "12px",
+                        boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                      }}
+                    />
+                    <Bar dataKey="views" fill="#0476D9" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-8 h-8 bg-[#0476D9] rounded-lg flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#011640]">
+                    Most Common Events
+                  </h3>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={overviewData.topEvents}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ event, percent }) =>
+                        `${event} ${((percent || 0) * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="count"
+                    >
+                      {overviewData.topEvents.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "white",
+                        border: "1px solid #E5EAF1",
+                        borderRadius: "12px",
+                        boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-        </Card>
+        )}
+
+        {activeTab === "traffic" && trafficData.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-[#0476D9] rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#011640]">
+                Traffic Evolution (30 days)
+              </h3>
+            </div>
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={trafficData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5EAF1" />
+                  <XAxis dataKey="date" stroke="#6B7280" fontSize={12} />
+                  <YAxis stroke="#6B7280" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "white",
+                      border: "1px solid #E5EAF1",
+                      borderRadius: "12px",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                    }}
+                  />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="screenPageViews"
+                    stackId="1"
+                    stroke="#0476D9"
+                    fill="#0476D9"
+                    fillOpacity={0.6}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="activeUsers"
+                    stackId="1"
+                    stroke="#10B981"
+                    fill="#10B981"
+                    fillOpacity={0.6}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "devices" && devicesData.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-[#0476D9] rounded-lg flex items-center justify-center">
+                <Smartphone className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#011640]">
+                Traffic by Device
+              </h3>
+            </div>
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={devicesData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5EAF1" />
+                  <XAxis
+                    dataKey="deviceCategory"
+                    stroke="#6B7280"
+                    fontSize={12}
+                  />
+                  <YAxis stroke="#6B7280" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "white",
+                      border: "1px solid #E5EAF1",
+                      borderRadius: "12px",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                    }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="screenPageViews"
+                    fill="#0476D9"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="activeUsers"
+                    fill="#10B981"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "countries" && countriesData.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-[#0476D9] rounded-lg flex items-center justify-center">
+                <Globe className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#011640]">
+                Traffic by Country
+              </h3>
+            </div>
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={countriesData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5EAF1" />
+                  <XAxis dataKey="country" stroke="#6B7280" fontSize={12} />
+                  <YAxis stroke="#6B7280" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "white",
+                      border: "1px solid #E5EAF1",
+                      borderRadius: "12px",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                    }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="screenPageViews"
+                    fill="#0476D9"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="activeUsers"
+                    fill="#10B981"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "pages" && pagesData.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-[#0476D9] rounded-lg flex items-center justify-center">
+                <Monitor className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#011640]">
+                Page Performance
+              </h3>
+            </div>
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={pagesData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5EAF1" />
+                  <XAxis dataKey="pagePath" stroke="#6B7280" fontSize={12} />
+                  <YAxis stroke="#6B7280" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "white",
+                      border: "1px solid #E5EAF1",
+                      borderRadius: "12px",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                    }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="screenPageViews"
+                    fill="#0476D9"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="avgSessionDuration"
+                    fill="#F59E0B"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* Show message when no data available */}
+        {activeTab !== "overview" &&
+          ((activeTab === "traffic" && trafficData.length === 0) ||
+            (activeTab === "devices" && devicesData.length === 0) ||
+            (activeTab === "countries" && countriesData.length === 0) ||
+            (activeTab === "pages" && pagesData.length === 0)) && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No data available
+              </h3>
+              <p className="text-gray-500">
+                This data will appear once you have traffic on your website.
+              </p>
+            </div>
+          )}
       </div>
     </div>
   );
-} 
+}

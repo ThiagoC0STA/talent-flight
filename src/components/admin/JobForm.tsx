@@ -3,6 +3,7 @@ import { Save, Trash2 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import JobCard from "@/components/JobCard";
 import { Job } from "@/types/job";
+import Image from "next/image";
 
 interface JobFormProps {
   isEditing: boolean;
@@ -165,11 +166,13 @@ export default function JobForm({
             />
             {formData.company_logo && (
               <div className="mt-2">
-                <img
+                <Image
                   src={formData.company_logo}
                   alt="Logo Preview"
                   className="h-12 rounded-xl border border-[#E5EAF1] bg-white"
-                  style={{ maxWidth: 120, objectFit: 'contain' }}
+                  style={{ maxWidth: 120, objectFit: "contain" }}
+                  width={120}
+                  height={120}
                 />
               </div>
             )}

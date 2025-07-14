@@ -133,7 +133,8 @@ export default function AdminPage() {
     if (filters.status === "inactive" && job.isActive) return false;
     if (filters.type && job.type !== filters.type) return false;
     if (filters.category && job.category !== filters.category) return false;
-    if (filters.experience && job.experience !== filters.experience) return false;
+    if (filters.experience && job.experience !== filters.experience)
+      return false;
     if (filters.remote === "yes" && !job.isRemote) return false;
     if (filters.remote === "no" && job.isRemote) return false;
     if (filters.featured === "yes" && !job.isFeatured) return false;
@@ -384,7 +385,7 @@ export default function AdminPage() {
         }
       } else {
         result = await jobsService.createJob(jobData);
-        
+
         if (result) {
           setToast("Vaga criada com sucesso!");
           setActiveTab("jobs");
@@ -553,6 +554,7 @@ export default function AdminPage() {
                 trend={{ value: 5, isPositive: true }}
               />
             </div>
+
             {/* Analytics de Cliques */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <AnalyticsCard
@@ -584,12 +586,12 @@ export default function AdminPage() {
                 trend={{ value: 0, isPositive: true }}
               />
             </div>
+
             {/* Gráficos de Analytics */}
             <AnalyticsCharts jobs={jobs} />
-            
-            {/* Google Analytics 4 */}
+
             <GA4Analytics />
-            
+
             {/* Recent Jobs */}
             <Card className="p-6">
               <h3 className="text-xl font-semibold text-[#011640] mb-4">
