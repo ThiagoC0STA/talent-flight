@@ -25,6 +25,8 @@ import JobForm from "@/components/admin/JobForm";
 import AnalyticsCharts from "@/components/admin/AnalyticsCharts";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+import JobFilters from "@/components/admin/JobFilters";
+import Pagination from "@/components/admin/Pagination";
 
 function LoadingSpinner() {
   return (
@@ -92,6 +94,87 @@ export default function AdminPage() {
   });
 
   const [toast, setToast] = useState("");
+
+  const [filters, setFilters] = useState({
+    query: "",
+    status: "",
+    type: "",
+    category: "",
+    remote: "",
+    featured: "",
+  });
+  const [showInvalidOnly, setShowInvalidOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+
+  // Simulação de links inválidos (depois integrar com analytics real)
+  const [invalidJobIds, setInvalidJobIds] = useState<string[]>([]);
+
+  // Filtros dinâmicos
+  const categories = Array.from(new Set(jobs.map((j) => j.category))).filter(
+    Boolean
+  );
+  const types = Array.from(new Set(jobs.map((j) => j.type))).filter(Boolean);
+
+  // Filtragem
+  const filteredJobs = jobs.filter((job) => {
+    if (showInvalidOnly && !invalidJobIds.includes(job.id)) return false;
+    if (
+      filters.query &&
+      !(
+        job.title.toLowerCase().includes(filters.query.toLowerCase()) ||
+        job.company.toLowerCase().includes(filters.query.toLowerCase()) ||
+        job.location.toLowerCase().includes(filters.query.toLowerCase())
+      )
+    )
+      return false;
+    if (filters.status === "active" && !job.isActive) return false;
+    if (filters.status === "inactive" && job.isActive) return false;
+    if (filters.type && job.type !== filters.type) return false;
+    if (filters.category && job.category !== filters.category) return false;
+    if (filters.remote === "yes" && !job.isRemote) return false;
+    if (filters.remote === "no" && job.isRemote) return false;
+    if (filters.featured === "yes" && !job.isFeatured) return false;
+    if (filters.featured === "no" && job.isFeatured) return false;
+    return true;
+  });
+
+  // Paginação
+  const totalPages = Math.max(1, Math.ceil(filteredJobs.length / pageSize));
+  const paginatedJobs = filteredJobs.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  // Resetar página ao filtrar
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, showInvalidOnly]);
+
+  // Buscar jobs com links inválidos (analytics real)
+  useEffect(() => {
+    let ignore = false;
+    async function fetchInvalidJobs() {
+      if (!showInvalidOnly) {
+        setInvalidJobIds([]);
+        return;
+      }
+      const clicks = await trackingService.getClickStats();
+      // Agrupar por job_id e contar inválidos
+      const invalidMap: Record<string, number> = {};
+      clicks.forEach((click: any) => {
+        if (click.is_valid === false) {
+          invalidMap[click.job_id] = (invalidMap[click.job_id] || 0) + 1;
+        }
+      });
+      const ids = Object.keys(invalidMap).filter((id) => invalidMap[id] > 0);
+      if (!ignore) setInvalidJobIds(ids);
+    }
+    fetchInvalidJobs();
+    return () => {
+      ignore = true;
+    };
+  }, [showInvalidOnly, jobs]);
 
   useEffect(() => {
     const getSession = async () => {
@@ -540,28 +623,25 @@ export default function AdminPage() {
 
         {activeTab === "jobs" && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-[#011640]">
-                All Jobs ({jobs.length})
-              </h2>
-              <button
-                onClick={() => {
-                  resetForm();
-                  setActiveTab("create");
-                }}
-                className="btn-primary flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Create New Job
-              </button>
-            </div>
-
+            <JobFilters
+              filters={filters}
+              onChange={setFilters}
+              showInvalidOnly={showInvalidOnly}
+              onToggleInvalid={setShowInvalidOnly}
+              categories={categories}
+              types={types}
+            />
             <JobTable
-              jobs={jobs}
+              jobs={paginatedJobs}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onToggleActive={handleToggleActive}
               loading={loading}
+            />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
             />
           </div>
         )}
