@@ -120,7 +120,7 @@ export default function AnalyticsPage() {
         ) : (
           <>
             {/* Cards de Resumo */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -128,7 +128,7 @@ export default function AnalyticsPage() {
                     <p className="text-3xl font-bold text-[#011640]">{summary.totalClicks}</p>
                   </div>
                   <MousePointer className="w-8 h-8 text-[#0476D9]" />
-                </div>
+                </div>  
               </Card>
 
               <Card className="p-6">
@@ -160,7 +160,53 @@ export default function AnalyticsPage() {
                   <BarChart3 className="w-8 h-8 text-[#0476D9]" />
                 </div>
               </Card>
+
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-[#010D26] mb-1">Vagas com Problemas</p>
+                    <p className="text-3xl font-bold text-orange-600">
+                      {summary.clicksByJob.filter(job => 
+                        job.invalidClicks > 0 && job.invalidClicks >= job.validClicks
+                      ).length}
+                    </p>
+                  </div>
+                  <XCircle className="w-8 h-8 text-orange-600" />
+                </div>
+              </Card>
             </div>
+
+            {/* Vagas com Problemas */}
+            {summary.clicksByJob.filter(job => 
+              job.invalidClicks > 0 && job.invalidClicks >= job.validClicks
+            ).length > 0 && (
+              <Card className="p-6 mb-6 border-l-4 border-orange-500">
+                <h2 className="text-xl font-semibold text-[#011640] mb-4 flex items-center gap-2">
+                  <XCircle className="w-5 h-5 text-orange-600" />
+                  Vagas que Precisam de Atenção
+                </h2>
+                <div className="space-y-3">
+                  {summary.clicksByJob
+                    .filter(job => job.invalidClicks > 0 && job.invalidClicks >= job.validClicks)
+                    .map((job, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                        <div>
+                          <p className="font-medium text-[#011640]">{job.jobTitle}</p>
+                          <p className="text-sm text-[#010D26]">{job.jobCompany}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-orange-600">
+                            {job.invalidClicks} cliques inválidos
+                          </p>
+                          <p className="text-xs text-[#010D26]">
+                            Taxa: {((job.validClicks / job.totalClicks) * 100).toFixed(1)}%
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </Card>
+            )}
 
             {/* Tabela de Vagas */}
             <Card className="p-6">

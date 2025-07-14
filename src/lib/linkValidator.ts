@@ -2,9 +2,10 @@ import { supabase } from "./supabase";
 
 // Serviço para validar links de aplicação
 export const linkValidator = {
-  async validateUrl(
-    url: string
-  ): Promise<{ isValid: boolean; errorMessage?: string }> {
+  async validateUrl(url: string): Promise<{
+    isValid: boolean;
+    errorMessage?: string;
+  }> {
     try {
       // Verificar se é uma URL válida
       const urlObj = new URL(url);
@@ -19,13 +20,14 @@ export const linkValidator = {
         return { isValid: true };
       }
 
-      // Tentar fazer uma requisição HEAD para verificar se o link está ativo
+      // Tentar fazer uma requisição para verificar se o link está ativo
       try {
         await fetch(url, {
           method: "HEAD",
           mode: "no-cors", // Para evitar problemas de CORS
           cache: "no-cache",
         });
+
         return { isValid: true };
       } catch (fetchError) {
         // Se há erro de CORS, ainda pode ser um link válido
