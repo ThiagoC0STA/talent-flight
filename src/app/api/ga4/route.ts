@@ -8,8 +8,6 @@ export async function POST(request: NextRequest) {
 
     // Configuração do Google Analytics Data API v1
     const GA4_PROPERTY_ID = process.env.GA4_PROPERTY_ID;
-    const GOOGLE_APPLICATION_CREDENTIALS =
-      process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
     // Verificar se o Property ID está no formato correto
     let propertyId = GA4_PROPERTY_ID || "";
@@ -103,6 +101,7 @@ async function getAccessToken(): Promise<string | null> {
     const token = await client.getAccessToken();
     return token.token || null;
   } catch (error) {
+    console.error("Erro ao obter token de acesso:", error);
     return null;
   }
 }
