@@ -21,7 +21,7 @@ const JobCardSkeleton = () => (
       <div className="flex-shrink-0">
         <div className="w-20 h-20 bg-gray-200 rounded-2xl"></div>
       </div>
-      
+
       {/* Content Skeleton */}
       <div className="flex-1 min-w-0">
         <div className="flex items-end justify-between mb-6">
@@ -33,7 +33,7 @@ const JobCardSkeleton = () => (
             <div className="h-6 bg-gray-200 rounded-lg w-24 mb-3"></div>
           </div>
         </div>
-        
+
         {/* Details Grid Skeleton */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {[...Array(4)].map((_, i) => (
@@ -46,20 +46,20 @@ const JobCardSkeleton = () => (
             </div>
           ))}
         </div>
-        
+
         {/* Badges Skeleton */}
         <div className="flex items-center gap-4 mb-6">
           <div className="h-8 bg-gray-200 rounded-full w-20"></div>
           <div className="h-8 bg-gray-200 rounded-full w-24"></div>
         </div>
-        
+
         {/* Description Skeleton */}
         <div className="space-y-2 mb-6">
           <div className="h-4 bg-gray-200 rounded w-full"></div>
           <div className="h-4 bg-gray-200 rounded w-5/6"></div>
           <div className="h-4 bg-gray-200 rounded w-4/6"></div>
         </div>
-        
+
         {/* Tags Skeleton */}
         <div className="flex flex-wrap gap-2">
           {[...Array(4)].map((_, i) => (
@@ -67,7 +67,7 @@ const JobCardSkeleton = () => (
           ))}
         </div>
       </div>
-      
+
       {/* Button Skeleton */}
       <div className="flex-shrink-0 self-end">
         <div className="h-12 bg-gray-200 rounded-2xl w-32"></div>
@@ -89,7 +89,7 @@ const JobCardGridSkeleton = () => (
           <div className="h-5 bg-gray-200 rounded-lg w-20"></div>
         </div>
       </div>
-      
+
       {/* Details */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
@@ -101,28 +101,19 @@ const JobCardGridSkeleton = () => (
           <div className="h-4 bg-gray-200 rounded w-20"></div>
         </div>
       </div>
-      
+
       {/* Description */}
       <div className="space-y-1">
         <div className="h-3 bg-gray-200 rounded w-full"></div>
         <div className="h-3 bg-gray-200 rounded w-4/5"></div>
       </div>
-      
+
       {/* Tags */}
       <div className="flex flex-wrap gap-1">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="h-5 bg-gray-200 rounded-full w-12"></div>
         ))}
       </div>
-    </div>
-  </div>
-);
-
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center py-8">
-    <div className="relative">
-      <div className="w-12 h-12 border-4 border-blue-200 rounded-full"></div>
-      <div className="absolute top-0 left-0 w-12 h-12 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
     </div>
   </div>
 );
