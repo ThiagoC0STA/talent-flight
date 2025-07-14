@@ -106,24 +106,24 @@ export default function JobForm({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 xl:gap-8">
       {/* Form */}
-      <Card className="lg:col-span-2 p-8 shadow-lg rounded-2xl border border-[#E5EAF1] bg-white">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-[#011640]">
+      <Card className="xl:col-span-2 p-4 sm:p-6 lg:p-8 shadow-lg rounded-2xl border border-[#E5EAF1] bg-white">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#011640]">
             {isEditing ? "Edit Job" : "Create New Job"}
           </h2>
           <button
             onClick={onReset}
-            className="text-[#0476D9] hover:text-[#0366C4] font-medium"
+            className="text-[#0476D9] hover:text-[#0366C4] font-medium text-sm sm:text-base"
           >
             {isEditing ? "Cancel Edit" : "Clear Form"}
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-medium text-[#011640] mb-2">
                 Job Title <span className="text-red-600">*</span>
@@ -133,7 +133,7 @@ export default function JobForm({
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
                 required
               />
             </div>
@@ -146,7 +146,7 @@ export default function JobForm({
                 name="company"
                 value={formData.company}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
                 required
               />
             </div>
@@ -162,7 +162,7 @@ export default function JobForm({
               value={formData.company_logo}
               onChange={handleInputChange}
               placeholder="https://..."
-              className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
             />
             {formData.company_logo && (
               <div className="mt-2">
@@ -178,7 +178,7 @@ export default function JobForm({
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-medium text-[#011640] mb-2">
                 Location <span className="text-red-600">*</span>
@@ -188,7 +188,7 @@ export default function JobForm({
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
                 required
               />
             </div>
@@ -200,7 +200,7 @@ export default function JobForm({
                 name="type"
                 value={formData.type}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
                 required
               >
                 <option value="full-time">Full-time</option>
@@ -218,97 +218,115 @@ export default function JobForm({
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
                 required
               >
-                <option value="engineering">Engineering</option>
+                <option value="frontend">Frontend</option>
+                <option value="backend">Backend</option>
+                <option value="fullstack">Fullstack</option>
+                <option value="mobile">Mobile</option>
+                <option value="devops">DevOps</option>
+                <option value="data">Data</option>
                 <option value="design">Design</option>
+                <option value="product">Product</option>
                 <option value="marketing">Marketing</option>
                 <option value="sales">Sales</option>
-                <option value="product">Product</option>
-                <option value="data">Data</option>
-                <option value="operations">Operations</option>
-                <option value="finance">Finance</option>
-                <option value="development">Development</option>
-                <option value="hr">HR</option>
                 <option value="other">Other</option>
               </select>
             </div>
           </div>
-          {/* Experience */}
-          <div className="mb-2">
-            <label className="block text-sm font-medium text-[#011640] mb-2">
-              Experience Level
-            </label>
-            <select
-              name="experience"
-              value={formData.experience}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
-            >
-              <option value="">Select...</option>
-              <option value="intern">Intern</option>
-              <option value="junior">Junior</option>
-              <option value="junior-mid">Junior-Mid</option>
-              <option value="mid">Mid</option>
-              <option value="mid-senior">Mid-Senior</option>
-              <option value="senior">Senior</option>
-              <option value="between">Between Levels</option>
-            </select>
-          </div>
 
-          {/* Created Date */}
-          <div>
-            <label className="block text-sm font-medium text-[#011640] mb-2">
-              Created Date <span className="text-gray-500">(for SEO)</span>
-            </label>
-            <input
-              type="date"
-              name="created_at"
-              value={formData.created_at}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
-            />
-          </div>
-
-          {/* Salary */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-medium text-[#011640] mb-2">
-                Salary Min
+                Experience Level
+              </label>
+              <select
+                name="experience"
+                value={formData.experience}
+                onChange={handleInputChange}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
+              >
+                <option value="">Select Experience</option>
+                <option value="intern">Intern</option>
+                <option value="junior">Junior</option>
+                <option value="junior-mid">Junior-Mid</option>
+                <option value="mid">Mid</option>
+                <option value="mid-senior">Mid-Senior</option>
+                <option value="senior">Senior</option>
+                <option value="between">Between Levels</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#011640] mb-2">
+                Application URL <span className="text-red-600">*</span>
+              </label>
+              <input
+                type="url"
+                name="applicationUrl"
+                value={formData.applicationUrl}
+                onChange={handleInputChange}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#011640] mb-2">
+                Tags
+              </label>
+              <input
+                type="text"
+                name="tags"
+                value={formData.tags}
+                onChange={handleInputChange}
+                placeholder="React, TypeScript, Node.js"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
+              />
+            </div>
+          </div>
+
+          {/* Salary Range */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div>
+              <label className="block text-sm font-medium text-[#011640] mb-2">
+                Min Salary
               </label>
               <input
                 type="number"
                 name="salary_min"
                 value={formData.salary_min}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-[#011640] mb-2">
-                Salary Max
+                Max Salary
               </label>
               <input
                 type="number"
                 name="salary_max"
                 value={formData.salary_max}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-[#011640] mb-2">
                 Currency
               </label>
-              <input
-                type="text"
+              <select
                 name="salary_currency"
                 value={formData.salary_currency}
                 onChange={handleInputChange}
-                placeholder="USD"
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
-              />
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
+              >
+                <option value="">Select Currency</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="BRL">BRL</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-[#011640] mb-2">
@@ -318,9 +336,9 @@ export default function JobForm({
                 name="salary_period"
                 value={formData.salary_period}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
               >
-                <option value="">Select...</option>
+                <option value="">Select Period</option>
                 <option value="hourly">Hourly</option>
                 <option value="monthly">Monthly</option>
                 <option value="yearly">Yearly</option>
@@ -328,65 +346,17 @@ export default function JobForm({
             </div>
           </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-[#011640] mb-2">
-              Job Description <span className="text-red-600">*</span>
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={8}
-              className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent font-mono text-sm"
-              required
-            />
-            <p className="text-xs text-[#0476D9] mt-1">
-              Use Markdown to format the description
-            </p>
-          </div>
-
-          {/* Tags */}
-          <div>
-            <label className="block text-sm font-medium text-[#011640] mb-2">
-              Skills/Tags (comma-separated)
-            </label>
-            <input
-              type="text"
-              name="tags"
-              value={formData.tags}
-              onChange={handleInputChange}
-              placeholder="React, TypeScript, Remote, Frontend"
-              className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
-            />
-          </div>
-
-          {/* Application URL */}
-          <div>
-            <label className="block text-sm font-medium text-[#011640] mb-2">
-              Application URL <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="url"
-              name="applicationUrl"
-              value={formData.applicationUrl}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent"
-              required
-            />
-          </div>
-
           {/* Checkboxes */}
-          <div className="flex gap-6">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 name="is_remote"
                 checked={formData.is_remote}
                 onChange={handleInputChange}
-                className="accent-[#0476D9] w-5 h-5"
+                className="w-4 h-4 text-[#0476D9] border-gray-300 rounded focus:ring-[#0476D9]"
               />
-              Remote
+              <span className="text-sm font-medium text-[#011640]">Remote Job</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -394,61 +364,133 @@ export default function JobForm({
                 name="is_active"
                 checked={formData.is_active}
                 onChange={handleInputChange}
-                className="accent-[#0476D9] w-5 h-5"
+                className="w-4 h-4 text-[#0476D9] border-gray-300 rounded focus:ring-[#0476D9]"
               />
-              Active
+              <span className="text-sm font-medium text-[#011640]">Active Job</span>
             </label>
           </div>
 
-          {message && (
-            <div
-              className={`p-4 rounded-xl text-center ${
-                message.includes("successfully")
-                  ? "bg-green-50 text-green-800 border border-green-200"
-                  : "bg-red-50 text-red-800 border border-red-200"
-              } animate-fade-in`}
-            >
-              {message}
-            </div>
-          )}
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-[#011640] mb-2">
+              Description <span className="text-red-600">*</span>
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows={8}
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base resize-vertical"
+              placeholder="Write a detailed job description using Markdown..."
+              required
+            />
+          </div>
 
-          <div className="flex items-center justify-between pt-6 border-t border-[#E5EAF1]">
-            <button
-              type="button"
-              onClick={onReset}
-              className="btn-secondary inline-flex items-center"
-              disabled={isSubmitting}
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear Form
-            </button>
+          {/* Requirements */}
+          <div>
+            <label className="block text-sm font-medium text-[#011640] mb-2">
+              Requirements
+            </label>
+            <div className="space-y-2">
+              {formData.requirements.map((req, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={req}
+                  onChange={(e) => {
+                    const newRequirements = [...formData.requirements];
+                    newRequirements[index] = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      requirements: newRequirements,
+                    }));
+                  }}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
+                  placeholder={`Requirement ${index + 1}`}
+                />
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    requirements: [...prev.requirements, ""],
+                  }))
+                }
+                className="text-[#0476D9] hover:text-[#0366C4] text-sm font-medium"
+              >
+                + Add Requirement
+              </button>
+            </div>
+          </div>
+
+          {/* Benefits */}
+          <div>
+            <label className="block text-sm font-medium text-[#011640] mb-2">
+              Benefits
+            </label>
+            <div className="space-y-2">
+              {formData.benefits.map((benefit, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={benefit}
+                  onChange={(e) => {
+                    const newBenefits = [...formData.benefits];
+                    newBenefits[index] = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      benefits: newBenefits,
+                    }));
+                  }}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm sm:text-base"
+                  placeholder={`Benefit ${index + 1}`}
+                />
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    benefits: [...prev.benefits, ""],
+                  }))
+                }
+                className="text-[#0476D9] hover:text-[#0366C4] text-sm font-medium"
+              >
+                + Add Benefit
+              </button>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-primary inline-flex items-center text-lg px-8 py-4"
+              className="btn-primary flex items-center justify-center gap-2 py-3 px-6 text-sm sm:text-base font-medium"
             >
-              {isSubmitting ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  {isEditing ? "Updating..." : "Publishing..."}
-                </>
-              ) : (
-                <>
-                  <Save className="w-5 h-5 mr-2" />
-                  {isEditing ? "Update Job" : "Publish Job"}
-                </>
-              )}
+              <Save className="w-4 h-4" />
+              {isSubmitting ? "Saving..." : isEditing ? "Update Job" : "Create Job"}
             </button>
+            {message && (
+              <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                {message}
+              </div>
+            )}
           </div>
         </form>
       </Card>
 
       {/* Preview */}
-      <div className="hidden lg:block">
-        <h3 className="text-lg font-semibold text-[#011640] mb-4">
-          Live Preview
-        </h3>
-        <JobCard job={previewJob} />
+      <div className="xl:col-span-1">
+        <Card className="p-4 sm:p-6 shadow-lg rounded-2xl border border-[#E5EAF1] bg-white">
+          <h3 className="text-lg sm:text-xl font-bold text-[#011640] mb-4">
+            Preview
+          </h3>
+          <div className="space-y-4">
+            <JobCard job={previewJob} />
+          </div>
+        </Card>
       </div>
     </div>
   );

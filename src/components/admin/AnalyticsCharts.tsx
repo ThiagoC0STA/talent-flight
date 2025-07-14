@@ -76,16 +76,16 @@ export default function AnalyticsCharts({ jobs }: AnalyticsChartsProps) {
   const maxCount = Math.max(...chartData.jobsByMonth.map((d) => d.count), 1);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Jobs by Month */}
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <TrendingUp className="w-5 h-5 text-[#0476D9]" />
-          <h3 className="text-lg font-semibold text-[#011640]">
+      <Card className="p-4 sm:p-6">
+        <div className="flex items-center gap-2 mb-4 sm:mb-6">
+          <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9]" />
+          <h3 className="text-base sm:text-lg font-semibold text-[#011640]">
             Jobs by Month
           </h3>
         </div>
-        <div className="flex items-end gap-2 h-32">
+        <div className="flex items-end gap-1 sm:gap-2 h-24 sm:h-32">
           {chartData.jobsByMonth.map((data, index) => (
             <div
               key={`${data.month}-${index}`}
@@ -95,36 +95,36 @@ export default function AnalyticsCharts({ jobs }: AnalyticsChartsProps) {
                 className="w-full bg-gradient-to-t from-[#0476D9] to-[#0487D9] rounded-t-lg transition-all duration-300 hover:opacity-80"
                 style={{ height: `${(data.count / maxCount) * 100}%` }}
               />
-              <span className="text-xs text-gray-600 mt-2 text-center">
+              <span className="text-xs text-gray-600 mt-1 sm:mt-2 text-center">
                 {data.month}
               </span>
             </div>
           ))}
         </div>
-        <div className="flex justify-center mt-4">
-          <span className="text-sm text-gray-500">
+        <div className="flex justify-center mt-3 sm:mt-4">
+          <span className="text-xs sm:text-sm text-gray-500">
             Total: {jobs.length} jobs
           </span>
         </div>
       </Card>
 
       {/* Jobs by Category */}
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <BarChart3 className="w-5 h-5 text-[#0476D9]" />
-          <h3 className="text-lg font-semibold text-[#011640]">
+      <Card className="p-4 sm:p-6">
+        <div className="flex items-center gap-2 mb-4 sm:mb-6">
+          <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9]" />
+          <h3 className="text-base sm:text-lg font-semibold text-[#011640]">
             Jobs by Category
           </h3>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {chartData.jobsByCategory.map((data) => (
-            <div key={data.category} className="flex items-center gap-3">
-              <div className="w-24 text-sm font-medium text-gray-700 capitalize">
+            <div key={data.category} className="flex items-center gap-2 sm:gap-3">
+              <div className="w-16 sm:w-24 text-xs sm:text-sm font-medium text-gray-700 capitalize truncate">
                 {data.category}
               </div>
-              <div className="flex-1 bg-gray-200 rounded-full h-3">
+              <div className="flex-1 bg-gray-200 rounded-full h-2 sm:h-3">
                 <div
-                  className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] h-3 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] h-2 sm:h-3 rounded-full transition-all duration-300"
                   style={{
                     width: `${
                       (data.count /
@@ -136,7 +136,7 @@ export default function AnalyticsCharts({ jobs }: AnalyticsChartsProps) {
                   }}
                 />
               </div>
-              <div className="w-8 text-sm font-semibold text-gray-900">
+              <div className="w-6 sm:w-8 text-xs sm:text-sm font-semibold text-gray-900">
                 {data.count}
               </div>
             </div>
@@ -145,42 +145,42 @@ export default function AnalyticsCharts({ jobs }: AnalyticsChartsProps) {
       </Card>
 
       {/* Remote vs Onsite */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <Card className="p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
-            <MapPin className="w-5 h-5 text-[#0476D9]" />
-            <h3 className="text-lg font-semibold text-[#011640]">
+            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9]" />
+            <h3 className="text-base sm:text-lg font-semibold text-[#011640]">
               Remote vs Onsite
             </h3>
           </div>
           <div className="flex items-center justify-center">
-            <div className="relative w-32 h-32">
-              <svg className="w-32 h-32 transform -rotate-90">
+            <div className="relative w-24 h-24 sm:w-32 sm:h-32">
+              <svg className="w-24 h-24 sm:w-32 sm:h-32 transform -rotate-90">
                 <circle
-                  cx="64"
-                  cy="64"
-                  r="56"
+                  cx="48"
+                  cy="48"
+                  r="40"
                   stroke="currentColor"
-                  strokeWidth="8"
+                  strokeWidth="6"
                   fill="transparent"
                   className="text-gray-200"
                 />
                 <circle
-                  cx="64"
-                  cy="64"
-                  r="56"
+                  cx="48"
+                  cy="48"
+                  r="40"
                   stroke="currentColor"
-                  strokeWidth="8"
+                  strokeWidth="6"
                   fill="transparent"
                   strokeDasharray={`${
-                    (chartData.remoteVsOnsite.remote / jobs.length) * 352
-                  } 352`}
+                    (chartData.remoteVsOnsite.remote / jobs.length) * 251
+                  } 251`}
                   className="text-[#0476D9]"
                 />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-[#011640]">
+              <div className="absolute inset-0 flex items-center justify-center ml-1 mb-1 sm:-ml-6 sm:-mb-6">
+                <div className="text-center flex flex-col items-center justify-center">
+                  <div className="text-lg sm:text-2xl font-bold text-[#011640]">
                     {Math.round(
                       (chartData.remoteVsOnsite.remote / jobs.length) * 100
                     )}
@@ -191,53 +191,48 @@ export default function AnalyticsCharts({ jobs }: AnalyticsChartsProps) {
               </div>
             </div>
           </div>
-          <div className="flex justify-center gap-4 mt-4 text-sm">
+          <div className="flex justify-center gap-2 sm:gap-4 mt-3 sm:mt-4 text-xs sm:text-sm">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-[#0476D9] rounded-full"></div>
+              <div className="w-2 h-2 sm:w-3 sm:h-3 bg-[#0476D9] rounded-full"></div>
               <span>Remote: {chartData.remoteVsOnsite.remote}</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+              <div className="w-2 h-2 sm:w-3 sm:h-3 bg-gray-300 rounded-full"></div>
               <span>Onsite: {chartData.remoteVsOnsite.onsite}</span>
             </div>
           </div>
         </Card>
 
         {/* Jobs by Type */}
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Users className="w-5 h-5 text-[#0476D9]" />
-            <h3 className="text-lg font-semibold text-[#011640]">
+            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9]" />
+            <h3 className="text-base sm:text-lg font-semibold text-[#011640]">
               Jobs by Type
             </h3>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {chartData.jobsByType.map((data) => (
-              <div
-                key={data.type}
-                className="flex items-center justify-between"
-              >
-                <span className="text-sm font-medium text-gray-700 capitalize">
-                  {data.type.replace("-", " ")}
-                </span>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] h-2 rounded-full"
-                      style={{
-                        width: `${
-                          (data.count /
-                            Math.max(
-                              ...chartData.jobsByType.map((d) => d.count)
-                            )) *
-                          100
-                        }%`,
-                      }}
-                    />
-                  </div>
-                  <span className="text-sm font-semibold text-gray-900 w-8 text-right">
-                    {data.count}
-                  </span>
+              <div key={data.type} className="flex items-center gap-2 sm:gap-3">
+                <div className="w-16 sm:w-20 text-xs sm:text-sm font-medium text-gray-700 capitalize truncate">
+                  {data.type}
+                </div>
+                <div className="flex-1 bg-gray-200 rounded-full h-2 sm:h-3">
+                  <div
+                    className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] h-2 sm:h-3 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${
+                        (data.count /
+                          Math.max(
+                            ...chartData.jobsByType.map((d) => d.count)
+                          )) *
+                        100
+                      }%`,
+                    }}
+                  />
+                </div>
+                <div className="w-6 sm:w-8 text-xs sm:text-sm font-semibold text-gray-900">
+                  {data.count}
                 </div>
               </div>
             ))}

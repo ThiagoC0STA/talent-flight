@@ -43,7 +43,7 @@ export default function JobTable({
 }: JobTableProps) {
   if (loading) {
     return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-8">
         <div className="text-center py-12">
           <div className="w-8 h-8 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
@@ -53,7 +53,8 @@ export default function JobTable({
 
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden">
-      <div className="overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="hidden lg:block overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -154,6 +155,82 @@ export default function JobTable({
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="lg:hidden">
+        <div className="p-4 space-y-4">
+          {jobs.map((job) => (
+            <div
+              key={job.id}
+              className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                  <h3 className="font-medium text-gray-900 mb-1">
+                    <a
+                      href={`/job/${slugify(job.title)}-at-${slugify(
+                        job.company
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline text-[#0476D9]"
+                    >
+                      {job.title}
+                    </a>
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-2">{job.company}</p>
+                  <p className="text-sm text-gray-500">{job.location}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onEdit(job)}
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    title="Edit job"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <a
+                    href={job.applicationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                    title="Ver link da vaga"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </a>
+                  <button
+                    onClick={() => onDelete(job.id)}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete job"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                {job.experience && (
+                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full capitalize ${getExperienceColor(job.experience)}`}>
+                    {job.experience}
+                  </span>
+                )}
+                <span
+                  className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                    job.isActive
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {job.isActive ? "Active" : "Inactive"}
+                </span>
+                <span className="text-gray-500">
+                  {new Date(job.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

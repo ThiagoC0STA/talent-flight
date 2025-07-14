@@ -6,7 +6,11 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+export default function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const goTo = (page: number) => {
@@ -15,40 +19,43 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
   };
 
   return (
-    <div className="flex items-center justify-between mt-6 gap-4 flex-wrap">
-      <div className="text-sm text-gray-600">
-        Página <span className="font-bold">{currentPage}</span> de <span className="font-bold">{totalPages}</span>
+    <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
+      <div className="text-sm text-gray-600 order-2 sm:order-1">
+        page <span className="font-bold">{currentPage}</span> of{" "}
+        <span className="font-bold">{totalPages}</span>
       </div>
-      <div className="flex gap-1">
+      <div className="flex gap-1 order-1 sm:order-2">
         <button
-          className="px-3 py-2 rounded-l-lg bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50"
+          className="px-2 sm:px-3 py-2 rounded-l-lg bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 text-sm"
           onClick={() => goTo(1)}
           disabled={currentPage === 1}
+          title="Primeira página"
         >
           «
         </button>
         <button
-          className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50"
+          className="px-2 sm:px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 text-sm hidden sm:block"
           onClick={() => goTo(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          Anterior
+          Previous
         </button>
         <button
-          className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50"
+          className="px-2 sm:px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 text-sm hidden sm:block"
           onClick={() => goTo(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          Próxima
+          Next
         </button>
         <button
-          className="px-3 py-2 rounded-r-lg bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50"
+          className="px-2 sm:px-3 py-2 rounded-r-lg bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 text-sm"
           onClick={() => goTo(totalPages)}
           disabled={currentPage === totalPages}
+          title="Última página"
         >
           »
         </button>
       </div>
     </div>
   );
-} 
+}

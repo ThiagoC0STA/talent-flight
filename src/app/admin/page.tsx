@@ -12,6 +12,8 @@ import {
   MousePointer,
   CheckCircle,
   XCircle,
+  Menu,
+  X,
 } from "lucide-react";
 import { Job } from "@/types/job";
 import { jobsService, trackingService } from "@/lib/jobs";
@@ -45,8 +47,8 @@ function LoadingSpinner() {
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   if (!message) return null;
   return (
-    <div className="fixed top-6 right-6 z-50 bg-[#0476D9] text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-4 animate-fade-in">
-      <span>{message}</span>
+    <div className="fixed top-4 right-4 left-4 sm:left-auto sm:right-6 z-50 bg-[#0476D9] text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-4 animate-fade-in">
+      <span className="flex-1">{message}</span>
       <button
         onClick={onClose}
         className="ml-2 text-white/80 hover:text-white font-bold"
@@ -66,6 +68,7 @@ export default function AdminPage() {
 
   // Tabs state
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Jobs state
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -253,20 +256,16 @@ export default function AdminPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
-    setAuthLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: loginData.email,
-      password: loginData.password,
-    });
-    if (error) {
+    try {
+      const { error } = await supabase.auth.signInWithPassword(loginData);
+      if (error) throw error;
+    } catch (error: any) {
       setLoginError(error.message);
     }
-    setAuthLoading(false);
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setUser(null);
   };
 
   const resetForm = () => {
@@ -279,83 +278,59 @@ export default function AdminPage() {
     setIsEditing(true);
     setEditingJob(job);
     setActiveTab("create");
+    setMobileMenuOpen(false);
   };
 
   const handleDelete = async (jobId: string) => {
-    if (confirm("Are you sure you want to delete this job?")) {
+    if (confirm("Tem certeza que deseja deletar esta vaga?")) {
       try {
         await jobsService.deleteJob(jobId);
+        setToast("Vaga deletada com sucesso!");
         await loadJobs();
-        setMessage("Job deleted successfully!");
       } catch (error) {
-        console.error("Error deleting job:", error);
-        setMessage("Error deleting job");
+        setToast("Erro ao deletar vaga");
       }
     }
   };
 
   const handleToggleActive = async (job: Job) => {
     try {
-      const updatedJob = { ...job, isActive: !job.isActive };
-      await jobsService.updateJob(job.id, updatedJob);
+      await jobsService.updateJob(job.id, { isActive: !job.isActive });
+      setToast(`Vaga ${job.isActive ? "desativada" : "ativada"} com sucesso!`);
       await loadJobs();
-      setMessage(
-        `Job ${job.isActive ? "deactivated" : "activated"} successfully!`
-      );
     } catch (error) {
-      console.error("Error updating job status:", error);
-      setMessage("Error updating job status");
+      setToast("Erro ao alterar status da vaga");
     }
   };
 
   const handleSubmit = async (formData: any) => {
     setIsSubmitting(true);
-    setMessage("");
-    setToast("");
     try {
-      if (
-        !formData.title ||
-        !formData.company ||
-        !formData.location ||
-        !formData.type ||
-        !formData.category ||
-        !formData.applicationUrl ||
-        !formData.description
-      ) {
-        throw new Error("All required fields must be filled");
-      }
-
-      let rawHtml: string;
-      const parsed = marked.parse(formData.description);
-      if (parsed instanceof Promise) {
-        rawHtml = await parsed;
-      } else {
-        rawHtml = parsed as string;
-      }
+      // Sanitize HTML description
+      const rawHtml = await marked(formData.description);
       const safeHtml = DOMPurify.sanitize(rawHtml);
 
-      const createdAtString =
-        formData.created_at || new Date().toISOString().split("T")[0];
+      const createdAtDate = isEditing && editingJob
+        ? new Date(editingJob.createdAt)
+        : new Date();
+
       const jobData = {
         title: formData.title,
         company: formData.company,
         location: formData.location,
         type: formData.type,
         category: formData.category,
-        experience: formData.experience
-          ? (formData.experience as any)
+        experience: formData.experience,
+        salary: formData.salary_min && formData.salary_max
+          ? {
+              min: Number(formData.salary_min),
+              max: Number(formData.salary_max),
+              currency: formData.salary_currency || undefined,
+              period:
+                (formData.salary_period as "hourly" | "monthly" | "yearly") ||
+                undefined,
+            }
           : undefined,
-        salary:
-          formData.salary_min && formData.salary_max
-            ? {
-                min: Number(formData.salary_min),
-                max: Number(formData.salary_max),
-                currency: formData.salary_currency || undefined,
-                period:
-                  (formData.salary_period as "hourly" | "monthly" | "yearly") ||
-                  undefined,
-              }
-            : undefined,
         description: safeHtml,
         requirements: formData.requirements.filter(
           (r: string) => r.trim().length > 0
@@ -370,7 +345,7 @@ export default function AdminPage() {
           .split(",")
           .map((tag: string) => tag.trim())
           .filter((tag: string) => tag.length > 0),
-        createdAt: createdAtString, // agora como string
+        createdAt: createdAtDate,
       };
 
       console.log("jobData enviado:", jobData);
@@ -412,12 +387,12 @@ export default function AdminPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F3F7FA] to-[#E5EAF1]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F3F7FA] to-[#E5EAF1] p-4">
         <form
           onSubmit={handleLogin}
-          className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-xl space-y-6 border border-slate-100 animate-fade-in"
+          className="w-full max-w-sm bg-white p-6 sm:p-8 rounded-2xl shadow-xl space-y-6 border border-slate-100 animate-fade-in"
         >
-          <h2 className="text-2xl font-bold text-[#011640] mb-4 text-center">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#011640] mb-4 text-center">
             Admin Login
           </h2>
           <div>
@@ -433,7 +408,7 @@ export default function AdminPage() {
               name="email"
               value={loginData.email}
               onChange={handleLoginChange}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-base sm:text-lg"
               required
             />
           </div>
@@ -450,7 +425,7 @@ export default function AdminPage() {
               name="password"
               value={loginData.password}
               onChange={handleLoginChange}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-base sm:text-lg"
               required
             />
           </div>
@@ -461,7 +436,7 @@ export default function AdminPage() {
           )}
           <button
             type="submit"
-            className="btn-primary w-full text-lg py-3 flex items-center justify-center"
+            className="btn-primary w-full text-base sm:text-lg py-3 flex items-center justify-center"
             disabled={authLoading}
           >
             {authLoading ? "Logging in..." : "Login"}
@@ -473,28 +448,43 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F3F7FA] to-[#E5EAF1]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[#011640] mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#011640] mb-2">
               Admin Dashboard
             </h1>
-            <p className="text-lg text-[#0476D9]">
+            <p className="text-base sm:text-lg text-[#0476D9]">
               Manage jobs and view analytics
             </p>
           </div>
           <button
             onClick={handleLogout}
-            className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA]"
+            className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA] w-full sm:w-auto justify-center"
           >
             <LogOut className="w-5 h-5" /> Logout
           </button>
         </div>
 
+        {/* Mobile Menu Button */}
+        <div className="sm:hidden mb-4">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="w-full bg-white/80 backdrop-blur-sm rounded-xl p-3 flex items-center justify-between"
+          >
+            <span className="font-medium text-[#011640]">Menu</span>
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5 text-[#0476D9]" />
+            ) : (
+              <Menu className="w-5 h-5 text-[#0476D9]" />
+            )}
+          </button>
+        </div>
+
         {/* Tabs */}
-        <div className="mb-8">
-          <div className="flex space-x-1 bg-white/80 backdrop-blur-sm rounded-xl p-1">
+        <div className={`mb-6 sm:mb-8 ${mobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
+          <div className="flex flex-col sm:flex-row sm:space-x-1 bg-white/80 backdrop-blur-sm rounded-xl p-1">
             {[
               { id: "dashboard", label: "Dashboard", icon: BarChart3 },
               { id: "jobs", label: "All Jobs", icon: Briefcase },
@@ -506,8 +496,11 @@ export default function AdminPage() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`flex items-center gap-2 px-4 py-3 sm:py-2 rounded-lg font-medium transition-all ${
                   activeTab === tab.id
                     ? "bg-[#0476D9] text-white shadow-lg"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -522,9 +515,9 @@ export default function AdminPage() {
 
         {/* Tab Content */}
         {activeTab === "dashboard" && (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Analytics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <AnalyticsCard
                 title="Total Jobs"
                 value={analytics.totalJobs}
@@ -556,7 +549,7 @@ export default function AdminPage() {
             </div>
 
             {/* Analytics de Cliques */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <AnalyticsCard
                 title="Total Clicks"
                 value={clickAnalytics.totalClicks}
@@ -593,8 +586,8 @@ export default function AdminPage() {
             <GA4Analytics />
 
             {/* Recent Jobs */}
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold text-[#011640] mb-4">
+            <Card className="p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-semibold text-[#011640] mb-4">
                 Recent Jobs
               </h3>
               {loading ? (
@@ -602,7 +595,7 @@ export default function AdminPage() {
                   <div className="w-8 h-8 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin mx-auto"></div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {jobs.slice(0, 6).map((job) => (
                     <JobCard key={job.id} job={job} />
                   ))}
@@ -613,7 +606,7 @@ export default function AdminPage() {
         )}
 
         {activeTab === "jobs" && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <JobFilters
               filters={filters}
               onChange={setFilters}
