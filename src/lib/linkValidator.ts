@@ -40,6 +40,7 @@ export const linkValidator = {
         throw fetchError;
       }
     } catch (error) {
+      console.error("Erro ao validar URL:", error);
       return {
         isValid: false,
         errorMessage: "Link não acessível ou inválido",

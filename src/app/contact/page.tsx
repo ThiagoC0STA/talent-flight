@@ -53,7 +53,7 @@ export default function ContactPage() {
                     testflightsup@gmail.com
                   </a>
                   <p className="text-sm text-[#010D26] mt-1">
-                    We'll get back to you within 24 hours
+                    We&apos;ll get back to you within 24 hours
                   </p>
                 </div>
               </div>
