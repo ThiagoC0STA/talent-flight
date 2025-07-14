@@ -62,7 +62,7 @@ export default function JobCardHorizontal({
                 height={80}
                 src={job.companyLogo}
                 alt={`${job.company} logo`}
-                className="w-20 h-20 rounded-2xl object-cover border-2 border-gray-100 bg-white shadow-lg group-hover:shadow-xl transition-shadow duration-300"
+                className="w-20 h-20 rounded-2xl object-cover border border-gray-100 bg-white"
               />
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
             </div>
