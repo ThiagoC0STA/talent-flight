@@ -87,7 +87,10 @@ export default function AnalyticsCharts({ jobs }: AnalyticsChartsProps) {
         </div>
         <div className="flex items-end gap-2 h-32">
           {chartData.jobsByMonth.map((data, index) => (
-            <div key={data.month} className="flex-1 flex flex-col items-center">
+            <div
+              key={`${data.month}-${index}`}
+              className="flex-1 flex flex-col items-center"
+            >
               <div
                 className="w-full bg-gradient-to-t from-[#0476D9] to-[#0487D9] rounded-t-lg transition-all duration-300 hover:opacity-80"
                 style={{ height: `${(data.count / maxCount) * 100}%` }}

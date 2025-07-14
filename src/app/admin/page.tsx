@@ -202,6 +202,7 @@ export default function AdminPage() {
         await loadJobs();
         setMessage("Job deleted successfully!");
       } catch (error) {
+        console.error("Error deleting job:", error);
         setMessage("Error deleting job");
       }
     }
@@ -216,6 +217,7 @@ export default function AdminPage() {
         `Job ${job.isActive ? "deactivated" : "activated"} successfully!`
       );
     } catch (error) {
+      console.error("Error updating job status:", error);
       setMessage("Error updating job status");
     }
   };

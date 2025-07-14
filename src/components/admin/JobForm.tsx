@@ -64,33 +64,6 @@ export default function JobForm({
     }
   };
 
-  const handleArrayChange = (
-    field: "requirements" | "benefits",
-    value: string,
-    idx: number
-  ) => {
-    setFormData((prev) => {
-      const arr = [...prev[field]];
-      arr[idx] = value;
-      return { ...prev, [field]: arr };
-    });
-  };
-
-  const handleAddArrayItem = (field: "requirements" | "benefits") => {
-    setFormData((prev) => ({ ...prev, [field]: [...prev[field], ""] }));
-  };
-
-  const handleRemoveArrayItem = (
-    field: "requirements" | "benefits",
-    idx: number
-  ) => {
-    setFormData((prev) => {
-      const arr = [...prev[field]];
-      arr.splice(idx, 1);
-      return { ...prev, [field]: arr };
-    });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit(formData);
