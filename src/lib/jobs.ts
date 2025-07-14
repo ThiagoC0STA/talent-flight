@@ -55,7 +55,6 @@ const mapJobToSupabaseJob = (
 });
 
 export const jobsService = {
-  // Buscar todas as vagas ativas
   async getAllJobs(): Promise<Job[]> {
     const { data, error } = await supabase
       .from("jobs")
