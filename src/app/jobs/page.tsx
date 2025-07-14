@@ -13,13 +13,127 @@ import { jobsService } from "@/lib/jobs";
 import { Job, JobFilters as JobFiltersType } from "@/types/job";
 import Button from "@/components/ui/Button";
 
+// Loading Skeleton Components
+const JobCardSkeleton = () => (
+  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 animate-pulse">
+    <div className="flex items-start gap-8">
+      {/* Logo Skeleton */}
+      <div className="flex-shrink-0">
+        <div className="w-20 h-20 bg-gray-200 rounded-2xl"></div>
+      </div>
+      
+      {/* Content Skeleton */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-end justify-between mb-6">
+          <div className="flex-1 min-w-0 pr-6">
+            <div className="h-8 bg-gray-200 rounded-lg mb-2 w-3/4"></div>
+            <div className="h-6 bg-gray-200 rounded-lg w-1/2"></div>
+          </div>
+          <div className="text-right flex-shrink-0">
+            <div className="h-6 bg-gray-200 rounded-lg w-24 mb-3"></div>
+          </div>
+        </div>
+        
+        {/* Details Grid Skeleton */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-200 rounded-xl"></div>
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 rounded w-16 mb-1"></div>
+                <div className="h-5 bg-gray-200 rounded w-20"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Badges Skeleton */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="h-8 bg-gray-200 rounded-full w-20"></div>
+          <div className="h-8 bg-gray-200 rounded-full w-24"></div>
+        </div>
+        
+        {/* Description Skeleton */}
+        <div className="space-y-2 mb-6">
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+          <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+        </div>
+        
+        {/* Tags Skeleton */}
+        <div className="flex flex-wrap gap-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-7 bg-gray-200 rounded-full w-16"></div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Button Skeleton */}
+      <div className="flex-shrink-0 self-end">
+        <div className="h-12 bg-gray-200 rounded-2xl w-32"></div>
+      </div>
+    </div>
+  </div>
+);
+
+const JobCardGridSkeleton = () => (
+  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 animate-pulse">
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="h-6 bg-gray-200 rounded-lg mb-2 w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded-lg w-1/2"></div>
+        </div>
+        <div className="text-right">
+          <div className="h-5 bg-gray-200 rounded-lg w-20"></div>
+        </div>
+      </div>
+      
+      {/* Details */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded w-24"></div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded w-20"></div>
+        </div>
+      </div>
+      
+      {/* Description */}
+      <div className="space-y-1">
+        <div className="h-3 bg-gray-200 rounded w-full"></div>
+        <div className="h-3 bg-gray-200 rounded w-4/5"></div>
+      </div>
+      
+      {/* Tags */}
+      <div className="flex flex-wrap gap-1">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-5 bg-gray-200 rounded-full w-12"></div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center py-8">
+    <div className="relative">
+      <div className="w-12 h-12 border-4 border-blue-200 rounded-full"></div>
+      <div className="absolute top-0 left-0 w-12 h-12 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+    </div>
+  </div>
+);
+
 export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [filters, setFilters] = useState<JobFiltersType>({});
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [stats, setStats] = useState({
     totalJobs: 0,
     totalCompanies: 0,
@@ -195,7 +309,7 @@ export default function JobsPage() {
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[#010D26] text-lg font-medium">
                   {loading
-                    ? "Loading..."
+                    ? "Loading opportunities..."
                     : `${filteredJobs.length} job${
                         filteredJobs.length !== 1 ? "s" : ""
                       } found`}
@@ -212,7 +326,24 @@ export default function JobsPage() {
             </div>
 
             {/* Jobs Display */}
-            {filteredJobs.length > 0 ? (
+            {loading ? (
+              // Loading State
+              <div className="space-y-6">
+                {viewMode === "grid" ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {[...Array(6)].map((_, index) => (
+                      <JobCardGridSkeleton key={index} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {[...Array(4)].map((_, index) => (
+                      <JobCardSkeleton key={index} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : filteredJobs.length > 0 ? (
               viewMode === "grid" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 animate-fade-in">
                   {filteredJobs.map((job, index) => (
@@ -258,7 +389,7 @@ export default function JobsPage() {
             )}
 
             {/* Load More Button (for future pagination) */}
-            {filteredJobs.length > 0 && (
+            {filteredJobs.length > 0 && !loading && (
               <div className="text-center mt-12 animate-fade-in">
                 <button className="btn-outline">Load More Jobs</button>
               </div>
