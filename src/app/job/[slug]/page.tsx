@@ -17,9 +17,10 @@ import Image from "next/image";
 import ApplyButton from "@/components/ApplyButton";
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const job = await jobsService.getJobById(params.slug);
+  const slug = await params.slug;
+  const job = await jobsService.getJobById(slug);
   if (!job) return {};
-  const url = `https://talentflight.com/job/${params.slug}`;
+  const url = `https://talentflight.com/job/${slug}`;
   return {
     title: `${job.title} at ${job.company} | TalentFlight`,
     description: job.description?.replace(/<[^>]+>/g, '').slice(0, 160) || 'Job opportunity at TalentFlight',
@@ -49,8 +50,8 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 }
 
 export default async function JobPage({ params }: any) {
-  const job = await jobsService.getJobById(params.slug);
-  console.log(job);
+  const slug = await params.slug;
+  const job = await jobsService.getJobById(slug);
   if (!job) {
     notFound();
   }
@@ -114,7 +115,7 @@ export default async function JobPage({ params }: any) {
     } : undefined,
     directApply: true,
     identifier: job.id,
-    url: `https://talentflight.com/job/${params.slug}`,
+    url: `https://talentflight.com/job/${slug}`,
     skills: job.tags,
     industry: job.category,
     experienceRequirements: job.experience,

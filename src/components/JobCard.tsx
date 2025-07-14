@@ -5,6 +5,7 @@ import {
   formatSalary,
   formatDate,
   truncateText,
+  generateJobSlug,
 } from "@/lib/utils";
 import Card from "@/components/ui/Card";
 import { Job } from "@/types/job";
@@ -64,7 +65,7 @@ export default function JobCard({ job, className }: JobCardProps) {
             )}
             <div>
               <h3 className="text-lg font-semibold text-[#011640] -mt-1 transition-colors">
-                <Link href={`/job/${job.id}`}>{job.title}</Link>
+                <Link href={`/job/${generateJobSlug(job.title, job.company)}`}>{job.title}</Link>
               </h3>
               <p className="text-[#0476D9] font-medium text-xs">
                 {job.company}
@@ -147,7 +148,7 @@ export default function JobCard({ job, className }: JobCardProps) {
       </div>
 
       <Link
-        href={`/job/${job.id}`}
+        href={`/job/${generateJobSlug(job.title, job.company)}`}
         className="w-full bg-[#0476D9] text-white text-center py-3 px-4 rounded-xl font-medium hover:bg-[#0366C4] transition-colors duration-200 block mt-auto"
       >
         View Details

@@ -60,6 +60,12 @@ export function generateSlug(text: string) {
     .replace(/(^-|-$)/g, "");
 }
 
+export function generateJobSlug(jobTitle: string, companyName: string) {
+  const titleSlug = generateSlug(jobTitle);
+  const companySlug = generateSlug(companyName);
+  return `${titleSlug}-at-${companySlug}`;
+}
+
 export function htmlToText(html: string): string {
   if (typeof window === "undefined") {
     // SSR: regex simples

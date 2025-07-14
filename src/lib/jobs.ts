@@ -88,14 +88,38 @@ export const jobsService = {
     return data.map(mapSupabaseJobToJob);
   },
 
-  // Buscar vaga por ID
-  async getJobById(id: string): Promise<Job | null> {
-    const { data, error } = await supabase
+  // Buscar vaga por ID ou slug
+  async getJobById(idOrSlug: string): Promise<Job | null> {
+    // Primeiro tenta buscar pelo ID direto (para compatibilidade)
+    let { data, error } = await supabase
       .from("jobs")
       .select("*")
-      .eq("id", id)
+      .eq("id", idOrSlug)
       .eq("is_active", true)
       .single();
+
+    // Se não encontrou, tenta buscar por slug
+    if (error && !data) {
+      // Busca por título e empresa baseado no slug
+      const slugParts = idOrSlug.split("-at-");
+      if (slugParts.length === 2) {
+        const titleSlug = slugParts[0];
+        const companySlug = slugParts[1];
+
+        // Busca por jobs que correspondem ao slug
+        const result = await supabase
+          .from("jobs")
+          .select("*")
+          .eq("is_active", true)
+          .ilike("title", `%${titleSlug.replace(/-/g, " ")}%`)
+          .ilike("company", `%${companySlug.replace(/-/g, " ")}%`)
+          .limit(1)
+          .single();
+
+        data = result.data;
+        error = result.error;
+      }
+    }
 
     if (error) {
       console.error("Error fetching job:", error);
