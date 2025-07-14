@@ -226,16 +226,26 @@ export const jobsService = {
     if (updates.companyLogo !== undefined)
       supabaseUpdates.company_logo = updates.companyLogo;
     if (updates.tags) supabaseUpdates.tags = updates.tags;
+    if (updates.createdAt) supabaseUpdates.created_at = updates.createdAt;
+
+    const { error: updateError } = await supabase
+      .from("jobs")
+      .update(supabaseUpdates)
+      .eq("id", id);
+
+    if (updateError) {
+      console.error("Error updating job:", updateError);
+      return null;
+    }
 
     const { data, error } = await supabase
       .from("jobs")
-      .update(supabaseUpdates)
+      .select("*")
       .eq("id", id)
-      .select()
       .single();
 
     if (error) {
-      console.error("Error updating job:", error);
+      console.error("Error fetching updated job:", error);
       return null;
     }
 
@@ -286,31 +296,54 @@ export const trackingService = {
 
   async getClickStats(jobId?: string) {
     try {
+      // Buscar cliques
       let query = supabase
         .from("job_clicks")
-        .select(
-          `
-          *,
-          jobs (
-            title,
-            company
-          )
-        `
-        )
+        .select("*")
         .order("clicked_at", { ascending: false });
 
       if (jobId) {
         query = query.eq("job_id", jobId);
       }
 
-      const { data, error } = await query;
+      const { data: clicks, error: clicksError } = await query;
 
-      if (error) {
-        console.error("Erro ao buscar estatísticas:", error);
+      if (clicksError) {
+        console.error("Erro ao buscar cliques:", clicksError);
         return [];
       }
 
-      return data || [];
+      if (!clicks || clicks.length === 0) {
+        return [];
+      }
+
+      // Buscar jobs correspondentes
+      const jobIds = [...new Set(clicks.map((click) => click.job_id))];
+      const { data: jobs, error: jobsError } = await supabase
+        .from("jobs")
+        .select("id, title, company")
+        .in("id", jobIds);
+
+      if (jobsError) {
+        console.error("Erro ao buscar jobs:", jobsError);
+        return [];
+      }
+
+      // Criar mapa de jobs para acesso rápido
+      const jobsMap = new Map();
+      jobs?.forEach((job) => {
+        jobsMap.set(job.id, job);
+      });
+
+      // Combinar dados
+      const clicksWithJobs = clicks.map((click) => ({
+        ...click,
+        jobs: [
+          jobsMap.get(click.job_id) || { title: "Unknown", company: "Unknown" },
+        ],
+      }));
+
+      return clicksWithJobs;
     } catch (error) {
       console.error("Erro ao buscar estatísticas:", error);
       return [];
@@ -319,18 +352,14 @@ export const trackingService = {
 
   async getClickSummary() {
     try {
-      const { data, error } = await supabase.from("job_clicks").select(`
-          job_id,
-          jobs (
-            title,
-            company
-          ),
-          is_valid,
-          clicked_at
-        `);
+      // Buscar cliques
+      const { data: clicks, error: clicksError } = await supabase
+        .from("job_clicks")
+        .select("job_id, is_valid, clicked_at")
+        .order("clicked_at", { ascending: false });
 
-      if (error) {
-        console.error("Erro ao buscar resumo:", error);
+      if (clicksError) {
+        console.error("Erro ao buscar cliques:", clicksError);
         return {
           totalClicks: 0,
           validClicks: 0,
@@ -339,15 +368,55 @@ export const trackingService = {
         };
       }
 
-      const clicks = data || [];
+      if (!clicks || clicks.length === 0) {
+        return {
+          totalClicks: 0,
+          validClicks: 0,
+          invalidClicks: 0,
+          clicksByJob: [],
+        };
+      }
+
+      // Buscar jobs correspondentes
+      const jobIds = [...new Set(clicks.map((click) => click.job_id))];
+      const { data: jobs, error: jobsError } = await supabase
+        .from("jobs")
+        .select("id, title, company")
+        .in("id", jobIds);
+
+      if (jobsError) {
+        console.error("Erro ao buscar jobs:", jobsError);
+        return {
+          totalClicks: 0,
+          validClicks: 0,
+          invalidClicks: 0,
+          clicksByJob: [],
+        };
+      }
+
+      // Criar mapa de jobs para acesso rápido
+      const jobsMap = new Map();
+      jobs?.forEach((job) => {
+        jobsMap.set(job.id, job);
+      });
+
+      // Combinar dados
+      const clicksWithJobs = clicks.map((click) => ({
+        ...click,
+        job: jobsMap.get(click.job_id) || {
+          title: "Unknown",
+          company: "Unknown",
+        },
+      }));
+
       const totalClicks = clicks.length;
       const validClicks = clicks.filter((click) => click.is_valid).length;
       const invalidClicks = totalClicks - validClicks;
 
       // Agrupar por vaga
-      const clicksByJob = clicks.reduce((acc, click) => {
-        const jobTitle = click.jobs?.[0]?.title || "Unknown";
-        const jobCompany = click.jobs?.[0]?.company || "Unknown";
+      const clicksByJob = clicksWithJobs.reduce((acc, click) => {
+        const jobTitle = click.job.title || "Unknown";
+        const jobCompany = click.job.company || "Unknown";
         const key = `${jobTitle} at ${jobCompany}`;
 
         if (!acc[key]) {

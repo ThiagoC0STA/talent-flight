@@ -1,12 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Trash2, LogOut, BarChart3 } from "lucide-react";
+import {
+  LogOut,
+  BarChart3,
+  Plus,
+  Briefcase,
+  Eye,
+  MapPin,
+  Users,
+  TrendingUp,
+  MousePointer,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import { Job } from "@/types/job";
-import { jobsService } from "@/lib/jobs";
+import { jobsService, trackingService } from "@/lib/jobs";
 import { supabase } from "@/lib/supabase";
 import JobCard from "@/components/JobCard";
 import Card from "@/components/ui/Card";
+import AnalyticsCard from "@/components/admin/AnalyticsCard";
+import JobTable from "@/components/admin/JobTable";
+import JobForm from "@/components/admin/JobForm";
+import AnalyticsCharts from "@/components/admin/AnalyticsCharts";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 
@@ -23,59 +39,59 @@ function LoadingSpinner() {
   );
 }
 
+// Toast simples
+function Toast({ message, onClose }: { message: string; onClose: () => void }) {
+  if (!message) return null;
+  return (
+    <div className="fixed top-6 right-6 z-50 bg-[#0476D9] text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-4 animate-fade-in">
+      <span>{message}</span>
+      <button
+        onClick={onClose}
+        className="ml-2 text-white/80 hover:text-white font-bold"
+      >
+        ×
+      </button>
+    </div>
+  );
+}
+
 export default function AdminPage() {
-  // 1. Atualizar o state inicial do formData para incluir todos os campos necessários
-  // Corrigir os tipos do formData para usar os tipos do Job
-  type FormDataType = {
-    title: string;
-    company: string;
-    location: string;
-    type: import("@/types/job").JobType;
-    category: import("@/types/job").JobCategory;
-    experience: import("@/types/job").ExperienceLevel | "";
-    salary_min: string;
-    salary_max: string;
-    salary_currency: string;
-    salary_period: "hourly" | "monthly" | "yearly" | "";
-    description: string;
-    requirements: string[];
-    benefits: string[];
-    is_remote: boolean;
-    is_active: boolean;
-    applicationUrl: string;
-    company_logo: string;
-    tags: string;
-  };
-
-  const [formData, setFormData] = useState<FormDataType>({
-    title: "",
-    company: "",
-    location: "",
-    type: "full-time",
-    category: "other",
-    experience: "",
-    salary_min: "",
-    salary_max: "",
-    salary_currency: "",
-    salary_period: "",
-    description: "",
-    requirements: [],
-    benefits: [],
-    is_remote: false,
-    is_active: true,
-    applicationUrl: "",
-    company_logo: "",
-    tags: "",
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
-
   // Auth state
   const [authLoading, setAuthLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loginError, setLoginError] = useState("");
+
+  // Tabs state
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Jobs state
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Form state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // Analytics state
+  const [analytics, setAnalytics] = useState({
+    totalJobs: 0,
+    activeJobs: 0,
+    remoteJobs: 0,
+    totalCompanies: 0,
+  });
+
+  // Click analytics state
+  const [clickAnalytics, setClickAnalytics] = useState({
+    totalClicks: 0,
+    validClicks: 0,
+    invalidClicks: 0,
+    conversionRate: 0,
+  });
+
+  const [toast, setToast] = useState("");
 
   useEffect(() => {
     const getSession = async () => {
@@ -93,6 +109,55 @@ export default function AdminPage() {
       listener.subscription.unsubscribe();
     };
   }, []);
+
+  // Load jobs when user is authenticated
+  useEffect(() => {
+    if (user) {
+      loadJobs();
+    }
+  }, [user]);
+
+  const loadJobs = async () => {
+    try {
+      setLoading(true);
+      const allJobs = await jobsService.getAllJobs();
+      setJobs(allJobs);
+
+      // Calculate analytics
+      const activeJobs = allJobs.filter((job) => job.isActive).length;
+      const remoteJobs = allJobs.filter((job) => job.isRemote).length;
+      const uniqueCompanies = new Set(allJobs.map((job) => job.company)).size;
+
+      setAnalytics({
+        totalJobs: allJobs.length,
+        activeJobs,
+        remoteJobs,
+        totalCompanies: uniqueCompanies,
+      });
+
+      // Load click analytics
+      try {
+        const clickData = await trackingService.getClickSummary();
+        const conversionRate =
+          clickData.totalClicks > 0
+            ? (clickData.validClicks / clickData.totalClicks) * 100
+            : 0;
+
+        setClickAnalytics({
+          totalClicks: clickData.totalClicks,
+          validClicks: clickData.validClicks,
+          invalidClicks: clickData.invalidClicks,
+          conversionRate,
+        });
+      } catch (error) {
+        console.error("Error loading click analytics:", error);
+      }
+    } catch (error) {
+      console.error("Error loading jobs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -118,63 +183,47 @@ export default function AdminPage() {
     setUser(null);
   };
 
-  // 2. Funções auxiliares para campos dinâmicos (requirements, benefits)
-  const handleArrayChange = (
-    field: "requirements" | "benefits",
-    value: string,
-    idx: number
-  ) => {
-    setFormData((prev) => {
-      const arr = [...prev[field]];
-      arr[idx] = value;
-      return { ...prev, [field]: arr };
-    });
-  };
-  const handleAddArrayItem = (field: "requirements" | "benefits") => {
-    setFormData((prev) => ({ ...prev, [field]: [...prev[field], ""] }));
-  };
-  const handleRemoveArrayItem = (
-    field: "requirements" | "benefits",
-    idx: number
-  ) => {
-    setFormData((prev) => {
-      const arr = [...prev[field]];
-      arr.splice(idx, 1);
-      return { ...prev, [field]: arr };
-    });
+  const resetForm = () => {
+    setIsEditing(false);
+    setEditingJob(null);
+    setMessage("");
   };
 
-  // 3. Atualizar handleInputChange para aceitar checkbox e outros tipos
-  // Corrigir handleInputChange para checkbox
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value, type } = e.target;
-    if (type === "checkbox") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: (e.target as HTMLInputElement).checked,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+  const handleEdit = (job: Job) => {
+    setIsEditing(true);
+    setEditingJob(job);
+    setActiveTab("create");
+  };
+
+  const handleDelete = async (jobId: string) => {
+    if (confirm("Are you sure you want to delete this job?")) {
+      try {
+        await jobsService.deleteJob(jobId);
+        await loadJobs();
+        setMessage("Job deleted successfully!");
+      } catch (error) {
+        setMessage("Error deleting job");
+      }
     }
   };
 
-  // 4. Atualizar handleSubmit para enviar todos os campos
-  // Corrigir o submit para enviar os tipos corretos
-  type JobType = import("@/types/job").JobType;
-  type JobCategory = import("@/types/job").JobCategory;
-  type ExperienceLevel = import("@/types/job").ExperienceLevel;
+  const handleToggleActive = async (job: Job) => {
+    try {
+      const updatedJob = { ...job, isActive: !job.isActive };
+      await jobsService.updateJob(job.id, updatedJob);
+      await loadJobs();
+      setMessage(
+        `Job ${job.isActive ? "deactivated" : "activated"} successfully!`
+      );
+    } catch (error) {
+      setMessage("Error updating job status");
+    }
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (formData: any) => {
     setIsSubmitting(true);
     setMessage("");
+    setToast("");
     try {
       if (
         !formData.title ||
@@ -187,6 +236,7 @@ export default function AdminPage() {
       ) {
         throw new Error("All required fields must be filled");
       }
+
       let rawHtml: string;
       const parsed = marked.parse(formData.description);
       if (parsed instanceof Promise) {
@@ -195,14 +245,15 @@ export default function AdminPage() {
         rawHtml = parsed as string;
       }
       const safeHtml = DOMPurify.sanitize(rawHtml);
-      const newJob: Omit<Job, "id" | "createdAt" | "updatedAt"> = {
+
+      const jobData = {
         title: formData.title,
         company: formData.company,
         location: formData.location,
-        type: formData.type as JobType,
-        category: formData.category as JobCategory,
+        type: formData.type,
+        category: formData.category,
         experience: formData.experience
-          ? (formData.experience as ExperienceLevel)
+          ? (formData.experience as any)
           : undefined,
         salary:
           formData.salary_min && formData.salary_max
@@ -210,14 +261,16 @@ export default function AdminPage() {
                 min: Number(formData.salary_min),
                 max: Number(formData.salary_max),
                 currency: formData.salary_currency || undefined,
-                period: formData.salary_period
-                  ? formData.salary_period
-                  : undefined,
+                period:
+                  (formData.salary_period as "hourly" | "monthly" | "yearly") ||
+                  undefined,
               }
             : undefined,
         description: safeHtml,
-        requirements: formData.requirements.filter((r) => r.trim().length > 0),
-        benefits: formData.benefits.filter((b) => b.trim().length > 0),
+        requirements: formData.requirements.filter(
+          (r: string) => r.trim().length > 0
+        ),
+        benefits: formData.benefits.filter((b: string) => b.trim().length > 0),
         isRemote: formData.is_remote,
         isFeatured: false,
         isActive: formData.is_active,
@@ -225,66 +278,39 @@ export default function AdminPage() {
         companyLogo: formData.company_logo || undefined,
         tags: formData.tags
           .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0),
+          .map((tag: string) => tag.trim())
+          .filter((tag: string) => tag.length > 0),
+        createdAt: new Date(formData.created_at + "T00:00:00"),
       };
-      const createdJob = await jobsService.createJob(newJob);
-      if (!createdJob) {
-        throw new Error("Failed to create job");
+
+      let result;
+      if (isEditing && editingJob) {
+        result = await jobsService.updateJob(editingJob.id, jobData);
+        if (result) {
+          setToast("Vaga atualizada com sucesso!");
+          setActiveTab("jobs");
+        } else {
+          setToast("Erro ao atualizar vaga");
+        }
+      } else {
+        result = await jobsService.createJob(jobData);
+        if (result) {
+          setToast("Vaga criada com sucesso!");
+          setActiveTab("jobs");
+        } else {
+          setToast("Erro ao criar vaga");
+        }
       }
-      setMessage("Job created successfully!");
-      setFormData({
-        title: "",
-        company: "",
-        location: "",
-        type: "full-time",
-        category: "other",
-        experience: "",
-        salary_min: "",
-        salary_max: "",
-        salary_currency: "",
-        salary_period: "",
-        description: "",
-        requirements: [],
-        benefits: [],
-        is_remote: false,
-        is_active: true,
-        applicationUrl: "",
-        company_logo: "",
-        tags: "",
-      });
+
+      if (result) {
+        resetForm();
+        await loadJobs();
+      }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Error creating job");
+      setToast(error instanceof Error ? error.message : "Erro ao salvar vaga");
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  // Monta um objeto Job para preview
-  const previewJob: Job = {
-    id: "preview",
-    title: formData.title || "Senior Frontend Developer",
-    company: formData.company || "TechCorp",
-    location: formData.location || "Remote",
-    type: "full-time",
-    category: "other",
-    experience: undefined,
-    salary: undefined,
-    description: formData.description || "Job description preview...",
-    requirements: [],
-    benefits: [],
-    isRemote: false,
-    isFeatured: false,
-    isActive: true,
-    applicationUrl: formData.applicationUrl || "https://company.com/apply",
-    tags: formData.tags
-      ? formData.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0)
-      : ["React", "TypeScript"],
-    createdAt: new Date(),
-    updatedAt: new Date(),
   };
 
   if (authLoading) {
@@ -352,486 +378,203 @@ export default function AdminPage() {
     );
   }
 
-  // Painel admin melhorado
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F3F7FA] to-[#E5EAF1]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-[#011640] mb-2">
-              Post a New Job
+            <h1 className="text-3xl font-bold text-[#011640] mb-2">
+              Admin Dashboard
             </h1>
             <p className="text-lg text-[#0476D9]">
-              Fill out the form below to publish a new opportunity
+              Manage jobs and view analytics
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="/admin/analytics"
-              className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA]"
-            >
-              <BarChart3 className="w-5 h-5" /> Analytics
-            </a>
-            <button
-              onClick={handleLogout}
-              className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA]"
-            >
-              <LogOut className="w-5 h-5" /> Logout
-            </button>
+          <button
+            onClick={handleLogout}
+            className="btn-outline flex items-center gap-2 text-[#0476D9] border-[#0476D9] hover:bg-[#F3F7FA]"
+          >
+            <LogOut className="w-5 h-5" /> Logout
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="mb-8">
+          <div className="flex space-x-1 bg-white/80 backdrop-blur-sm rounded-xl p-1">
+            {[
+              { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+              { id: "analytics", label: "Analytics", icon: TrendingUp },
+              { id: "jobs", label: "All Jobs", icon: Briefcase },
+              {
+                id: "create",
+                label: isEditing ? "Edit Job" : "Create Job",
+                icon: Plus,
+              },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                  activeTab === tab.id
+                    ? "bg-[#0476D9] text-white shadow-lg"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
-          {/* Formulário */}
-          <Card className="md:col-span-2 p-8 shadow-lg rounded-2xl border border-[#E5EAF1] bg-white animate-fade-in">
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="grid grid-cols-1 gap-6">
-                {/* Título */}
-                <div>
-                  <label
-                    htmlFor="title"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Job Title <span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                    required
-                  />
+
+        {/* Tab Content */}
+        {activeTab === "dashboard" && (
+          <div className="space-y-8">
+            {/* Analytics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <AnalyticsCard
+                title="Total Jobs"
+                value={analytics.totalJobs}
+                icon={Briefcase}
+                color="bg-blue-500"
+                trend={{ value: 12, isPositive: true }}
+              />
+              <AnalyticsCard
+                title="Active Jobs"
+                value={analytics.activeJobs}
+                icon={Eye}
+                color="bg-green-500"
+                trend={{ value: 8, isPositive: true }}
+              />
+              <AnalyticsCard
+                title="Remote Jobs"
+                value={analytics.remoteJobs}
+                icon={MapPin}
+                color="bg-purple-500"
+                trend={{ value: 15, isPositive: true }}
+              />
+              <AnalyticsCard
+                title="Companies"
+                value={analytics.totalCompanies}
+                icon={Users}
+                color="bg-orange-500"
+                trend={{ value: 5, isPositive: true }}
+              />
+            </div>
+
+            {/* Recent Jobs */}
+            <Card className="p-6">
+              <h3 className="text-xl font-semibold text-[#011640] mb-4">
+                Recent Jobs
+              </h3>
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="w-8 h-8 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin mx-auto"></div>
                 </div>
-                {/* Empresa */}
-                <div>
-                  <label
-                    htmlFor="company"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Company <span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                    required
-                  />
-                </div>
-                {/* Localização */}
-                <div>
-                  <label
-                    htmlFor="location"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Location <span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                    required
-                  />
-                </div>
-                {/* Tipo de vaga */}
-                <div>
-                  <label
-                    htmlFor="type"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Type <span className="text-red-600">*</span>
-                  </label>
-                  <select
-                    id="type"
-                    name="type"
-                    value={formData.type}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                    required
-                  >
-                    <option value="full-time">Full-time</option>
-                    <option value="part-time">Part-time</option>
-                    <option value="contract">Contract</option>
-                    <option value="internship">Internship</option>
-                    <option value="freelance">Freelance</option>
-                  </select>
-                </div>
-                {/* Categoria */}
-                <div>
-                  <label
-                    htmlFor="category"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Category <span className="text-red-600">*</span>
-                  </label>
-                  <select
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                    required
-                  >
-                    <option value="engineering">Engineering</option>
-                    <option value="design">Design</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="sales">Sales</option>
-                    <option value="product">Product</option>
-                    <option value="data">Data</option>
-                    <option value="operations">Operations</option>
-                    <option value="finance">Finance</option>
-                    <option value="development">Development</option>
-                    <option value="hr">HR</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                {/* Nível de experiência */}
-                <div>
-                  <label
-                    htmlFor="experience"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Experience
-                  </label>
-                  <select
-                    id="experience"
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                  >
-                    <option value="">Select...</option>
-                    <option value="entry">Entry</option>
-                    <option value="junior">Junior</option>
-                    <option value="mid">Mid</option>
-                    <option value="senior">Senior</option>
-                    <option value="lead">Lead</option>
-                    <option value="executive">Executive</option>
-                  </select>
-                </div>
-                {/* Faixa salarial */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="salary_min"
-                      className="block text-sm font-medium text-[#011640] mb-2"
-                    >
-                      Salary Min
-                    </label>
-                    <input
-                      type="number"
-                      id="salary_min"
-                      name="salary_min"
-                      value={formData.salary_min}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                      min="0"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="salary_max"
-                      className="block text-sm font-medium text-[#011640] mb-2"
-                    >
-                      Salary Max
-                    </label>
-                    <input
-                      type="number"
-                      id="salary_max"
-                      name="salary_max"
-                      value={formData.salary_max}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                      min="0"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="salary_period"
-                      className="block text-sm font-medium text-[#011640] mb-2"
-                    >
-                      Period
-                    </label>
-                    <select
-                      id="salary_period"
-                      name="salary_period"
-                      value={formData.salary_period}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                    >
-                      <option value="">Select...</option>
-                      <option value="hourly">Hourly</option>
-                      <option value="monthly">Monthly</option>
-                      <option value="yearly">Yearly</option>
-                    </select>
-                  </div>
-                  {/* currency permanece input texto */}
-                  <div>
-                    <label
-                      htmlFor="salary_currency"
-                      className="block text-sm font-medium text-[#011640] mb-2"
-                    >
-                      Currency
-                    </label>
-                    <input
-                      type="text"
-                      id="salary_currency"
-                      name="salary_currency"
-                      value={formData.salary_currency}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                      placeholder="e.g. USD, BRL"
-                    />
-                  </div>
-                </div>
-                {/* Requirements dinâmico */}
-                <div>
-                  <label className="block text-sm font-medium text-[#011640] mb-2">
-                    Requirements
-                  </label>
-                  {formData.requirements.map((req, idx) => (
-                    <div key={idx} className="flex gap-2 mb-2">
-                      <input
-                        type="text"
-                        value={req}
-                        onChange={(e) =>
-                          handleArrayChange("requirements", e.target.value, idx)
-                        }
-                        className="flex-1 px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleRemoveArrayItem("requirements", idx)
-                        }
-                        className="text-red-500 font-bold"
-                      >
-                        x
-                      </button>
-                    </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {jobs.slice(0, 6).map((job) => (
+                    <JobCard key={job.id} job={job} />
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => handleAddArrayItem("requirements")}
-                    className="text-[#0476D9] text-sm font-medium mt-1"
-                  >
-                    + Add requirement
-                  </button>
-                </div>
-                {/* Benefits dinâmico */}
-                <div>
-                  <label className="block text-sm font-medium text-[#011640] mb-2">
-                    Benefits
-                  </label>
-                  {formData.benefits.map((ben, idx) => (
-                    <div key={idx} className="flex gap-2 mb-2">
-                      <input
-                        type="text"
-                        value={ben}
-                        onChange={(e) =>
-                          handleArrayChange("benefits", e.target.value, idx)
-                        }
-                        className="flex-1 px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveArrayItem("benefits", idx)}
-                        className="text-red-500 font-bold"
-                      >
-                        x
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => handleAddArrayItem("benefits")}
-                    className="text-[#0476D9] text-sm font-medium mt-1"
-                  >
-                    + Add benefit
-                  </button>
-                </div>
-                {/* Remote e Ativa */}
-                <div className="flex gap-6 items-center">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="is_remote"
-                      checked={formData.is_remote}
-                      onChange={handleInputChange}
-                      className="accent-[#0476D9] w-5 h-5"
-                    />
-                    Remote
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="is_active"
-                      checked={formData.is_active}
-                      onChange={handleInputChange}
-                      className="accent-[#0476D9] w-5 h-5"
-                    />
-                    Active
-                  </label>
-                </div>
-                {/* Logo da empresa */}
-                <div>
-                  <label
-                    htmlFor="company_logo"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Company Logo URL
-                  </label>
-                  <input
-                    type="url"
-                    id="company_logo"
-                    name="company_logo"
-                    value={formData.company_logo}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                    placeholder="https://logo.com/image.png"
-                  />
-                </div>
-                {/* Skills */}
-                <div>
-                  <label
-                    htmlFor="tags"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Skills (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    id="tags"
-                    name="tags"
-                    value={formData.tags}
-                    onChange={handleInputChange}
-                    placeholder="e.g. React, TypeScript, Remote, Frontend"
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                  />
-                  <p className="text-xs text-[#0476D9] mt-1">
-                    Skills help candidates find your job more easily
-                  </p>
-                </div>
-                {/* Link de candidatura */}
-                <div>
-                  <label
-                    htmlFor="applicationUrl"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Application Link <span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    type="url"
-                    id="applicationUrl"
-                    name="applicationUrl"
-                    value={formData.applicationUrl}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg"
-                    required
-                  />
-                </div>
-                {/* Descrição */}
-                <div>
-                  <label
-                    htmlFor="description"
-                    className="block text-sm font-medium text-[#011640] mb-2"
-                  >
-                    Job Description <span className="text-red-600">*</span>
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows={10}
-                    className="w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent font-mono text-sm"
-                    required
-                  />
-                  <p className="text-xs text-[#0476D9] mt-1">
-                    Use Markdown to format the description. Supports headings,
-                    lists, bold text, etc.
-                  </p>
-                </div>
-              </div>
-              {message && (
-                <div
-                  className={`p-4 rounded-xl text-center mt-4 ${
-                    message.includes("successfully")
-                      ? "bg-green-50 text-green-800 border border-green-200"
-                      : "bg-red-50 text-red-800 border border-red-200"
-                  } animate-fade-in`}
-                >
-                  {message}
                 </div>
               )}
-              <div className="flex items-center justify-between pt-8 border-t border-[#E5EAF1] mt-8 gap-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormData({
-                      title: "",
-                      company: "",
-                      location: "",
-                      type: "full-time",
-                      category: "other",
-                      experience: "",
-                      salary_min: "",
-                      salary_max: "",
-                      salary_currency: "",
-                      salary_period: "",
-                      description: "",
-                      requirements: [],
-                      benefits: [],
-                      is_remote: false,
-                      is_active: true,
-                      applicationUrl: "",
-                      company_logo: "",
-                      tags: "",
-                    });
-                    setMessage("");
-                  }}
-                  className="btn-secondary inline-flex items-center"
-                  disabled={isSubmitting}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Clear Form
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="btn-primary inline-flex items-center text-lg px-8 py-4"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Publishing...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-5 h-5 mr-2" />
-                      Publish Job
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </Card>
-          {/* Preview do Card */}
-          <div className="hidden md:block">
-            <h3 className="text-lg font-semibold text-[#011640] mb-4">
-              Live Card Preview
-            </h3>
-            <JobCard job={previewJob} />
+            </Card>
           </div>
-        </div>
+        )}
+
+        {activeTab === "analytics" && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-[#011640]">
+                Analytics & Insights
+              </h2>
+              <div className="text-sm text-gray-600">
+                Last updated: {new Date().toLocaleDateString()}
+              </div>
+            </div>
+
+            {/* Click Analytics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <AnalyticsCard
+                title="Total Clicks"
+                value={clickAnalytics.totalClicks}
+                icon={MousePointer}
+                color="bg-blue-500"
+                trend={{ value: 0, isPositive: true }}
+              />
+              <AnalyticsCard
+                title="Valid Clicks"
+                value={clickAnalytics.validClicks}
+                icon={CheckCircle}
+                color="bg-green-500"
+                trend={{ value: 0, isPositive: true }}
+              />
+              <AnalyticsCard
+                title="Invalid Clicks"
+                value={clickAnalytics.invalidClicks}
+                icon={XCircle}
+                color="bg-red-500"
+                trend={{ value: 0, isPositive: false }}
+              />
+              <AnalyticsCard
+                title="Conversion Rate"
+                value={`${clickAnalytics.conversionRate.toFixed(1)}%`}
+                icon={BarChart3}
+                color="bg-purple-500"
+                trend={{ value: 0, isPositive: true }}
+              />
+            </div>
+
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="w-8 h-8 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin mx-auto"></div>
+              </div>
+            ) : (
+              <AnalyticsCharts jobs={jobs} />
+            )}
+          </div>
+        )}
+
+        {activeTab === "jobs" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-[#011640]">
+                All Jobs ({jobs.length})
+              </h2>
+              <button
+                onClick={() => {
+                  resetForm();
+                  setActiveTab("create");
+                }}
+                className="btn-primary flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Create New Job
+              </button>
+            </div>
+
+            <JobTable
+              jobs={jobs}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onToggleActive={handleToggleActive}
+              loading={loading}
+            />
+          </div>
+        )}
+
+        {activeTab === "create" && (
+          <JobForm
+            isEditing={isEditing}
+            editingJob={editingJob}
+            onSubmit={handleSubmit}
+            onReset={resetForm}
+            isSubmitting={isSubmitting}
+            message={message}
+          />
+        )}
+        <Toast message={toast} onClose={() => setToast("")} />
       </div>
     </div>
   );
