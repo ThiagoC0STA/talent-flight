@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-[#F3F7FA]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm">
           <div className="flex items-center gap-4 mb-6">
@@ -180,6 +180,51 @@ export default function PrivacyPage() {
                 <li>When required by law or to protect our rights</li>
                 <li>In case of merger or acquisition of the company</li>
               </ul>
+            </div>
+          </div>
+
+          {/* Job Curation & Data Processing */}
+          <div className="bg-white rounded-2xl p-8 shadow-sm border-l-4 border-[#0476D9]">
+            <div className="flex items-center gap-3 mb-6">
+              <Shield className="w-6 h-6 text-[#0476D9]" />
+              <h2 className="text-2xl font-bold text-[#011640]">
+                Job Curation & Data Processing
+              </h2>
+            </div>
+            
+            <div className="space-y-4">
+              <p className="text-[#010D26] leading-relaxed">
+                <strong>Important Notice:</strong> As a job curation platform, TalentFlight processes 
+                data differently than traditional job boards. Here&apos;s how we handle your information:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-[#F3F7FA] p-4 rounded-xl">
+                  <h4 className="font-semibold text-[#011640] mb-2">What We Do:</h4>
+                  <ul className="text-[#010D26] space-y-2 text-sm">
+                    <li>• Curate and rewrite job descriptions</li>
+                    <li>• Store your search preferences</li>
+                    <li>• Track job views and interactions</li>
+                    <li>• Provide job recommendations</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-[#F3F7FA] p-4 rounded-xl">
+                  <h4 className="font-semibold text-[#011640] mb-2">What We Don&apos;t Do:</h4>
+                  <ul className="text-[#010D26] space-y-2 text-sm">
+                    <li>• Process job applications directly</li>
+                    <li>• Store your application data</li>
+                    <li>• Share your data with hiring companies</li>
+                    <li>• Access your application submissions</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <p className="text-[#010D26] leading-relaxed">
+                When you apply for a job through our platform, you are redirected to the original 
+                company&apos;s application system. We do not have access to or control over the data 
+                you submit during the application process.
+              </p>
             </div>
           </div>
 

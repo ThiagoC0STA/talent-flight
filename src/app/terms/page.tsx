@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
-import { FileText, AlertTriangle, CheckCircle, XCircle, Shield, Users } from "lucide-react";
+import {
+  FileText,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Shield,
+  Users,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Terms of Use - TalentFlight",
-  description: "Read our terms of use and conditions for using the TalentFlight platform. Learn about your rights and responsibilities.",
+  description:
+    "Read our terms of use and conditions for using the TalentFlight platform. Learn about your rights and responsibilities.",
   keywords: "terms of use, conditions, legal, rights, responsibilities",
   openGraph: {
     title: "Terms of Use - TalentFlight",
-    description: "Read our terms of use and conditions for using the TalentFlight platform.",
+    description:
+      "Read our terms of use and conditions for using the TalentFlight platform.",
     type: "website",
   },
 };
@@ -15,7 +24,7 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-[#F3F7FA]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm">
           <div className="flex items-center gap-4 mb-6">
@@ -31,9 +40,9 @@ export default function TermsPage() {
               </p>
             </div>
           </div>
-          
+
           <p className="text-[#010D26] leading-relaxed">
-            By using the TalentFlight platform, you agree to these terms of use. 
+            By using the TalentFlight platform, you agree to these terms of use.
             Please read carefully before using our services.
           </p>
         </div>
@@ -48,17 +57,23 @@ export default function TermsPage() {
                 Acceptance of Terms
               </h2>
             </div>
-            
+
             <div className="space-y-4">
               <p className="text-[#010D26] leading-relaxed">
-                By accessing and using the TalentFlight platform, you confirm that:
+                By accessing and using the TalentFlight platform, you confirm
+                that:
               </p>
-              
+
               <ul className="list-disc list-inside text-[#010D26] space-y-2 ml-4">
-                <li>You are at least 18 years old or have parental authorization</li>
+                <li>
+                  You are at least 18 years old or have parental authorization
+                </li>
                 <li>You have legal capacity to enter into contracts</li>
                 <li>You will provide true and accurate information</li>
-                <li>You will not use the platform for illegal or inappropriate purposes</li>
+                <li>
+                  You will not use the platform for illegal or inappropriate
+                  purposes
+                </li>
                 <li>You will respect the rights of other users</li>
               </ul>
             </div>
@@ -72,7 +87,7 @@ export default function TermsPage() {
                 Our Services
               </h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
@@ -86,7 +101,7 @@ export default function TermsPage() {
                   <li>• Advanced search tools</li>
                 </ul>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   For Companies
@@ -102,6 +117,49 @@ export default function TermsPage() {
             </div>
           </div>
 
+          {/* Job Curation Disclaimer */}
+          <div className="bg-white rounded-2xl p-8 shadow-sm border-l-4 border-[#0476D9]">
+            <div className="flex items-center gap-3 mb-6">
+              <AlertTriangle className="w-6 h-6 text-[#0476D9]" />
+              <h2 className="text-2xl font-bold text-[#011640]">
+                Job Curation & Application Process
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-[#010D26] leading-relaxed">
+                <strong>Important Notice:</strong> TalentFlight operates as a
+                job curation platform. All job listings displayed on our
+                platform are carefully selected, reviewed, and rewritten by our
+                team to ensure quality and relevance.
+              </p>
+
+              <div className="bg-[#F3F7FA] p-4 rounded-xl">
+                <h4 className="font-semibold text-[#011640] mb-2">
+                  How It Works:
+                </h4>
+                <ul className="text-[#010D26] space-y-2 text-sm">
+                  <li>• We curate job opportunities from various sources</li>
+                  <li>
+                    • Our team reviews and rewrites job descriptions for clarity
+                  </li>
+                  <li>• We ensure all listings meet our quality standards</li>
+                  <li>
+                    • When you apply, you are redirected to the original
+                    company&apos;s application system
+                  </li>
+                  <li>• TalentFlight does not process applications directly</li>
+                </ul>
+              </div>
+
+              <p className="text-[#010D26] leading-relaxed">
+                By using our platform, you acknowledge that TalentFlight acts as
+                an intermediary and that all applications are processed by the
+                original hiring companies, not by us.
+              </p>
+            </div>
+          </div>
+
           {/* User Responsibilities */}
           <div className="bg-white rounded-2xl p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
@@ -110,18 +168,19 @@ export default function TermsPage() {
                 User Responsibilities
               </h2>
             </div>
-            
+
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Accurate Information
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  You are responsible for providing true, accurate and up-to-date information. 
-                  TalentFlight is not responsible for false or misleading information.
+                  You are responsible for providing true, accurate and
+                  up-to-date information. TalentFlight is not responsible for
+                  false or misleading information.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Appropriate Use
@@ -138,14 +197,15 @@ export default function TermsPage() {
                   <li>Use bots or automated scripts</li>
                 </ul>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Account Security
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  You are responsible for maintaining the confidentiality of your access credentials 
-                  and for all activities performed in your account.
+                  You are responsible for maintaining the confidentiality of
+                  your access credentials and for all activities performed in
+                  your account.
                 </p>
               </div>
             </div>
@@ -159,7 +219,7 @@ export default function TermsPage() {
                 Prohibited Activities
               </h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
@@ -173,7 +233,7 @@ export default function TermsPage() {
                   <li>• Violation of employment contracts</li>
                 </ul>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   For Companies
@@ -194,35 +254,37 @@ export default function TermsPage() {
             <h2 className="text-2xl font-bold text-[#011640] mb-6">
               Intellectual Property
             </h2>
-            
+
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   TalentFlight Rights
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  The TalentFlight platform, including its design, features, content and technology, 
-                  is protected by copyright, trademarks and other intellectual property laws.
+                  The TalentFlight platform, including its design, features,
+                  content and technology, is protected by copyright, trademarks
+                  and other intellectual property laws.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   License to Use
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  We grant you a limited, non-exclusive and revocable license to use the platform 
-                  in accordance with these terms.
+                  We grant you a limited, non-exclusive and revocable license to
+                  use the platform in accordance with these terms.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   User Content
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  You retain rights to content you submit, but grant us license to use, 
-                  modify and distribute that content to provide our services.
+                  You retain rights to content you submit, but grant us license
+                  to use, modify and distribute that content to provide our
+                  services.
                 </p>
               </div>
             </div>
@@ -233,15 +295,17 @@ export default function TermsPage() {
             <h2 className="text-2xl font-bold text-[#011640] mb-6">
               Privacy and Data
             </h2>
-            
+
             <div className="space-y-4">
               <p className="text-[#010D26] leading-relaxed">
-                The processing of your personal data is governed by our Privacy Policy, 
-                which is an integral part of these terms.
+                The processing of your personal data is governed by our Privacy
+                Policy, which is an integral part of these terms.
               </p>
-              
+
               <div className="bg-[#F3F7FA] p-4 rounded-xl">
-                <h4 className="font-semibold text-[#011640] mb-2">Key Points:</h4>
+                <h4 className="font-semibold text-[#011640] mb-2">
+                  Key Points:
+                </h4>
                 <ul className="text-[#010D26] space-y-1 text-sm">
                   <li>• We collect only data necessary for our services</li>
                   <li>• We do not sell your personal data</li>
@@ -261,18 +325,19 @@ export default function TermsPage() {
                 Limitations and Disclaimers
               </h2>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Service Availability
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  We strive to keep the platform available, but do not guarantee continuous 
-                  availability. We may interrupt service for maintenance or updates.
+                  We strive to keep the platform available, but do not guarantee
+                  continuous availability. We may interrupt service for
+                  maintenance or updates.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Limitation of Liability
@@ -287,14 +352,15 @@ export default function TermsPage() {
                   <li>Technical issues from third parties</li>
                 </ul>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Indemnification
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  You agree to indemnify and hold TalentFlight harmless from any claim, 
-                  damage or expense arising from inappropriate use of the platform.
+                  You agree to indemnify and hold TalentFlight harmless from any
+                  claim, damage or expense arising from inappropriate use of the
+                  platform.
                 </p>
               </div>
             </div>
@@ -305,35 +371,36 @@ export default function TermsPage() {
             <h2 className="text-2xl font-bold text-[#011640] mb-6">
               Termination
             </h2>
-            
+
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Termination by User
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  You may terminate your account at any time through platform settings 
-                  or by contacting us.
+                  You may terminate your account at any time through platform
+                  settings or by contacting us.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Termination by TalentFlight
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  We may suspend or terminate your account if you violate these terms or if 
-                  we detect inappropriate activities.
+                  We may suspend or terminate your account if you violate these
+                  terms or if we detect inappropriate activities.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-[#011640] mb-3">
                   Effects of Termination
                 </h3>
                 <p className="text-[#010D26] leading-relaxed">
-                  After termination, you will lose access to the platform, but we may retain 
-                  certain data in accordance with our privacy policy.
+                  After termination, you will lose access to the platform, but
+                  we may retain certain data in accordance with our privacy
+                  policy.
                 </p>
               </div>
             </div>
@@ -344,15 +411,17 @@ export default function TermsPage() {
             <h2 className="text-2xl font-bold text-[#011640] mb-6">
               Changes to Terms
             </h2>
-            
+
             <div className="space-y-4">
               <p className="text-[#010D26] leading-relaxed">
-                We may update these terms periodically. We will notify you of significant changes 
-                through the platform or by email.
+                We may update these terms periodically. We will notify you of
+                significant changes through the platform or by email.
               </p>
-              
+
               <div className="bg-[#F3F7FA] p-4 rounded-xl">
-                <h4 className="font-semibold text-[#011640] mb-2">Notification Process:</h4>
+                <h4 className="font-semibold text-[#011640] mb-2">
+                  Notification Process:
+                </h4>
                 <ul className="text-[#010D26] space-y-1 text-sm">
                   <li>• Platform notification for 30 days</li>
                   <li>• Email to active users</li>
@@ -365,9 +434,7 @@ export default function TermsPage() {
 
           {/* Contact */}
           <div className="bg-gradient-to-br from-[#011640] to-[#0476D9] text-white rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4">
-              Contact Us
-            </h2>
+            <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
             <p className="mb-6 leading-relaxed">
               If you have questions about these terms of use, please contact us.
             </p>
@@ -386,4 +453,4 @@ export default function TermsPage() {
       </div>
     </div>
   );
-} 
+}

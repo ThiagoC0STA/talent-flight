@@ -189,6 +189,80 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Job Posting Process Section */}
+      <section className="bg-[#F3F7FA] py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-[#011640] mb-4">
+              How We Work
+            </h2>
+            <p className="text-xl text-[#0476D9] max-w-2xl mx-auto">
+              Our process for curating and presenting job opportunities
+            </p>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-8 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-bold text-[#011640] mb-6">
+                  Job Post Curation Process
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 bg-[#0476D9] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white font-bold text-sm">1</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-[#011640] mb-1">Source & Review</h4>
+                      <p className="text-[#010D26] text-sm">We source job postings from reputable companies and hiring platforms.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 bg-[#0476D9] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white font-bold text-sm">2</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-[#011640] mb-1">Curate & Enhance</h4>
+                      <p className="text-[#010D26] text-sm">Our team reviews and enhances job descriptions for clarity and completeness.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 bg-[#0476D9] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white font-bold text-sm">3</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-[#011640] mb-1">Present & Connect</h4>
+                      <p className="text-[#010D26] text-sm">We present enhanced job posts and connect candidates directly to the original source.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-[#F3F7FA] rounded-xl p-6 border border-[#E5EAF1]">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#0476D9] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-[#011640] mb-2">Important Disclaimer</h4>
+                    <p className="text-[#010D26] text-sm leading-relaxed">
+                      <strong>Job Post Curation:</strong> All job posts on TalentFlight are curated and rewritten by our team to improve clarity and visibility. 
+                      The original listings belong to the hiring companies or their representatives.
+                    </p>
+                    <p className="text-[#010D26] text-sm leading-relaxed mt-2">
+                      <strong>Application Process:</strong> All applications are redirected to the official source. 
+                      We act as a bridge between candidates and employers, ensuring transparency throughout the process.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="bg-gradient-to-br from-[#011640] to-[#0476D9] text-white py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

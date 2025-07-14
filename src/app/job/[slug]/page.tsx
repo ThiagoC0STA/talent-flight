@@ -266,6 +266,29 @@ export default async function JobPage({ params }: any) {
                   className="prose prose-lg max-w-none text-[#010D26] leading-relaxed mb-6"
                   dangerouslySetInnerHTML={{ __html: job.description }}
                 />
+                
+                {/* Disclaimer */}
+                <div className="mt-8 pt-6 border-t border-[#E5EAF1]">
+                  <div className="bg-[#F3F7FA] rounded-lg p-4 border border-[#E5EAF1]">
+                    <div className="flex items-start gap-3">
+                      <div className="w-5 h-5 bg-[#0476D9] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-[#011640] mb-1">
+                          Job Post Disclaimer
+                        </h4>
+                        <p className="text-xs text-[#011640]/80 leading-relaxed">
+                          This job post was curated and rewritten by Talent Flight to improve clarity and visibility. 
+                          The original listing belongs to the hiring company or its representatives. 
+                          All applications are redirected to the official source.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Requirements */}
