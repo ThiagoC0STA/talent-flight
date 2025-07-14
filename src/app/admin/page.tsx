@@ -9,7 +9,6 @@ import {
   Eye,
   MapPin,
   Users,
-  TrendingUp,
   MousePointer,
   CheckCircle,
   XCircle,
@@ -489,7 +488,6 @@ export default function AdminPage() {
           <div className="flex space-x-1 bg-white/80 backdrop-blur-sm rounded-xl p-1">
             {[
               { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-              { id: "analytics", label: "Analytics", icon: TrendingUp },
               { id: "jobs", label: "All Jobs", icon: Briefcase },
               {
                 id: "create",
@@ -547,39 +545,7 @@ export default function AdminPage() {
                 trend={{ value: 5, isPositive: true }}
               />
             </div>
-
-            {/* Recent Jobs */}
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold text-[#011640] mb-4">
-                Recent Jobs
-              </h3>
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="w-8 h-8 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin mx-auto"></div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {jobs.slice(0, 6).map((job) => (
-                    <JobCard key={job.id} job={job} />
-                  ))}
-                </div>
-              )}
-            </Card>
-          </div>
-        )}
-
-        {activeTab === "analytics" && (
-          <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-[#011640]">
-                Analytics & Insights
-              </h2>
-              <div className="text-sm text-gray-600">
-                Last updated: {new Date().toLocaleDateString()}
-              </div>
-            </div>
-
-            {/* Click Analytics Cards */}
+            {/* Analytics de Cliques */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <AnalyticsCard
                 title="Total Clicks"
@@ -610,14 +576,25 @@ export default function AdminPage() {
                 trend={{ value: 0, isPositive: true }}
               />
             </div>
-
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="w-8 h-8 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin mx-auto"></div>
-              </div>
-            ) : (
-              <AnalyticsCharts jobs={jobs} />
-            )}
+            {/* Gráficos de Analytics */}
+            <AnalyticsCharts jobs={jobs} />
+            {/* Recent Jobs */}
+            <Card className="p-6">
+              <h3 className="text-xl font-semibold text-[#011640] mb-4">
+                Recent Jobs
+              </h3>
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="w-8 h-8 border-4 border-[#0476D9] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {jobs.slice(0, 6).map((job) => (
+                    <JobCard key={job.id} job={job} />
+                  ))}
+                </div>
+              )}
+            </Card>
           </div>
         )}
 

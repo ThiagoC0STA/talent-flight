@@ -23,7 +23,6 @@ export default function JobTable({
   jobs,
   onEdit,
   onDelete,
-  onToggleActive,
   loading,
 }: JobTableProps) {
   if (loading) {
