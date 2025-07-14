@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, Clock, DollarSign, Building2, Calendar } from "lucide-react";
+import { MapPin, Clock, Building2, Calendar } from "lucide-react";
 import {
   htmlToText,
   formatSalary,

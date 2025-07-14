@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Filter } from "lucide-react";
+import { X, Filter, ChevronDown, ChevronRight } from "lucide-react";
 import {
   JobFilters as JobFiltersType,
   JobCategory,
@@ -8,6 +8,7 @@ import {
   ExperienceLevel,
 } from "@/types/job";
 import Button from "@/components/ui/Button";
+import { useState } from "react";
 
 interface JobFiltersProps {
   filters: JobFiltersType;
@@ -20,6 +21,22 @@ export default function JobFilters({
   onFiltersChange,
   isMobile = false,
 }: JobFiltersProps) {
+  const [openSections, setOpenSections] = useState<{
+    categories: boolean;
+    types: boolean;
+    experience: boolean;
+  }>({
+    categories: false,
+    types: false,
+    experience: false,
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
   const handleCategoryChange = (category: JobCategory) => {
     const currentCategories = filters.category || [];
     const newCategories = currentCategories.includes(category)
@@ -60,11 +77,6 @@ export default function JobFilters({
     onFiltersChange({});
   };
 
-  const hasActiveFilters = Object.values(filters).some(
-    (value) =>
-      value !== undefined && (Array.isArray(value) ? value.length > 0 : true)
-  );
-
   const categories: { value: JobCategory; label: string }[] = [
     { value: "engineering", label: "Engineering" },
     { value: "design", label: "Design" },
@@ -98,18 +110,36 @@ export default function JobFilters({
   const FilterSection = ({
     title,
     children,
+    isOpen,
+    onToggle,
   }: {
     title: string;
     children: React.ReactNode;
+    isOpen: boolean;
+    onToggle: () => void;
   }) => (
-    <div className="mb-8">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-1 h-1 bg-[#0476D9] rounded-full"></div>
-        <h3 className="text-sm font-semibold text-[#011640] uppercase tracking-wide">
-          {title}
-        </h3>
-      </div>
-      {children}
+    <div className="mb-6">
+      <button
+        onClick={onToggle}
+        className="flex items-center justify-between w-full p-3 rounded-xl hover:bg-[#F3F7FA] transition-all duration-200 group"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-1 h-1 bg-[#0476D9] rounded-full"></div>
+          <h3 className="text-sm font-semibold text-[#011640] uppercase tracking-wide group-hover:text-[#0476D9] transition-colors">
+            {title}
+          </h3>
+        </div>
+        {isOpen ? (
+          <ChevronDown className="w-4 h-4 text-[#6B7280] group-hover:text-[#0476D9] transition-colors" />
+        ) : (
+          <ChevronRight className="w-4 h-4 text-[#6B7280] group-hover:text-[#0476D9] transition-colors" />
+        )}
+      </button>
+      {isOpen && (
+        <div className="mt-4 pl-1 ml-3 border-l-1 border-[#E5EAF1]">
+          {children}
+        </div>
+      )}
     </div>
   );
 
@@ -160,101 +190,9 @@ export default function JobFilters({
     </label>
   );
 
-  const ActiveFilters = () =>
-    hasActiveFilters && (
-      <div className="mb-6 p-5 bg-gradient-to-r from-[#F3F7FA] to-[#E8F4FD] rounded-2xl border border-[#E5EAF1]">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#0476D9] rounded-full"></div>
-            <h3 className="text-sm font-semibold text-[#011640]">
-              Active Filters
-            </h3>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            className="text-[#0476D9] hover:text-[#011640] text-xs bg-white/50 hover:bg-white/80"
-          >
-            Clear All
-          </Button>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {filters.query && (
-            <span className="badge badge-primary flex items-center gap-1 text-xs">
-              Search: {filters.query}
-              <button
-                onClick={() =>
-                  onFiltersChange({ ...filters, query: undefined })
-                }
-                className="ml-1 hover:bg-white/20 rounded-full p-0.5"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-          {filters.location && (
-            <span className="badge badge-primary flex items-center gap-1 text-xs">
-              Location: {filters.location}
-              <button
-                onClick={() =>
-                  onFiltersChange({ ...filters, location: undefined })
-                }
-                className="ml-1 hover:bg-white/20 rounded-full p-0.5"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-          {filters.category?.map((cat) => (
-            <span
-              key={cat}
-              className="badge badge-outline flex items-center gap-1 text-xs"
-            >
-              {categories.find((c) => c.value === cat)?.label}
-              <button
-                onClick={() => handleCategoryChange(cat)}
-                className="ml-1 hover:bg-[#0476D9]/10 rounded-full p-0.5"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
-          {filters.type?.map((type) => (
-            <span
-              key={type}
-              className="badge badge-outline flex items-center gap-1 text-xs"
-            >
-              {types.find((t) => t.value === type)?.label}
-              <button
-                onClick={() => handleTypeChange(type)}
-                className="ml-1 hover:bg-[#0476D9]/10 rounded-full p-0.5"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
-          {filters.experience?.map((exp) => (
-            <span
-              key={exp}
-              className="badge badge-outline flex items-center gap-1 text-xs"
-            >
-              {experiences.find((e) => e.value === exp)?.label}
-              <button
-                onClick={() => handleExperienceChange(exp)}
-                className="ml-1 hover:bg-[#0476D9]/10 rounded-full p-0.5"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      </div>
-    );
-
   return (
     <div
-      className={`bg-gradient-to-br from-white to-[#F8FAFC] rounded-3xl border border-[#E5EAF1] shadow-lg p-6 ${
+      className={`bg-gradient-to-br from-white to-[#F8FAFC] rounded-3xl border border-[#E5EAF1] p-5 ${
         isMobile ? "mb-6" : ""
       }`}
     >
@@ -268,23 +206,41 @@ export default function JobFilters({
             <p className="text-xs text-[#6B7280]">Refine your search</p>
           </div>
         </div>
-        {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            className="text-[#0476D9] hover:text-[#011640] text-xs bg-[#F3F7FA] hover:bg-[#E5EAF1]"
-          >
-            Clear All
-          </Button>
-        )}
       </div>
 
-      <ActiveFilters />
-
       <div className="space-y-6 filter-scrollbar scrollbar-hide max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+        {/* Quick Filters */}
+        <div className="space-y-3">
+          <FilterCheckbox
+            value="remote"
+            label="Remote Only"
+            checked={filters.isRemote || false}
+            onChange={() =>
+              onFiltersChange({
+                ...filters,
+                isRemote: !filters.isRemote ? true : undefined,
+              })
+            }
+          />
+          <FilterCheckbox
+            value="featured"
+            label="Featured Jobs Only"
+            checked={filters.isFeatured || false}
+            onChange={() =>
+              onFiltersChange({
+                ...filters,
+                isFeatured: !filters.isFeatured ? true : undefined,
+              })
+            }
+          />
+        </div>
+
         {/* Categories */}
-        <FilterSection title="Categories">
+        <FilterSection 
+          title="Categories"
+          isOpen={openSections.categories}
+          onToggle={() => toggleSection('categories')}
+        >
           <div className="space-y-2">
             {categories.map(({ value, label }) => (
               <FilterCheckbox
@@ -299,7 +255,11 @@ export default function JobFilters({
         </FilterSection>
 
         {/* Job Types */}
-        <FilterSection title="Job Type">
+        <FilterSection 
+          title="Job Type"
+          isOpen={openSections.types}
+          onToggle={() => toggleSection('types')}
+        >
           <div className="space-y-2">
             {types.map(({ value, label }) => (
               <FilterCheckbox
@@ -314,7 +274,11 @@ export default function JobFilters({
         </FilterSection>
 
         {/* Experience Levels */}
-        <FilterSection title="Experience Level">
+        <FilterSection 
+          title="Experience Level"
+          isOpen={openSections.experience}
+          onToggle={() => toggleSection('experience')}
+        >
           <div className="space-y-2">
             {experiences.map(({ value, label }) => (
               <FilterCheckbox
@@ -327,75 +291,6 @@ export default function JobFilters({
             ))}
           </div>
         </FilterSection>
-
-        {/* Remote Option */}
-        <FilterSection title="Work Type">
-          <FilterCheckbox
-            value="remote"
-            label="Remote Only"
-            checked={filters.isRemote || false}
-            onChange={() =>
-              onFiltersChange({
-                ...filters,
-                isRemote: !filters.isRemote ? true : undefined,
-              })
-            }
-          />
-        </FilterSection>
-
-        {/* Featured Jobs */}
-        <FilterSection title="Job Status">
-          <FilterCheckbox
-            value="featured"
-            label="Featured Jobs Only"
-            checked={filters.isFeatured || false}
-            onChange={() =>
-              onFiltersChange({
-                ...filters,
-                isFeatured: !filters.isFeatured ? true : undefined,
-              })
-            }
-          />
-        </FilterSection>
-
-        {/* Quick Actions */}
-        <div className="pt-6 border-t border-[#E5EAF1]">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-1 bg-[#0476D9] rounded-full"></div>
-            <h3 className="text-sm font-semibold text-[#011640] uppercase tracking-wide">
-              Quick Actions
-            </h3>
-          </div>
-          <div className="space-y-3">
-            <button
-              onClick={() => onFiltersChange({ isRemote: true })}
-              className="w-full text-left text-sm text-[#0476D9] hover:text-[#011640] p-3 rounded-xl hover:bg-[#F3F7FA] transition-all duration-200 filter-quick-action group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-[#0476D9] rounded-full group-hover:scale-125 transition-transform"></div>
-                <span className="font-medium">Show Remote Jobs</span>
-              </div>
-            </button>
-            <button
-              onClick={() => onFiltersChange({ isFeatured: true })}
-              className="w-full text-left text-sm text-[#0476D9] hover:text-[#011640] p-3 rounded-xl hover:bg-[#F3F7FA] transition-all duration-200 filter-quick-action group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-[#0476D9] rounded-full group-hover:scale-125 transition-transform"></div>
-                <span className="font-medium">Show Featured Jobs</span>
-              </div>
-            </button>
-            <button
-              onClick={() => onFiltersChange({ type: ["full-time"] })}
-              className="w-full text-left text-sm text-[#0476D9] hover:text-[#011640] p-3 rounded-xl hover:bg-[#F3F7FA] transition-all duration-200 filter-quick-action group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-[#0476D9] rounded-full group-hover:scale-125 transition-transform"></div>
-                <span className="font-medium">Full Time Only</span>
-              </div>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -6,11 +6,9 @@ import {
   DollarSign,
   Building2,
   Calendar,
-  ArrowLeft,
   Users,
   CheckCircle,
 } from "lucide-react";
-import Link from "next/link";
 import { jobsService } from "@/lib/jobs";
 import { formatSalary, formatDate } from "@/lib/utils";
 import Image from "next/image";

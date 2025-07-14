@@ -6,6 +6,7 @@ import JobCard from "@/components/JobCard";
 import JobCardHorizontal from "@/components/JobCardHorizontal";
 import SearchBar from "@/components/SearchBar";
 import JobFilters from "@/components/JobFilters";
+import ActiveFilters from "@/components/ActiveFilters";
 import ViewToggle from "@/components/ViewToggle";
 import { jobsService } from "@/lib/jobs";
 import { Job, JobFilters as JobFiltersType } from "@/types/job";
@@ -74,8 +75,13 @@ export default function JobsPage() {
         </div>
 
         {/* Search Bar */}
-        <div className="mb-8 animate-slide-in-left">
+        <div className="mb-4 animate-slide-in-left">
           <SearchBar filters={filters} onFiltersChange={setFilters} />
+        </div>
+
+        {/* Active Filters */}
+        <div className="mb-4">
+          <ActiveFilters filters={filters} onFiltersChange={setFilters} />
         </div>
 
         {/* Mobile Filter Toggle */}
@@ -103,7 +109,7 @@ export default function JobsPage() {
 
         <div className="flex gap-8">
           {/* Desktop Sidebar Filters */}
-          <div className="hidden lg:block w-80 flex-shrink-0 max-w-[320px]">
+          <div className="hidden lg:block w-80 flex-shrink-0 max-w-[300px]">
             <div className="sticky top-8 ">
               <JobFilters filters={filters} onFiltersChange={setFilters} />
             </div>
