@@ -1,8 +1,9 @@
-import { Edit, Eye, Trash2 } from "lucide-react";
+import { Edit, Eye, Trash2, Linkedin } from "lucide-react";
 import { Job } from "@/types/job";
 import Image from "next/image";
 import { useState } from "react";
 import DeleteConfirmModal from "./DeleteConfirmModal";
+import LinkedInPostModal from "./LinkedInPostModal";
 
 function getExperienceColor(experience?: string) {
   const colors = {
@@ -58,6 +59,14 @@ export default function JobTable({
     isDeleting: false,
   });
 
+  const [linkedInModal, setLinkedInModal] = useState<{
+    isOpen: boolean;
+    job: Job | null;
+  }>({
+    isOpen: false,
+    job: null,
+  });
+
   const handleDeleteClick = (job: Job) => {
     setDeleteModal({
       isOpen: true,
@@ -87,6 +96,13 @@ export default function JobTable({
       // Não fecha a modal se houver erro, mas para o loading
       setDeleteModal((prev) => ({ ...prev, isDeleting: false }));
     }
+  };
+
+  const handleLinkedInClick = (job: Job) => {
+    setLinkedInModal({
+      isOpen: true,
+      job,
+    });
   };
   if (loading) {
     return (
@@ -234,6 +250,13 @@ export default function JobTable({
                         <Eye className="w-4 h-4" />
                       </a>
                       <button
+                        onClick={() => handleLinkedInClick(job)}
+                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Postar no LinkedIn"
+                      >
+                        <Linkedin className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => handleDeleteClick(job)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete job"
@@ -312,6 +335,13 @@ export default function JobTable({
                       <Eye className="w-4 h-4" />
                     </a>
                     <button
+                      onClick={() => handleLinkedInClick(job)}
+                      className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Postar no LinkedIn"
+                    >
+                      <Linkedin className="w-4 h-4" />
+                    </button>
+                    <button
                       onClick={() => handleDeleteClick(job)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       title="Delete job"
@@ -366,6 +396,18 @@ export default function JobTable({
         jobTitle={deleteModal.jobTitle}
         companyName={deleteModal.companyName}
         isLoading={deleteModal.isDeleting}
+      />
+
+      {/* LinkedIn Post Modal */}
+      <LinkedInPostModal
+        isOpen={linkedInModal.isOpen}
+        onClose={() =>
+          setLinkedInModal({
+            isOpen: false,
+            job: null,
+          })
+        }
+        job={linkedInModal.job}
       />
     </>
   );
