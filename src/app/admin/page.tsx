@@ -14,6 +14,8 @@ import {
   XCircle,
   Menu,
   X,
+  Search,
+  Clock,
 } from "lucide-react";
 import { Job } from "@/types/job";
 import { jobsService, trackingService } from "@/lib/jobs";
@@ -29,6 +31,8 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import JobFilters from "@/components/admin/JobFilters";
 import Pagination from "@/components/admin/Pagination";
+import JobAggregator from "@/components/admin/JobAggregator";
+import SearchHistoryTab from "@/components/admin/SearchHistoryTab";
 
 function LoadingSpinner() {
   return (
@@ -282,26 +286,46 @@ export default function AdminPage() {
   };
 
   const handleDelete = async (jobId: string) => {
-    if (confirm("Tem certeza que deseja deletar esta vaga?")) {
-      try {
-        await jobsService.deleteJob(jobId);
-        setToast("Vaga deletada com sucesso!");
-        await loadJobs();
-      } catch (error) {
-        console.error("Erro ao deletar vaga:", error);
-        setToast("Erro ao deletar vaga");
-      }
+    try {
+      await jobsService.deleteJob(jobId);
+      setToast("Job deleted successfully!");
+      await loadJobs();
+    } catch (error) {
+      console.error("Erro ao deletar vaga:", error);
+      setToast("Error deleting job");
     }
   };
 
   const handleToggleActive = async (job: Job) => {
     try {
       await jobsService.updateJob(job.id, { isActive: !job.isActive });
-      setToast(`Vaga ${job.isActive ? "desativada" : "ativada"} com sucesso!`);
+      setToast(
+        `Job ${job.isActive ? "deactivated" : "activated"} successfully!`
+      );
       await loadJobs();
     } catch (error) {
       console.error("Erro ao alterar status da vaga:", error);
-      setToast("Erro ao alterar status da vaga");
+      setToast("Error changing job status");
+    }
+  };
+
+  const handleImportJob = async (
+    jobData: Omit<Job, "id" | "createdAt" | "updatedAt"> & { createdAt?: Date | string }
+  ): Promise<boolean> => {
+    try {
+      const result = await jobsService.createJob(jobData);
+      if (result) {
+        setToast("Job imported successfully!");
+        await loadJobs();
+        return true;
+      } else {
+        setToast("Error importing job");
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao importar vaga:", error);
+      setToast("Error importing job");
+      return false;
     }
   };
 
@@ -312,9 +336,25 @@ export default function AdminPage() {
       const rawHtml = await marked(formData.description);
       const safeHtml = DOMPurify.sanitize(rawHtml);
 
-      const createdAtDate = isEditing && editingJob
-        ? new Date(formData.created_at + 'T00:00:00')
-        : new Date();
+      let createdAtDate: Date;
+      
+      if (isEditing && editingJob && formData.created_at) {
+        // Se é edição e tem data, usar a data do form
+        createdAtDate = new Date(formData.created_at + "T00:00:00");
+        
+        // Validar se a data é válida
+        if (isNaN(createdAtDate.getTime())) {
+          createdAtDate = new Date();
+        }
+      } else {
+        // Se é nova vaga, usar data atual
+        createdAtDate = new Date();
+      }
+      
+      console.log("=== ADMIN DEBUG ===");
+      console.log("formData.created_at:", formData.created_at);
+      console.log("createdAtDate:", createdAtDate);
+      console.log("createdAtDate.toISOString():", createdAtDate.toISOString());
 
       const jobData = {
         title: formData.title,
@@ -323,16 +363,17 @@ export default function AdminPage() {
         type: formData.type,
         category: formData.category,
         experience: formData.experience,
-        salary: formData.salary_min && formData.salary_max
-          ? {
-              min: Number(formData.salary_min),
-              max: Number(formData.salary_max),
-              currency: formData.salary_currency || undefined,
-              period:
-                (formData.salary_period as "hourly" | "monthly" | "yearly") ||
-                undefined,
-            }
-          : undefined,
+        salary:
+          formData.salary_min && formData.salary_max
+            ? {
+                min: Number(formData.salary_min),
+                max: Number(formData.salary_max),
+                currency: formData.salary_currency || undefined,
+                period:
+                  (formData.salary_period as "hourly" | "monthly" | "yearly") ||
+                  undefined,
+              }
+            : undefined,
         description: safeHtml,
         requirements: formData.requirements.filter(
           (r: string) => r.trim().length > 0
@@ -355,19 +396,19 @@ export default function AdminPage() {
       if (isEditing && editingJob) {
         result = await jobsService.updateJob(editingJob.id, jobData);
         if (result) {
-          setToast("Vaga atualizada com sucesso!");
+          setToast("Job updated successfully!");
           setActiveTab("jobs");
         } else {
-          setToast("Erro ao atualizar vaga");
+          setToast("Error updating job");
         }
       } else {
         result = await jobsService.createJob(jobData);
 
         if (result) {
-          setToast("Vaga criada com sucesso!");
+          setToast("Job created successfully!");
           setActiveTab("jobs");
         } else {
-          setToast("Erro ao criar vaga");
+          setToast("Error creating job");
         }
       }
 
@@ -377,7 +418,7 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error("Erro no submit:", error);
-      setToast(error instanceof Error ? error.message : "Erro ao salvar vaga");
+      setToast(error instanceof Error ? error.message : "Error saving job");
     } finally {
       setIsSubmitting(false);
     }
@@ -485,7 +526,11 @@ export default function AdminPage() {
         </div>
 
         {/* Tabs */}
-        <div className={`mb-6 sm:mb-8 ${mobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
+        <div
+          className={`mb-6 sm:mb-8 ${
+            mobileMenuOpen ? "block" : "hidden sm:block"
+          }`}
+        >
           <div className="flex flex-col sm:flex-row sm:space-x-1 bg-white/80 backdrop-blur-sm rounded-xl p-1">
             {[
               { id: "dashboard", label: "Dashboard", icon: BarChart3 },
@@ -495,6 +540,8 @@ export default function AdminPage() {
                 label: isEditing ? "Edit Job" : "Create Job",
                 icon: Plus,
               },
+              { id: "search", label: "Search Jobs", icon: Search },
+              { id: "history", label: "History", icon: Clock },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -640,6 +687,20 @@ export default function AdminPage() {
             onReset={resetForm}
             isSubmitting={isSubmitting}
             message={message}
+          />
+        )}
+
+        {activeTab === "search" && (
+          <JobAggregator
+            onImportJob={handleImportJob}
+            isSubmitting={isSubmitting}
+          />
+        )}
+
+        {activeTab === "history" && (
+          <SearchHistoryTab
+            onImportJob={handleImportJob}
+            isSubmitting={isSubmitting}
           />
         )}
         <Toast message={toast} onClose={() => setToast("")} />

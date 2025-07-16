@@ -4,6 +4,17 @@ export interface BaseEntity {
   updatedAt: Date;
 }
 
+export interface SearchHistory {
+  id: string;
+  query: string;
+  sources: string[];
+  resultsCount: number;
+  results?: any[];
+  createdAt: Date;
+  userId: string;
+  imported?: boolean;
+}
+
 export interface PaginationParams {
   page: number;
   limit: number;

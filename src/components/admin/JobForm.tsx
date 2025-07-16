@@ -42,8 +42,13 @@ export default function JobForm({
     company_logo: editingJob?.companyLogo || "",
     tags: editingJob?.tags?.join(", ") || "",
     created_at: editingJob?.createdAt 
-      ? new Date(editingJob.createdAt).toLocaleDateString('en-CA')
-      : new Date().toLocaleDateString('en-CA'),
+      ? (() => {
+          const date = new Date(editingJob.createdAt);
+          return isNaN(date.getTime()) 
+            ? new Date().toISOString().split('T')[0]
+            : date.toISOString().split('T')[0];
+        })()
+      : new Date().toISOString().split('T')[0],
   });
 
   const handleInputChange = (
@@ -229,8 +234,14 @@ export default function JobForm({
                 <option value="data">Data</option>
                 <option value="operations">Operations</option>
                 <option value="finance">Finance</option>
-                <option value="development">Development</option>
                 <option value="hr">HR</option>
+                <option value="development">Development</option>
+                <option value="frontend">Frontend</option>
+                <option value="backend">Backend</option>
+                <option value="fullstack">Full Stack</option>
+                <option value="mobile">Mobile</option>
+                <option value="devops">DevOps</option>
+                <option value="ai">AI/ML</option>
                 <option value="other">Other</option>
               </select>
             </div>

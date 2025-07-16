@@ -36,6 +36,13 @@ export type JobCategory =
   | "operations"
   | "finance"
   | "hr"
+  | "development"
+  | "frontend"
+  | "backend"
+  | "fullstack"
+  | "mobile"
+  | "devops"
+  | "ai"
   | "other";
 
 export type ExperienceLevel =

@@ -32,6 +32,13 @@ export default function ActiveFilters({
     { value: "operations", label: "Operations" },
     { value: "finance", label: "Finance" },
     { value: "hr", label: "HR" },
+    { value: "development", label: "Development" },
+    { value: "frontend", label: "Frontend" },
+    { value: "backend", label: "Backend" },
+    { value: "fullstack", label: "Full Stack" },
+    { value: "mobile", label: "Mobile" },
+    { value: "devops", label: "DevOps" },
+    { value: "ai", label: "AI/ML" },
     { value: "other", label: "Other" },
   ];
 

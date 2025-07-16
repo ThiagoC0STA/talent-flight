@@ -31,6 +31,7 @@ export interface Database {
           application_url: string;
           company_logo: string | null;
           tags: string[];
+          slug: string;
           created_at: string;
           updated_at: string;
         };

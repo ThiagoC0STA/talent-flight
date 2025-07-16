@@ -1,3 +1,4 @@
+import { SearchHistory } from "@/types/common";
 import { Job } from "@/types/job";
 import { supabase } from "./supabase";
 
@@ -31,28 +32,58 @@ const mapSupabaseJobToJob = (supabaseJob: any): Job => ({
 
 // Converter dados da aplicação para o formato do Supabase
 const mapJobToSupabaseJob = (
-  job: Omit<Job, "id" | "createdAt" | "updatedAt">
-) => ({
-  title: job.title,
-  company: job.company,
-  location: job.location,
-  type: job.type,
-  category: job.category,
-  experience: job.experience,
-  salary_min: job.salary?.min,
-  salary_max: job.salary?.max,
-  salary_currency: job.salary?.currency,
-  salary_period: job.salary?.period,
-  description: job.description,
-  requirements: job.requirements,
-  benefits: job.benefits,
-  is_remote: job.isRemote,
-  is_featured: job.isFeatured,
-  is_active: job.isActive,
-  application_url: job.applicationUrl,
-  company_logo: job.companyLogo,
-  tags: job.tags,
-});
+  job: Omit<Job, "id" | "createdAt" | "updatedAt"> & {
+    createdAt?: Date | string;
+  }
+) => {
+  console.log("=== mapJobToSupabaseJob DEBUG ===");
+  console.log("Job recebido:", job);
+  console.log("job.createdAt:", job.createdAt);
+  console.log("typeof job.createdAt:", typeof job.createdAt);
+  console.log("job.createdAt instanceof Date:", job.createdAt instanceof Date);
+
+  const created_at = job.createdAt
+    ? job.createdAt instanceof Date
+      ? job.createdAt.toISOString().split("T")[0] + "T00:00:00.000Z"
+      : (() => {
+          try {
+            return (
+              new Date(job.createdAt as string).toISOString().split("T")[0] +
+              "T00:00:00.000Z"
+            );
+          } catch (error) {
+            console.error("Erro ao converter data:", job.createdAt, error);
+            return new Date().toISOString().split("T")[0] + "T00:00:00.000Z";
+          }
+        })()
+    : new Date().toISOString().split("T")[0] + "T00:00:00.000Z";
+
+  console.log("created_at final:", created_at);
+
+  return {
+    title: job.title,
+    company: job.company,
+    location: job.location,
+    type: job.type,
+    category: job.category,
+    experience: job.experience,
+    salary_min: job.salary?.min,
+    salary_max: job.salary?.max,
+    salary_currency: job.salary?.currency,
+    salary_period: job.salary?.period,
+    description: job.description,
+    requirements: job.requirements,
+    benefits: job.benefits,
+    is_remote: job.isRemote,
+    is_featured: job.isFeatured,
+    is_active: job.isActive,
+    application_url: job.applicationUrl,
+    company_logo: job.companyLogo,
+    tags: job.tags,
+    created_at,
+    updated_at: new Date().toISOString(),
+  };
+};
 
 function slugify(str: string) {
   return str
@@ -127,6 +158,47 @@ export const jobsService = {
     return mapSupabaseJobToJob(data);
   },
 
+  // Verificar se vaga já existe (por título, empresa e URL)
+  async checkJobExists(
+    job: Omit<Job, "id" | "createdAt" | "updatedAt">
+  ): Promise<boolean> {
+    // Verificar por título e empresa (mais comum)
+    const { data } = await supabase
+      .from("jobs")
+      .select("id")
+      .eq("title", job.title)
+      .eq("company", job.company)
+      .eq("is_active", true)
+      .single();
+
+    if (data) return true;
+
+    // Verificar por URL de aplicação (se existir)
+    if (job.applicationUrl) {
+      const { data: urlData } = await supabase
+        .from("jobs")
+        .select("id")
+        .eq("application_url", job.applicationUrl)
+        .eq("is_active", true)
+        .single();
+
+      if (urlData) return true;
+    }
+
+    // Verificar por slug
+    const slug = `${slugify(job.title)}-at-${slugify(job.company)}`;
+    const { data: slugData } = await supabase
+      .from("jobs")
+      .select("id")
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .single();
+
+    if (slugData) return true;
+
+    return false;
+  },
+
   // Buscar vagas com filtros
   async searchJobs(filters: any): Promise<Job[]> {
     let query = supabase.from("jobs").select("*").eq("is_active", true);
@@ -176,11 +248,18 @@ export const jobsService = {
 
   // Criar nova vaga
   async createJob(
-    job: Omit<Job, "id" | "createdAt" | "updatedAt">
+    job: Omit<Job, "id" | "createdAt" | "updatedAt"> & {
+      createdAt?: Date | string;
+    }
   ): Promise<Job | null> {
+    console.log("=== createJob DEBUG ===");
+    console.log("Job recebido para criar:", job);
+
     // Gerar slug
     const slug = `${slugify(job.title)}-at-${slugify(job.company)}`;
     const supabaseJob = { ...mapJobToSupabaseJob(job), slug };
+
+    console.log("Supabase job para inserir:", supabaseJob);
 
     const { data, error } = await supabase
       .from("jobs")
@@ -193,6 +272,7 @@ export const jobsService = {
       return null;
     }
 
+    console.log("Job criado com sucesso:", data);
     return mapSupabaseJobToJob(data);
   },
 
@@ -288,10 +368,7 @@ export const jobsService = {
 
   // Deletar vaga (soft delete)
   async deleteJob(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from("jobs")
-      .update({ is_active: false })
-      .eq("id", id);
+    const { error } = await supabase.from("jobs").delete().eq("id", id);
 
     if (error) {
       console.error("Error deleting job:", error);
@@ -325,6 +402,186 @@ export const trackingService = {
     } catch (error) {
       console.error("Erro ao registrar clique:", error);
       return false;
+    }
+  },
+
+  // Histórico de pesquisas
+  async saveSearchHistory(
+    query: string,
+    sources: string[],
+    resultsCount: number,
+    results?: any[]
+  ) {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return false;
+
+      const { error } = await supabase.from("search_history").insert({
+        query,
+        sources,
+        results_count: resultsCount,
+        results: results || null,
+        user_id: user.id,
+      });
+
+      if (error) {
+        console.error("Erro ao salvar histórico:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Erro ao salvar histórico:", error);
+      return false;
+    }
+  },
+
+  async getSearchHistory(): Promise<SearchHistory[]> {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      const { data, error } = await supabase
+        .from("search_history")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.error("Erro ao buscar histórico:", error);
+        return [];
+      }
+
+      return data.map((item: any) => ({
+        id: item.id,
+        query: item.query,
+        sources: item.sources,
+        resultsCount: item.results_count,
+        results: item.results || [],
+        createdAt: new Date(item.created_at),
+        userId: item.user_id,
+        imported: item.imported || false,
+      }));
+    } catch (error) {
+      console.error("Erro ao buscar histórico:", error);
+      return [];
+    }
+  },
+
+  async deleteSearchHistory(id: string): Promise<boolean> {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return false;
+
+      const { error } = await supabase
+        .from("search_history")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Erro ao deletar histórico:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Erro ao deletar histórico:", error);
+      return false;
+    }
+  },
+
+  async markSearchHistoryAsImported(id: string): Promise<boolean> {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return false;
+
+      const { error } = await supabase
+        .from("search_history")
+        .update({ imported: true })
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Erro ao marcar como importado:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Erro ao marcar como importado:", error);
+      return false;
+    }
+  },
+
+  async markJobAsImported(
+    historyId: string,
+    externalJobId: string,
+    jobTitle: string,
+    companyName: string
+  ): Promise<boolean> {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return false;
+
+      const { error } = await supabase.from("imported_jobs").insert({
+        history_id: historyId,
+        external_job_id: externalJobId,
+        job_title: jobTitle,
+        company_name: companyName,
+        user_id: user.id,
+      });
+
+      if (error) {
+        console.error("Erro ao marcar vaga como importada:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Erro ao marcar vaga como importada:", error);
+      return false;
+    }
+  },
+
+  async getImportedJobs(historyId?: string): Promise<string[]> {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      let query = supabase
+        .from("imported_jobs")
+        .select("external_job_id")
+        .eq("user_id", user.id);
+
+      if (historyId) {
+        query = query.eq("history_id", historyId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Erro ao buscar vagas importadas:", error);
+        return [];
+      }
+
+      return data.map((item) => item.external_job_id);
+    } catch (error) {
+      console.error("Erro ao buscar vagas importadas:", error);
+      return [];
     }
   },
 
