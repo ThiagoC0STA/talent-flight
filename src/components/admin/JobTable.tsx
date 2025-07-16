@@ -1,4 +1,4 @@
-import { Edit, Eye, Trash2, Linkedin } from "lucide-react";
+import { Edit, Eye, Trash2, Linkedin, Globe, Building } from "lucide-react";
 import { Job } from "@/types/job";
 import Image from "next/image";
 import { useState } from "react";
@@ -26,6 +26,7 @@ interface JobTableProps {
   onEdit: (job: Job) => void;
   onDelete: (jobId: string) => void;
   onToggleActive: (job: Job) => void;
+  onToggleRemote: (job: Job) => void;
   loading?: boolean;
 }
 
@@ -43,6 +44,7 @@ export default function JobTable({
   jobs,
   onEdit,
   onDelete,
+  onToggleRemote,
   loading,
 }: JobTableProps) {
   const [deleteModal, setDeleteModal] = useState<{
@@ -235,7 +237,7 @@ export default function JobTable({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => onEdit(job)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                         title="Edit job"
                       >
                         <Edit className="w-4 h-4" />
@@ -244,21 +246,36 @@ export default function JobTable({
                         href={job.applicationUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                        className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors cursor-pointer"
                         title="Ver link da vaga"
                       >
                         <Eye className="w-4 h-4" />
                       </a>
                       <button
                         onClick={() => handleLinkedInClick(job)}
-                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                         title="Postar no LinkedIn"
                       >
                         <Linkedin className="w-4 h-4" />
                       </button>
                       <button
+                        onClick={() => onToggleRemote(job)}
+                        className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                          job.isRemote
+                            ? "text-green-600 hover:bg-green-50"
+                            : "text-gray-600 hover:bg-gray-50"
+                        }`}
+                        title={job.isRemote ? "Marcar como não-remote" : "Marcar como remote"}
+                      >
+                        {job.isRemote ? (
+                          <Globe className="w-4 h-4" />
+                        ) : (
+                          <Building className="w-4 h-4" />
+                        )}
+                      </button>
+                      <button
                         onClick={() => handleDeleteClick(job)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                         title="Delete job"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -336,14 +353,29 @@ export default function JobTable({
                     </a>
                     <button
                       onClick={() => handleLinkedInClick(job)}
-                      className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                       title="Postar no LinkedIn"
                     >
                       <Linkedin className="w-4 h-4" />
                     </button>
                     <button
+                      onClick={() => onToggleRemote(job)}
+                      className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                        job.isRemote
+                          ? "text-green-600 hover:bg-green-50"
+                          : "text-gray-600 hover:bg-gray-50"
+                      }`}
+                      title={job.isRemote ? "Marcar como não-remote" : "Marcar como remote"}
+                    >
+                      {job.isRemote ? (
+                        <Globe className="w-4 h-4" />
+                      ) : (
+                        <Building className="w-4 h-4" />
+                      )}
+                    </button>
+                    <button
                       onClick={() => handleDeleteClick(job)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       title="Delete job"
                     >
                       <Trash2 className="w-4 h-4" />

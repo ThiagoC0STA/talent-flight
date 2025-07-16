@@ -77,6 +77,7 @@ export default function AdminPage() {
   // Jobs state
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   // Form state
   const [isEditing, setIsEditing] = useState(false);
@@ -124,28 +125,9 @@ export default function AdminPage() {
   );
   const types = Array.from(new Set(jobs.map((j) => j.type))).filter(Boolean);
 
-  // Filtragem
+  // Filtragem - agora usa os jobs carregados diretamente
   const filteredJobs = jobs.filter((job) => {
     if (showInvalidOnly && !invalidJobIds.includes(job.id)) return false;
-    if (
-      filters.query &&
-      !(
-        job.title.toLowerCase().includes(filters.query.toLowerCase()) ||
-        job.company.toLowerCase().includes(filters.query.toLowerCase()) ||
-        job.location.toLowerCase().includes(filters.query.toLowerCase())
-      )
-    )
-      return false;
-    if (filters.status === "active" && !job.isActive) return false;
-    if (filters.status === "inactive" && job.isActive) return false;
-    if (filters.type && job.type !== filters.type) return false;
-    if (filters.category && job.category !== filters.category) return false;
-    if (filters.experience && job.experience !== filters.experience)
-      return false;
-    if (filters.remote === "yes" && !job.isRemote) return false;
-    if (filters.remote === "no" && job.isRemote) return false;
-    if (filters.featured === "yes" && !job.isFeatured) return false;
-    if (filters.featured === "no" && job.isFeatured) return false;
     return true;
   });
 
@@ -159,7 +141,7 @@ export default function AdminPage() {
   // Resetar página ao filtrar
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters, showInvalidOnly]);
+  }, [showInvalidOnly]);
 
   // Buscar jobs com links inválidos (analytics real)
   useEffect(() => {
@@ -203,9 +185,9 @@ export default function AdminPage() {
     };
   }, []);
 
-  // Load jobs when user is authenticated
+  // Load jobs only once when user is authenticated
   useEffect(() => {
-    if (user) {
+    if (user && jobs.length === 0) {
       loadJobs();
     }
   }, [user]);
@@ -288,8 +270,9 @@ export default function AdminPage() {
   const handleDelete = async (jobId: string) => {
     try {
       await jobsService.deleteJob(jobId);
+      // Remove job from local state instead of reloading all
+      setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
       setToast("Job deleted successfully!");
-      await loadJobs();
     } catch (error) {
       console.error("Erro ao deletar vaga:", error);
       setToast("Error deleting job");
@@ -298,25 +281,59 @@ export default function AdminPage() {
 
   const handleToggleActive = async (job: Job) => {
     try {
-      await jobsService.updateJob(job.id, { isActive: !job.isActive });
-      setToast(
-        `Job ${job.isActive ? "deactivated" : "activated"} successfully!`
-      );
-      await loadJobs();
+      const updatedJob = await jobsService.updateJob(job.id, {
+        isActive: !job.isActive,
+      });
+      if (updatedJob) {
+        // Update job in local state instead of reloading all
+        setJobs((prevJobs) =>
+          prevJobs.map((j) => (j.id === job.id ? updatedJob : j))
+        );
+        setToast(
+          `Job ${
+            updatedJob.isActive ? "activated" : "deactivated"
+          } successfully!`
+        );
+      }
     } catch (error) {
       console.error("Erro ao alterar status da vaga:", error);
       setToast("Error changing job status");
     }
   };
 
+  const handleToggleRemote = async (job: Job) => {
+    try {
+      const updatedJob = await jobsService.updateJob(job.id, {
+        isRemote: !job.isRemote,
+      });
+      if (updatedJob) {
+        // Update job in local state instead of reloading all
+        setJobs((prevJobs) =>
+          prevJobs.map((j) => (j.id === job.id ? updatedJob : j))
+        );
+        setToast(
+          `Job marked as ${
+            updatedJob.isRemote ? "remote" : "not remote"
+          } successfully!`
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao alterar status remote da vaga:", error);
+      setToast("Error changing job remote status");
+    }
+  };
+
   const handleImportJob = async (
-    jobData: Omit<Job, "id" | "createdAt" | "updatedAt"> & { createdAt?: Date | string }
+    jobData: Omit<Job, "id" | "createdAt" | "updatedAt"> & {
+      createdAt?: Date | string;
+    }
   ): Promise<boolean> => {
     try {
       const result = await jobsService.createJob(jobData);
       if (result) {
+        // Add new job to local state instead of reloading all
+        setJobs((prevJobs) => [...prevJobs, result]);
         setToast("Job imported successfully!");
-        await loadJobs();
         return true;
       } else {
         setToast("Error importing job");
@@ -337,11 +354,11 @@ export default function AdminPage() {
       const safeHtml = DOMPurify.sanitize(rawHtml);
 
       let createdAtDate: Date;
-      
+
       if (isEditing && editingJob && formData.created_at) {
         // Se é edição e tem data, usar a data do form
         createdAtDate = new Date(formData.created_at + "T00:00:00");
-        
+
         // Validar se a data é válida
         if (isNaN(createdAtDate.getTime())) {
           createdAtDate = new Date();
@@ -350,7 +367,7 @@ export default function AdminPage() {
         // Se é nova vaga, usar data atual
         createdAtDate = new Date();
       }
-      
+
       console.log("=== ADMIN DEBUG ===");
       console.log("formData.created_at:", formData.created_at);
       console.log("createdAtDate:", createdAtDate);
@@ -414,7 +431,14 @@ export default function AdminPage() {
 
       if (result) {
         resetForm();
-        await loadJobs();
+        // Update jobs in local state instead of reloading all
+        if (isEditing && editingJob) {
+          setJobs((prevJobs) =>
+            prevJobs.map((job) => (job.id === editingJob.id ? result : job))
+          );
+        } else {
+          setJobs((prevJobs) => [...prevJobs, result]);
+        }
       }
     } catch (error) {
       console.error("Erro no submit:", error);
@@ -659,17 +683,55 @@ export default function AdminPage() {
             <JobFilters
               filters={filters}
               onChange={setFilters}
+              onSearch={async () => {
+                setSearchLoading(true);
+                try {
+                  const searchResults = await jobsService.searchJobsAdmin(filters);
+                  setJobs(searchResults);
+                  setCurrentPage(1);
+                } catch (error) {
+                  console.error("Erro na busca:", error);
+                  setToast("Erro ao buscar vagas");
+                } finally {
+                  setSearchLoading(false);
+                }
+              }}
+              onClear={async () => {
+                const emptyFilters = {
+                  query: "",
+                  status: "",
+                  type: "",
+                  category: "",
+                  experience: "",
+                  remote: "",
+                  featured: "",
+                };
+                setFilters(emptyFilters);
+                setCurrentPage(1);
+                setSearchLoading(true);
+                try {
+                  const allJobs = await jobsService.getAllJobs();
+                  setJobs(allJobs);
+                } catch (error) {
+                  console.error("Erro ao carregar vagas:", error);
+                  setToast("Erro ao carregar vagas");
+                } finally {
+                  setSearchLoading(false);
+                }
+              }}
               showInvalidOnly={showInvalidOnly}
               onToggleInvalid={setShowInvalidOnly}
               categories={categories}
               types={types}
+              loading={searchLoading}
             />
             <JobTable
               jobs={paginatedJobs}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onToggleActive={handleToggleActive}
-              loading={loading}
+              onToggleRemote={handleToggleRemote}
+              loading={loading || searchLoading}
             />
             <Pagination
               currentPage={currentPage}

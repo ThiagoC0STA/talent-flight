@@ -246,6 +246,59 @@ export const jobsService = {
     return data.map(mapSupabaseJobToJob);
   },
 
+  // Buscar vagas com filtros para admin (inclui inativas)
+  async searchJobsAdmin(filters: any): Promise<Job[]> {
+    let query = supabase.from("jobs").select("*");
+
+    // Aplicar filtros
+    if (filters.query) {
+      query = query.or(
+        `title.ilike.%${filters.query}%,company.ilike.%${filters.query}%,location.ilike.%${filters.query}%`
+      );
+    }
+
+    if (filters.status === "active") {
+      query = query.eq("is_active", true);
+    } else if (filters.status === "inactive") {
+      query = query.eq("is_active", false);
+    }
+
+    if (filters.type) {
+      query = query.eq("type", filters.type);
+    }
+
+    if (filters.category) {
+      query = query.eq("category", filters.category);
+    }
+
+    if (filters.experience) {
+      query = query.eq("experience", filters.experience);
+    }
+
+    if (filters.remote === "yes") {
+      query = query.eq("is_remote", true);
+    } else if (filters.remote === "no") {
+      query = query.eq("is_remote", false);
+    }
+
+    if (filters.featured === "yes") {
+      query = query.eq("is_featured", true);
+    } else if (filters.featured === "no") {
+      query = query.eq("is_featured", false);
+    }
+
+    const { data, error } = await query.order("created_at", {
+      ascending: false,
+    });
+
+    if (error) {
+      console.error("Error searching jobs admin:", error);
+      return [];
+    }
+
+    return data.map(mapSupabaseJobToJob);
+  },
+
   // Criar nova vaga
   async createJob(
     job: Omit<Job, "id" | "createdAt" | "updatedAt"> & {

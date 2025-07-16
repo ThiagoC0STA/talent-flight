@@ -1,4 +1,5 @@
 import React from "react";
+import { Search, X } from "lucide-react";
 
 interface JobFiltersProps {
   filters: {
@@ -11,33 +12,44 @@ interface JobFiltersProps {
     featured: string;
   };
   onChange: (filters: any) => void;
+  onSearch: () => void;
+  onClear: () => void;
   showInvalidOnly: boolean;
   onToggleInvalid: (value: boolean) => void;
   categories?: string[];
   types?: string[];
+  loading?: boolean;
 }
 
 export default function JobFilters({
   filters,
   onChange,
+  onSearch,
+  onClear,
   showInvalidOnly,
   onToggleInvalid,
   categories = [],
   types = [],
+  loading = false,
 }: JobFiltersProps) {
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
-        {/* Busca */}
+        {/* Search */}
         <div className="sm:col-span-2 lg:col-span-1">
           <label className="block text-xs font-medium text-gray-700 mb-1">
-            Buscar
+            Search
           </label>
           <input
             type="text"
             value={filters.query}
             onChange={(e) => onChange({ ...filters, query: e.target.value })}
-            placeholder="Título, empresa, localização..."
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                onSearch();
+              }
+            }}
+            placeholder="Title, company, location..."
             className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-sm"
           />
         </div>
@@ -56,10 +68,10 @@ export default function JobFilters({
             <option value="inactive">Inactive</option>
           </select>
         </div>
-        {/* Tipo */}
+        {/* Type */}
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
-            Tipo
+            Type
           </label>
           <select
             value={filters.type}
@@ -74,10 +86,10 @@ export default function JobFilters({
             ))}
           </select>
         </div>
-        {/* Categoria */}
+        {/* Category */}
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
-            Categoria
+            Category
           </label>
           <select
             value={filters.category}
@@ -112,10 +124,10 @@ export default function JobFilters({
             <option value="between">Between Levels</option>
           </select>
         </div>
-        {/* Remoto */}
+        {/* Remote */}
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
-            Remoto
+            Remote
           </label>
           <select
             value={filters.remote}
@@ -127,10 +139,10 @@ export default function JobFilters({
             <option value="no">No</option>
           </select>
         </div>
-        {/* Destaque */}
+        {/* Featured */}
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
-            Destaque
+            Featured
           </label>
           <select
             value={filters.featured}
@@ -144,21 +156,45 @@ export default function JobFilters({
         </div>
       </div>
       
-      {/* Toggle links inválidos */}
-      <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
-        <input
-          type="checkbox"
-          checked={showInvalidOnly}
-          onChange={(e) => onToggleInvalid(e.target.checked)}
-          id="invalid-toggle"
-          className="accent-[#0476D9] w-4 h-4 sm:w-5 sm:h-5"
-        />
-        <label
-          htmlFor="invalid-toggle"
-          className="text-sm text-[#0476D9] font-medium cursor-pointer"
-        >
-          Only jobs with invalid links
-        </label>
+      {/* Action buttons */}
+      <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={showInvalidOnly}
+            onChange={(e) => onToggleInvalid(e.target.checked)}
+            id="invalid-toggle"
+            className="accent-[#0476D9] w-4 h-4 sm:w-5 sm:h-5"
+          />
+          <label
+            htmlFor="invalid-toggle"
+            className="text-sm text-[#0476D9] font-medium cursor-pointer"
+          >
+            Only jobs with invalid links
+          </label>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onClear}
+            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <X className="w-4 h-4" />
+            Clear
+          </button>
+          <button
+            onClick={onSearch}
+            disabled={loading}
+            className="px-4 py-2 text-sm font-medium text-white bg-[#0476D9] hover:bg-[#0366C9] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center gap-2"
+          >
+            {loading ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Search className="w-4 h-4" />
+            )}
+            {loading ? "Searching..." : "Search"}
+          </button>
+        </div>
       </div>
     </div>
   );
