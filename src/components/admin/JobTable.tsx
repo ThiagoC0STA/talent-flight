@@ -1,5 +1,6 @@
 import { Edit, Eye, Trash2 } from "lucide-react";
 import { Job } from "@/types/job";
+import Image from "next/image";
 
 function getExperienceColor(experience?: string) {
   const colors = {
@@ -82,20 +83,39 @@ export default function JobTable({
             {jobs.map((job) => (
               <tr key={job.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4">
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      <a
-                        href={`/job/${slugify(job.title)}-at-${slugify(
-                          job.company
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline text-[#0476D9] cursor-pointer"
-                      >
-                        {job.title}
-                      </a>
-                    </p>
-                    <p className="text-sm text-gray-500">{job.location}</p>
+                  <div className="flex items-center gap-3">
+                    {job.companyLogo ? (
+                      <div className="flex-shrink-0">
+                        <Image
+                          src={job.companyLogo}
+                          alt={`${job.company} logo`}
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 rounded-lg object-contain bg-white border border-gray-200"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-gray-500 text-xs font-medium">
+                          {job.company.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        <a
+                          href={`/job/${slugify(job.title)}-at-${slugify(
+                            job.company
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline text-[#0476D9] cursor-pointer"
+                        >
+                          {job.title}
+                        </a>
+                      </p>
+                      <p className="text-sm text-gray-500">{job.location}</p>
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
@@ -166,21 +186,40 @@ export default function JobTable({
               className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm"
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 mb-1">
-                    <a
-                      href={`/job/${slugify(job.title)}-at-${slugify(
-                        job.company
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline text-[#0476D9]"
-                    >
-                      {job.title}
-                    </a>
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2">{job.company}</p>
-                  <p className="text-sm text-gray-500">{job.location}</p>
+                <div className="flex items-start gap-3 flex-1">
+                  {job.companyLogo ? (
+                    <div className="flex-shrink-0">
+                      <Image
+                        src={job.companyLogo}
+                        alt={`${job.company} logo`}
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 rounded-lg object-contain bg-white border border-gray-200"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-gray-500 text-xs font-medium">
+                        {job.company.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 mb-1">
+                      <a
+                        href={`/job/${slugify(job.title)}-at-${slugify(
+                          job.company
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline text-[#0476D9]"
+                      >
+                        {job.title}
+                      </a>
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2">{job.company}</p>
+                    <p className="text-sm text-gray-500">{job.location}</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button

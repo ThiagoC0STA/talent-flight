@@ -313,7 +313,7 @@ export default function AdminPage() {
       const safeHtml = DOMPurify.sanitize(rawHtml);
 
       const createdAtDate = isEditing && editingJob
-        ? new Date(editingJob.createdAt)
+        ? new Date(formData.created_at + 'T00:00:00')
         : new Date();
 
       const jobData = {

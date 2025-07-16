@@ -231,7 +231,8 @@ export const jobsService = {
     if (updates.companyLogo !== undefined)
       supabaseUpdates.company_logo = updates.companyLogo;
     if (updates.tags) supabaseUpdates.tags = updates.tags;
-    if (updates.createdAt) supabaseUpdates.created_at = updates.createdAt;
+    if (updates.createdAt)
+      supabaseUpdates.created_at = updates.createdAt.toISOString();
     // Gerar slug atualizado
     if (updates.title && updates.company) {
       supabaseUpdates.slug = `${slugify(updates.title)}-at-${slugify(

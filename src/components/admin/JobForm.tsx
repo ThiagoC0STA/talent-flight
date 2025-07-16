@@ -41,9 +41,9 @@ export default function JobForm({
     applicationUrl: editingJob?.applicationUrl || "",
     company_logo: editingJob?.companyLogo || "",
     tags: editingJob?.tags?.join(", ") || "",
-    created_at: editingJob
-      ? new Date(editingJob.createdAt).toISOString().split("T")[0]
-      : new Date().toISOString().split("T")[0],
+    created_at: editingJob?.createdAt 
+      ? new Date(editingJob.createdAt).toLocaleDateString('en-CA')
+      : new Date().toLocaleDateString('en-CA'),
   });
 
   const handleInputChange = (
