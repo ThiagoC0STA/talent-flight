@@ -76,7 +76,7 @@ function getExperienceFromSeniority(seniority: string): string {
     lowerSeniority.includes("c_level") ||
     lowerSeniority.includes("executive")
   ) {
-    return "executive";
+    return "senior"; // Mapear executive para senior
   }
 
   return "mid"; // Default

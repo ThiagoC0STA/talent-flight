@@ -42,8 +42,8 @@ export default function JobFilters({
 
   const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
+      types: section === "types" ? !prev.types : false,
+      experience: section === "experience" ? !prev.experience : false,
     }));
   };
 

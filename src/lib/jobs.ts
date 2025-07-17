@@ -2,33 +2,69 @@ import { SearchHistory } from "@/types/common";
 import { Job } from "@/types/job";
 import { supabase } from "./supabase";
 
+// Função para corrigir dados inconsistentes no banco
+const fixInconsistentData = (data: any[]): any[] => {
+  return data.map((job) => {
+    // Corrigir valores de experiência inconsistentes
+    let fixedExperience = job.experience;
+    if (job.experience) {
+      const experience = job.experience.toLowerCase();
+      if (experience === "executive" || experience === "lead") {
+        fixedExperience = "senior";
+      } else if (
+        ![
+          "intern",
+          "junior",
+          "junior-mid",
+          "mid",
+          "mid-senior",
+          "senior",
+          "between",
+        ].includes(experience)
+      ) {
+        fixedExperience = "mid"; // Default para valores desconhecidos
+      }
+    }
+
+    return {
+      ...job,
+      experience: fixedExperience,
+    };
+  });
+};
+
 // Converter dados do Supabase para o formato da aplicação
-const mapSupabaseJobToJob = (supabaseJob: any): Job => ({
-  id: supabaseJob.id,
-  title: supabaseJob.title,
-  company: supabaseJob.company,
-  location: supabaseJob.location,
-  type: supabaseJob.type as any,
-  category: supabaseJob.category as any,
-  experience: supabaseJob.experience as any,
-  salary: {
-    min: supabaseJob.salary_min,
-    max: supabaseJob.salary_max,
-    currency: supabaseJob.salary_currency,
-    period: supabaseJob.salary_period as any,
-  },
-  description: supabaseJob.description,
-  requirements: supabaseJob.requirements || [],
-  benefits: supabaseJob.benefits || [],
-  isRemote: supabaseJob.is_remote,
-  isFeatured: supabaseJob.is_featured,
-  isActive: supabaseJob.is_active,
-  applicationUrl: supabaseJob.application_url,
-  companyLogo: supabaseJob.company_logo,
-  tags: supabaseJob.tags || [],
-  createdAt: new Date(supabaseJob.created_at),
-  updatedAt: new Date(supabaseJob.updated_at),
-});
+const mapSupabaseJobToJob = (supabaseJob: any): Job => {
+  // Corrigir dados inconsistentes antes do mapeamento
+  const fixedJob = fixInconsistentData([supabaseJob])[0];
+
+  return {
+    id: fixedJob.id,
+    title: fixedJob.title,
+    company: fixedJob.company,
+    location: fixedJob.location,
+    type: fixedJob.type as any,
+    category: fixedJob.category as any,
+    experience: fixedJob.experience as any,
+    salary: {
+      min: fixedJob.salary_min,
+      max: fixedJob.salary_max,
+      currency: fixedJob.salary_currency,
+      period: fixedJob.salary_period as any,
+    },
+    description: fixedJob.description,
+    requirements: fixedJob.requirements || [],
+    benefits: fixedJob.benefits || [],
+    isRemote: fixedJob.is_remote,
+    isFeatured: fixedJob.is_featured,
+    isActive: fixedJob.is_active,
+    applicationUrl: fixedJob.application_url,
+    companyLogo: fixedJob.company_logo,
+    tags: fixedJob.tags || [],
+    createdAt: new Date(fixedJob.created_at),
+    updatedAt: new Date(fixedJob.updated_at),
+  };
+};
 
 // Converter dados da aplicação para o formato do Supabase
 const mapJobToSupabaseJob = (
@@ -118,6 +154,105 @@ export const jobsService = {
     }
 
     return data.map(mapSupabaseJobToJob);
+  },
+
+  // Nova função para buscar jobs com paginação e filtros
+  async getJobsWithPagination(params: {
+    page: number;
+    limit: number;
+    filters?: any;
+    sortBy?: "date" | "salary" | "relevance";
+    sortOrder?: "asc" | "desc";
+  }): Promise<{
+    jobs: Job[];
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    hasMore: boolean;
+  }> {
+    const {
+      page,
+      limit,
+      filters = {},
+      sortBy = "date",
+      sortOrder = "desc",
+    } = params;
+    const offset = (page - 1) * limit;
+
+    let query = supabase
+      .from("jobs")
+      .select("*", { count: "exact" })
+      .eq("is_active", true);
+
+    // Aplicar filtros
+    if (filters.query) {
+      query = query.or(
+        `title.ilike.%${filters.query}%,company.ilike.%${filters.query}%,location.ilike.%${filters.query}%,description.ilike.%${filters.query}%`
+      );
+    }
+
+    if (filters.location) {
+      query = query.ilike("location", `%${filters.location}%`);
+    }
+
+    if (filters.category && filters.category.length > 0) {
+      query = query.in("category", filters.category);
+    }
+
+    if (filters.type && filters.type.length > 0) {
+      query = query.in("type", filters.type);
+    }
+
+    if (filters.experience && filters.experience.length > 0) {
+      query = query.in("experience", filters.experience);
+    }
+
+    if (filters.isRemote) {
+      query = query.eq("is_remote", true);
+    }
+
+    if (filters.isFeatured) {
+      query = query.eq("is_featured", true);
+    }
+
+    // Aplicar ordenação
+    let orderBy = "created_at";
+    if (sortBy === "salary") {
+      orderBy = "salary_min";
+    } else if (sortBy === "relevance") {
+      orderBy = "created_at"; // Para relevância, mantém por data
+    }
+
+    query = query.order(orderBy, { ascending: sortOrder === "asc" });
+
+    // Aplicar paginação
+    query = query.range(offset, offset + limit - 1);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      console.error("Error fetching jobs with pagination:", error);
+      return {
+        jobs: [],
+        total: 0,
+        totalPages: 0,
+        currentPage: page,
+        hasMore: false,
+      };
+    }
+
+    const jobs = data.map(mapSupabaseJobToJob);
+    const total = count || 0;
+    const totalPages = Math.ceil(total / limit);
+    const hasMore = page < totalPages;
+
+    return {
+      jobs,
+      total,
+      totalPages,
+      currentPage: page,
+      hasMore,
+    };
   },
 
   async getJobsCount(): Promise<number> {
@@ -220,6 +355,62 @@ export const jobsService = {
     if (slugData) return true;
 
     return false;
+  },
+
+  // Função para limpar dados inconsistentes no banco
+  async cleanInconsistentData(): Promise<boolean> {
+    try {
+      console.log("=== CLEANING INCONSISTENT DATA ===");
+
+      // Buscar todos os jobs com dados inconsistentes
+      const { data: inconsistentJobs, error: fetchError } = await supabase
+        .from("jobs")
+        .select("id, experience")
+        .or("experience.eq.executive,experience.eq.lead");
+
+      if (fetchError) {
+        console.error("Erro ao buscar dados inconsistentes:", fetchError);
+        return false;
+      }
+
+      console.log(
+        "Jobs com dados inconsistentes encontrados:",
+        inconsistentJobs?.length || 0
+      );
+
+      if (!inconsistentJobs || inconsistentJobs.length === 0) {
+        console.log("Nenhum dado inconsistente encontrado");
+        return true;
+      }
+
+      // Atualizar cada job inconsistente
+      for (const job of inconsistentJobs) {
+        let newExperience = job.experience;
+
+        if (job.experience === "executive" || job.experience === "lead") {
+          newExperience = "senior";
+        }
+
+        const { error: updateError } = await supabase
+          .from("jobs")
+          .update({ experience: newExperience })
+          .eq("id", job.id);
+
+        if (updateError) {
+          console.error(`Erro ao atualizar job ${job.id}:`, updateError);
+        } else {
+          console.log(
+            `Job ${job.id} atualizado: ${job.experience} -> ${newExperience}`
+          );
+        }
+      }
+
+      console.log("Limpeza de dados inconsistentes concluída");
+      return true;
+    } catch (error) {
+      console.error("Erro na limpeza de dados:", error);
+      return false;
+    }
   },
 
   // Buscar vagas com filtros

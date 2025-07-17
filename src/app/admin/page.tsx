@@ -332,18 +332,33 @@ export default function AdminPage() {
     try {
       const result = await jobsService.createJob(jobData);
       if (result) {
-        // Add new job to local state instead of reloading all
-        setJobs((prevJobs) => [...prevJobs, result]);
         setToast("Job imported successfully!");
+        loadJobs(); // Recarregar jobs
         return true;
       } else {
         setToast("Error importing job");
         return false;
       }
     } catch (error) {
-      console.error("Erro ao importar vaga:", error);
+      console.error("Error importing job:", error);
       setToast("Error importing job");
       return false;
+    }
+  };
+
+  const handleCleanInconsistentData = async () => {
+    try {
+      setToast("Cleaning inconsistent data...");
+      const success = await jobsService.cleanInconsistentData();
+      if (success) {
+        setToast("Data cleaned successfully!");
+        loadJobs(); // Recarregar jobs
+      } else {
+        setToast("Error cleaning data");
+      }
+    } catch (error) {
+      console.error("Error cleaning data:", error);
+      setToast("Error cleaning data");
     }
   };
 
@@ -727,6 +742,18 @@ export default function AdminPage() {
               types={types}
               loading={searchLoading}
             />
+            
+            {/* Botão para limpar dados inconsistentes */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleCleanInconsistentData}
+                className="btn-outline flex items-center gap-2 text-orange-600 border-orange-600 hover:bg-orange-50"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Clean Inconsistent Data
+              </button>
+            </div>
+            
             <JobTable
               jobs={paginatedJobs}
               onEdit={handleEdit}
