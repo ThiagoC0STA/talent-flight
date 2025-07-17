@@ -58,16 +58,24 @@ function generateLinkedInPost(job: Job): string {
     job.title
   )}-at-${slugify(job.company)}`;
 
-  // Gerar hashtags baseadas na categoria e experiência
+  // Gerar hashtags baseadas na categoria, experiência e localização
+  const locationTags = job.location
+    ? job.location
+        .split(",")
+        .map((part) => part.trim().replace(/\s+/g, "").toLowerCase())
+    : [];
+
   const hashtags = [
     job.category,
     job.experience,
     "developer",
-    "remotework",
+    "work",
+    "job",
     "talentflight",
-    job.isRemote ? "remote" : null,
+    ...locationTags,
   ]
     .filter(Boolean)
+    .filter((tag, index, arr) => arr.indexOf(tag) === index) // Remove duplicatas
     .map((tag) => `#${tag}`)
     .join(" ");
 
