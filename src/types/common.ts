@@ -54,6 +54,7 @@ export interface InputProps {
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
+  onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   error?: string;
   type?: "text" | "email" | "password" | "search" | "number";
   required?: boolean;

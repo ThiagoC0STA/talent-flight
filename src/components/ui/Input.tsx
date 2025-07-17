@@ -6,6 +6,7 @@ export default function Input({
   placeholder,
   value,
   onChange,
+  onKeyPress,
   error,
   type = 'text',
   required = false,
@@ -25,6 +26,7 @@ export default function Input({
         type={type}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
+        onKeyPress={onKeyPress}
         placeholder={placeholder}
         disabled={disabled}
         required={required}

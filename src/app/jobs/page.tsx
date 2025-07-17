@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Search, Briefcase, Filter } from "lucide-react";
 import JobCard from "@/components/JobCard";
 import JobCardHorizontal from "@/components/JobCardHorizontal";
-import SearchBar from "@/components/SearchBar";
 import JobFilters from "@/components/JobFilters";
 import ActiveFilters from "@/components/ActiveFilters";
 import ViewToggle from "@/components/ViewToggle";
@@ -132,56 +131,119 @@ export default function JobsPage() {
   });
   const [animationKey, setAnimationKey] = useState(0);
 
+  // Paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreJobs, setHasMoreJobs] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const jobsPerPage = 12;
+
+  // Estado para controlar se a busca foi aplicada
+  const [hasAppliedSearch, setHasAppliedSearch] = useState(false);
+
   // Load jobs and stats from Supabase
   useEffect(() => {
     const loadJobsAndStats = async () => {
       try {
-        const allJobs = await jobsService.getAllJobs();
-        setJobs(allJobs);
-        setFilteredJobs(allJobs);
+        const offset = (currentPage - 1) * jobsPerPage;
+        const jobs = await jobsService.getAllJobs(jobsPerPage, offset);
 
-        // Calculate stats
-        const uniqueCompanies = new Set(allJobs.map((job) => job.company)).size;
-        const remoteJobsCount = allJobs.filter((job) => job.isRemote).length;
+        if (currentPage === 1) {
+          setJobs(jobs);
+          setFilteredJobs(jobs);
+        } else {
+          setJobs((prev) => [...prev, ...jobs]);
+          setFilteredJobs((prev) => [...prev, ...jobs]);
+        }
 
-        const newStats = {
-          totalJobs: allJobs.length,
-          totalCompanies: uniqueCompanies,
-          remoteJobs: remoteJobsCount,
-        };
+        // Check if there are more jobs
+        const totalJobs = await jobsService.getJobsCount();
+        setHasMoreJobs(
+          jobs.length === jobsPerPage && jobs.length + offset < totalJobs
+        );
 
-        setStats(newStats);
-        // Start animation after stats are set
-        setTimeout(() => setAnimationKey((prev) => prev + 1), 100);
+        // Calculate stats only on first load
+        if (currentPage === 1) {
+          const uniqueCompanies = new Set(jobs.map((job) => job.company)).size;
+          const remoteJobsCount = jobs.filter((job) => job.isRemote).length;
+
+          const newStats = {
+            totalJobs,
+            totalCompanies: uniqueCompanies,
+            remoteJobs: remoteJobsCount,
+          };
+
+          setStats(newStats);
+          // Start animation immediately
+          setAnimationKey((prev) => prev + 1);
+        }
       } catch (error) {
         console.error("Error loading jobs:", error);
       } finally {
         setLoading(false);
+        setLoadingMore(false);
       }
     };
 
     loadJobsAndStats();
-  }, []);
+  }, [currentPage]);
 
-  // Filter jobs when filters change
-  useEffect(() => {
-    const applyFilters = async () => {
-      if (Object.keys(filters).length === 0) {
-        setFilteredJobs(jobs);
-        return;
-      }
+  // Função para aplicar busca manualmente
+  const applySearch = async () => {
+    try {
+      setLoading(true);
+      setHasAppliedSearch(true);
 
-      try {
+      // Reset pagination
+      setCurrentPage(1);
+      setJobs([]);
+      setFilteredJobs([]);
+
+      // Se não há filtros ativos, usa os jobs já carregados
+      const hasActiveFilters = Object.values(filters).some(
+        (value) => value !== undefined && value !== null && value !== ""
+      );
+
+      if (!hasActiveFilters) {
+        // Se não há filtros, carrega jobs normalmente
+        const offset = 0;
+        const newJobs = await jobsService.getAllJobs(jobsPerPage, offset);
+        setJobs(newJobs);
+        setFilteredJobs(newJobs);
+      } else {
         const filtered = await jobsService.searchJobs(filters);
         setFilteredJobs(filtered);
-      } catch (error) {
-        console.error("Error filtering jobs:", error);
-        setFilteredJobs(jobs);
       }
-    };
 
-    applyFilters();
-  }, [filters, jobs]);
+      // Trigger animation immediately
+      setAnimationKey((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error filtering jobs:", error);
+      setFilteredJobs(jobs);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para carregar mais jobs
+  const loadMoreJobs = async () => {
+    if (loadingMore || !hasMoreJobs) return;
+
+    setLoadingMore(true);
+    setCurrentPage((prev) => prev + 1);
+    // Trigger animation for new jobs
+    setAnimationKey((prev) => prev + 1);
+  };
+
+  // Reset search state when all filters are cleared
+  useEffect(() => {
+    const hasActiveFilters = Object.values(filters).some(
+      (value) => value !== undefined && value !== null && value !== ""
+    );
+
+    if (!hasActiveFilters && hasAppliedSearch) {
+      setHasAppliedSearch(false);
+    }
+  }, [filters, hasAppliedSearch]);
 
   return (
     <div className="min-h-screen bg-[#F3F7FA]">
@@ -252,16 +314,6 @@ export default function JobsPage() {
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-4 animate-slide-in-left">
-          <SearchBar filters={filters} onFiltersChange={setFilters} />
-        </div>
-
-        {/* Active Filters */}
-        <div className="mb-4">
-          <ActiveFilters filters={filters} onFiltersChange={setFilters} />
-        </div>
-
         {/* Mobile Filter Toggle */}
         <div className="lg:hidden mb-6">
           <Button
@@ -280,6 +332,8 @@ export default function JobsPage() {
             <JobFilters
               filters={filters}
               onFiltersChange={setFilters}
+              onSearch={applySearch}
+              isSearching={loading}
               isMobile={true}
             />
           </div>
@@ -288,8 +342,13 @@ export default function JobsPage() {
         <div className="flex gap-7">
           {/* Desktop Sidebar Filters */}
           <div className="hidden lg:block w-80 flex-shrink-0 max-w-[280px]">
-            <div className="sticky top-8 ">
-              <JobFilters filters={filters} onFiltersChange={setFilters} />
+            <div className="sticky top-24">
+              <JobFilters
+                filters={filters}
+                onFiltersChange={setFilters}
+                onSearch={applySearch}
+                isSearching={loading}
+              />
             </div>
           </div>
 
@@ -301,8 +360,12 @@ export default function JobsPage() {
                 <p className="text-[#010D26] text-lg font-medium">
                   {loading
                     ? "Loading opportunities..."
-                    : `${filteredJobs.length} job${
+                    : hasAppliedSearch
+                    ? `${filteredJobs.length} job${
                         filteredJobs.length !== 1 ? "s" : ""
+                      } found`
+                    : `${stats.totalJobs} job${
+                        stats.totalJobs !== 1 ? "s" : ""
                       } found`}
                 </p>
                 <ViewToggle
@@ -379,10 +442,32 @@ export default function JobsPage() {
               </div>
             )}
 
-            {/* Load More Button (for future pagination) */}
-            {filteredJobs.length > 0 && !loading && (
+            {/* Load More Button */}
+            {filteredJobs.length > 0 && !loading && hasMoreJobs && (
               <div className="text-center mt-12 animate-fade-in">
-                <button className="btn-outline">Load More Jobs</button>
+                <button
+                  onClick={loadMoreJobs}
+                  disabled={loadingMore}
+                  className="btn-outline flex items-center gap-2 mx-auto"
+                >
+                  {loadingMore ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                      Loading...
+                    </>
+                  ) : (
+                    "Load More Jobs"
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* End of results message */}
+            {filteredJobs.length > 0 && !loading && !hasMoreJobs && (
+              <div className="text-center mt-12 animate-fade-in">
+                <p className="text-gray-500 text-sm">
+                  You've reached the end of all available opportunities
+                </p>
               </div>
             )}
           </div>

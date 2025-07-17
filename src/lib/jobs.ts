@@ -96,12 +96,21 @@ function slugify(str: string) {
 }
 
 export const jobsService = {
-  async getAllJobs(): Promise<Job[]> {
-    const { data, error } = await supabase
+  async getAllJobs(limit?: number, offset?: number): Promise<Job[]> {
+    let query = supabase
       .from("jobs")
       .select("*")
       .eq("is_active", true)
       .order("created_at", { ascending: false });
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+    if (offset) {
+      query = query.range(offset, offset + (limit || 50) - 1);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Error fetching jobs:", error);
@@ -109,6 +118,20 @@ export const jobsService = {
     }
 
     return data.map(mapSupabaseJobToJob);
+  },
+
+  async getJobsCount(): Promise<number> {
+    const { count, error } = await supabase
+      .from("jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("is_active", true);
+
+    if (error) {
+      console.error("Error fetching jobs count:", error);
+      return 0;
+    }
+
+    return count || 0;
   },
 
   // Buscar vagas em destaque
@@ -206,7 +229,7 @@ export const jobsService = {
     // Aplicar filtros
     if (filters.query) {
       query = query.or(
-        `title.ilike.%${filters.query}%,company.ilike.%${filters.query}%,location.ilike.%${filters.query}%`
+        `title.ilike.%${filters.query}%,company.ilike.%${filters.query}%,location.ilike.%${filters.query}%,description.ilike.%${filters.query}%`
       );
     }
 
@@ -243,7 +266,28 @@ export const jobsService = {
       return [];
     }
 
-    return data.map(mapSupabaseJobToJob);
+    let results = data.map(mapSupabaseJobToJob);
+
+    // Busca adicional por tags se houver query
+    if (filters.query) {
+      const tagResults = results.filter(
+        (job) =>
+          job.tags &&
+          job.tags.some((tag) =>
+            tag.toLowerCase().includes(filters.query.toLowerCase())
+          )
+      );
+
+      // Combinar resultados únicos
+      const allResults = [...results, ...tagResults];
+      const uniqueResults = allResults.filter(
+        (job, index, self) => index === self.findIndex((j) => j.id === job.id)
+      );
+
+      results = uniqueResults;
+    }
+
+    return results;
   },
 
   // Buscar vagas com filtros para admin (inclui inativas)
@@ -253,7 +297,7 @@ export const jobsService = {
     // Aplicar filtros
     if (filters.query) {
       query = query.or(
-        `title.ilike.%${filters.query}%,company.ilike.%${filters.query}%,location.ilike.%${filters.query}%`
+        `title.ilike.%${filters.query}%,company.ilike.%${filters.query}%,location.ilike.%${filters.query}%,description.ilike.%${filters.query}%`
       );
     }
 
@@ -296,7 +340,28 @@ export const jobsService = {
       return [];
     }
 
-    return data.map(mapSupabaseJobToJob);
+    let results = data.map(mapSupabaseJobToJob);
+
+    // Busca adicional por tags se houver query
+    if (filters.query) {
+      const tagResults = results.filter(
+        (job) =>
+          job.tags &&
+          job.tags.some((tag) =>
+            tag.toLowerCase().includes(filters.query.toLowerCase())
+          )
+      );
+
+      // Combinar resultados únicos
+      const allResults = [...results, ...tagResults];
+      const uniqueResults = allResults.filter(
+        (job, index, self) => index === self.findIndex((j) => j.id === job.id)
+      );
+
+      results = uniqueResults;
+    }
+
+    return results;
   },
 
   // Criar nova vaga
