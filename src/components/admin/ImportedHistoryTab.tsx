@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import {
   Clock,
   Trash2,
-  Search,
   RefreshCw,
   ExternalLink,
-  Plus,
   CheckCircle,
   ChevronDown,
   Linkedin,
@@ -15,6 +13,7 @@ import {
   Edit,
   Eye,
   Globe,
+  AlertTriangle,
 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { Job } from "@/types/job";
@@ -42,9 +41,7 @@ interface ImportedHistoryTabProps {
 }
 
 export default function ImportedHistoryTab({
-  onImportJob,
   onEdit,
-  isSubmitting = false,
 }: ImportedHistoryTabProps) {
   const [importedJobs, setImportedJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,12 +63,13 @@ export default function ImportedHistoryTab({
     isDeleting: false,
   });
 
-  const categories = Array.from(
-    new Set(importedJobs.map((j) => j.category))
-  ).filter(Boolean);
-  const types = Array.from(new Set(importedJobs.map((j) => j.type))).filter(
-    Boolean
-  );
+  const [clearHistoryModal, setClearHistoryModal] = useState<{
+    isOpen: boolean;
+    isClearing: boolean;
+  }>({
+    isOpen: false,
+    isClearing: false,
+  });
 
   useEffect(() => {
     loadImportedJobs();
@@ -86,15 +84,6 @@ export default function ImportedHistoryTab({
       console.error("Erro ao carregar vagas importadas:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleDeleteJob = async (id: string) => {
-    try {
-      await jobsService.deleteJob(id);
-      await loadImportedJobs();
-    } catch (error) {
-      console.error("Erro ao deletar vaga:", error);
     }
   };
 
@@ -156,6 +145,26 @@ export default function ImportedHistoryTab({
     }
   };
 
+  const handleClearHistory = async () => {
+    try {
+      setClearHistoryModal((prev) => ({ ...prev, isClearing: true }));
+      const success = await trackingService.clearImportedHistory();
+      if (success) {
+        await loadImportedJobs();
+        setClearHistoryModal({
+          isOpen: false,
+          isClearing: false,
+        });
+      } else {
+        console.error("Erro ao limpar histórico");
+        setClearHistoryModal((prev) => ({ ...prev, isClearing: false }));
+      }
+    } catch (error) {
+      console.error("Erro ao limpar histórico:", error);
+      setClearHistoryModal((prev) => ({ ...prev, isClearing: false }));
+    }
+  };
+
   const toggleExpanded = (id: string) => {
     setExpandedItems((prev) => {
       const newSet = new Set(prev);
@@ -204,17 +213,26 @@ export default function ImportedHistoryTab({
           <h2 className="text-2xl font-bold text-[#011640] mb-2">
             Imported History
           </h2>
-          <p className="text-gray-600">
-            View and manage your imported jobs
-          </p>
+          <p className="text-gray-600">View and manage your imported jobs</p>
         </div>
-        <button
-          onClick={loadImportedJobs}
-          className="btn-outline flex items-center gap-2"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Refresh
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() =>
+              setClearHistoryModal({ isOpen: true, isClearing: false })
+            }
+            className="btn-outline flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50"
+          >
+            <AlertTriangle className="w-4 h-4" />
+            Clear History
+          </button>
+          <button
+            onClick={loadImportedJobs}
+            className="btn-outline flex items-center gap-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -590,6 +608,62 @@ export default function ImportedHistoryTab({
         companyName={deleteModal.companyName}
         isLoading={deleteModal.isDeleting}
       />
+
+      {/* Clear History Confirmation Modal */}
+      {clearHistoryModal.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Clear Imported History
+                </h3>
+                <p className="text-sm text-gray-600">
+                  This action cannot be undone
+                </p>
+              </div>
+            </div>
+
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to clear all imported job history? This will
+              remove all records of imported jobs but will not delete the actual
+              jobs from your database.
+            </p>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() =>
+                  setClearHistoryModal({ isOpen: false, isClearing: false })
+                }
+                disabled={clearHistoryModal.isClearing}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleClearHistory}
+                disabled={clearHistoryModal.isClearing}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {clearHistoryModal.isClearing ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Clearing...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    Clear History
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

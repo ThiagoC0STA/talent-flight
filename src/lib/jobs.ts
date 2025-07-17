@@ -705,6 +705,31 @@ export const trackingService = {
     }
   },
 
+  async clearImportedHistory(): Promise<boolean> {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return false;
+
+      // Deletar todos os registros de imported_jobs do usuário
+      const { error } = await supabase
+        .from("imported_jobs")
+        .delete()
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Erro ao limpar histórico importado:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Erro ao limpar histórico importado:", error);
+      return false;
+    }
+  },
+
   async getClickStats(jobId?: string) {
     try {
       // Buscar cliques
