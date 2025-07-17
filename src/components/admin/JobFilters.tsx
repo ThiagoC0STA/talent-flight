@@ -159,19 +159,19 @@ export default function JobFilters({
       {/* Action buttons */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-200">
         <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={showInvalidOnly}
-            onChange={(e) => onToggleInvalid(e.target.checked)}
-            id="invalid-toggle"
-            className="accent-[#0476D9] w-4 h-4 sm:w-5 sm:h-5"
-          />
-          <label
-            htmlFor="invalid-toggle"
-            className="text-sm text-[#0476D9] font-medium cursor-pointer"
-          >
-            Only jobs with invalid links
-          </label>
+        <input
+          type="checkbox"
+          checked={showInvalidOnly}
+          onChange={(e) => onToggleInvalid(e.target.checked)}
+          id="invalid-toggle"
+          className="accent-[#0476D9] w-4 h-4 sm:w-5 sm:h-5"
+        />
+        <label
+          htmlFor="invalid-toggle"
+          className="text-sm text-[#0476D9] font-medium cursor-pointer"
+        >
+          Only jobs with invalid links
+        </label>
         </div>
         
         <div className="flex items-center gap-2">

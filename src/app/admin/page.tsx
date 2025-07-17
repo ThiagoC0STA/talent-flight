@@ -33,6 +33,7 @@ import JobFilters from "@/components/admin/JobFilters";
 import Pagination from "@/components/admin/Pagination";
 import JobAggregator from "@/components/admin/JobAggregator";
 import SearchHistoryTab from "@/components/admin/SearchHistoryTab";
+import ImportedHistoryTab from "@/components/admin/ImportedHistoryTab";
 
 function LoadingSpinner() {
   return (
@@ -289,11 +290,11 @@ export default function AdminPage() {
         setJobs((prevJobs) =>
           prevJobs.map((j) => (j.id === job.id ? updatedJob : j))
         );
-        setToast(
+      setToast(
           `Job ${
             updatedJob.isActive ? "activated" : "deactivated"
           } successfully!`
-        );
+      );
       }
     } catch (error) {
       console.error("Erro ao alterar status da vaga:", error);
@@ -354,11 +355,11 @@ export default function AdminPage() {
       const safeHtml = DOMPurify.sanitize(rawHtml);
 
       let createdAtDate: Date;
-
+      
       if (isEditing && editingJob && formData.created_at) {
         // Se é edição e tem data, usar a data do form
         createdAtDate = new Date(formData.created_at + "T00:00:00");
-
+        
         // Validar se a data é válida
         if (isNaN(createdAtDate.getTime())) {
           createdAtDate = new Date();
@@ -367,7 +368,7 @@ export default function AdminPage() {
         // Se é nova vaga, usar data atual
         createdAtDate = new Date();
       }
-
+      
       console.log("=== ADMIN DEBUG ===");
       console.log("formData.created_at:", formData.created_at);
       console.log("createdAtDate:", createdAtDate);
@@ -566,6 +567,7 @@ export default function AdminPage() {
               },
               { id: "search", label: "Search Jobs", icon: Search },
               { id: "history", label: "History", icon: Clock },
+              { id: "imported", label: "Imported History", icon: CheckCircle },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -762,6 +764,14 @@ export default function AdminPage() {
         {activeTab === "history" && (
           <SearchHistoryTab
             onImportJob={handleImportJob}
+            isSubmitting={isSubmitting}
+          />
+        )}
+
+        {activeTab === "imported" && (
+          <ImportedHistoryTab
+            onImportJob={handleImportJob}
+            onEdit={handleEdit}
             isSubmitting={isSubmitting}
           />
         )}

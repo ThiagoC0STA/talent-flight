@@ -638,6 +638,73 @@ export const trackingService = {
     }
   },
 
+  async getImportedJobsList(limit: number = 50): Promise<Job[]> {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      // Primeiro, buscar os registros de vagas importadas
+      const { data: importedJobs, error: importedError } = await supabase
+        .from("imported_jobs")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("imported_at", { ascending: false })
+        .limit(limit);
+
+      if (importedError) {
+        console.error("Erro ao buscar vagas importadas:", importedError);
+        return [];
+      }
+
+      if (!importedJobs || importedJobs.length === 0) {
+        return [];
+      }
+
+      // Buscar as vagas correspondentes na tabela jobs
+      // Vamos buscar por título e empresa para encontrar as vagas importadas
+      const importedJobsData: Job[] = [];
+
+      for (const importedJob of importedJobs) {
+        // Buscar a vaga na tabela jobs por título e empresa
+        const { data: jobData, error: jobError } = await supabase
+          .from("jobs")
+          .select("*")
+          .eq("title", importedJob.job_title)
+          .eq("company", importedJob.company_name)
+          .eq("is_active", true)
+          .single();
+
+        if (jobData && !jobError) {
+          importedJobsData.push(mapSupabaseJobToJob(jobData));
+        }
+      }
+
+      // Ordenar pela data de importação (mais recentes primeiro)
+      return importedJobsData.sort((a, b) => {
+        const aImported = importedJobs.find(
+          (item) =>
+            item.job_title === a.title && item.company_name === a.company
+        );
+        const bImported = importedJobs.find(
+          (item) =>
+            item.job_title === b.title && item.company_name === b.company
+        );
+
+        if (!aImported || !bImported) return 0;
+
+        return (
+          new Date(bImported.imported_at).getTime() -
+          new Date(aImported.imported_at).getTime()
+        );
+      });
+    } catch (error) {
+      console.error("Erro ao buscar lista de vagas importadas:", error);
+      return [];
+    }
+  },
+
   async getClickStats(jobId?: string) {
     try {
       // Buscar cliques
