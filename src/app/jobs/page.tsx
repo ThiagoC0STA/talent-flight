@@ -125,6 +125,12 @@ export default function JobsPage() {
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+  
+  // Debug function for viewMode changes
+  const handleViewModeChange = (mode: "grid" | "list") => {
+    console.log('ViewMode changing from', viewMode, 'to', mode);
+    setViewMode(mode);
+  };
   const [stats, setStats] = useState({
     totalJobs: 0,
     totalCompanies: 0,
@@ -267,6 +273,18 @@ export default function JobsPage() {
       setTotalPages(result.totalPages);
 
       // Não recarregar estatísticas - manter as totais
+      
+      // Scroll para o elemento de resultados após a busca
+      setTimeout(() => {
+        const element = document.getElementById("jobs-results");
+        if (element) {
+          const elementPosition = element.offsetTop - 100; // Offset de 100px para subir mais
+          window.scrollTo({
+            top: elementPosition,
+            behavior: "smooth"
+          });
+        }
+      }, 100);
     } catch (error) {
       console.error("Error filtering jobs:", error);
     } finally {
@@ -277,11 +295,15 @@ export default function JobsPage() {
   // Função para mudar de página
   const handlePageChange = async (page: number) => {
     setCurrentPage(page);
-    // Scroll para o elemento de resultados
+    // Scroll para o elemento de resultados com offset
     setTimeout(() => {
       const element = document.getElementById("jobs-results");
       if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+        const elementPosition = element.offsetTop - 100; // Offset de 100px para subir mais
+        window.scrollTo({
+          top: elementPosition,
+          behavior: "smooth"
+        });
       }
     }, 100);
   };
@@ -409,7 +431,7 @@ export default function JobsPage() {
                 </p>
                 <ViewToggle
                   viewMode={viewMode}
-                  onViewModeChange={setViewMode}
+                  onViewModeChange={handleViewModeChange}
                 />
               </div>
               <div className="flex items-center gap-2 text-sm text-[#0476D9]">
