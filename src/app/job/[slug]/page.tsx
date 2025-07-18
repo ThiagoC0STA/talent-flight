@@ -57,5 +57,8 @@ export default async function JobPage({ params }: any) {
     notFound();
   }
 
-  return <JobPagePreview job={job} />;
+  // Buscar trabalhos relacionados
+  const relatedJobs = await jobsService.getRelatedJobs(job, 12);
+
+  return <JobPagePreview job={job} relatedJobs={relatedJobs} />;
 }

@@ -393,6 +393,109 @@ export const jobsService = {
     return mapSupabaseJobToJob(data);
   },
 
+  // Buscar trabalhos relacionados
+  async getRelatedJobs(currentJob: Job, limit: number = 12): Promise<Job[]> {
+    try {
+      // Buscar vagas com mesma categoria ou tags similares
+      let query = supabase
+        .from("jobs")
+        .select("*")
+        .eq("is_active", true)
+        .neq("id", currentJob.id); // Excluir a vaga atual
+
+      // Filtrar por categoria se existir
+      if (currentJob.category) {
+        query = query.eq("category", currentJob.category);
+      }
+
+      // Se não encontrou por categoria, buscar por tags similares
+      let { data, error } = await query.limit(limit);
+
+      if (error) {
+        console.error("Error fetching related jobs by category:", error);
+        data = [];
+      }
+
+      // Se não encontrou vagas suficientes, buscar por tags
+      if (!data || data.length < limit) {
+        const remainingLimit = limit - (data?.length || 0);
+
+        if (currentJob.tags && currentJob.tags.length > 0) {
+          // Buscar vagas que tenham pelo menos uma tag em comum
+          const tagConditions = currentJob.tags.map(
+            (tag) => `tags.cs.{${tag}}`
+          );
+
+          const { data: tagData, error: tagError } = await supabase
+            .from("jobs")
+            .select("*")
+            .eq("is_active", true)
+            .neq("id", currentJob.id)
+            .or(tagConditions.join(","))
+            .limit(remainingLimit);
+
+          if (!tagError && tagData) {
+            // Combinar resultados únicos
+            const existingIds = new Set(data?.map((job) => job.id) || []);
+            const newJobs = tagData.filter((job) => !existingIds.has(job.id));
+            data = [...(data || []), ...newJobs];
+          }
+        }
+      }
+
+      // Se ainda não encontrou vagas suficientes, buscar por localização
+      if (!data || data.length < limit) {
+        const remainingLimit = limit - (data?.length || 0);
+
+        if (currentJob.location) {
+          const { data: locationData, error: locationError } = await supabase
+            .from("jobs")
+            .select("*")
+            .eq("is_active", true)
+            .neq("id", currentJob.id)
+            .ilike("location", `%${currentJob.location.split(",")[0].trim()}%`)
+            .limit(remainingLimit);
+
+          if (!locationError && locationData) {
+            const existingIds = new Set(data?.map((job) => job.id) || []);
+            const newJobs = locationData.filter(
+              (job) => !existingIds.has(job.id)
+            );
+            data = [...(data || []), ...newJobs];
+          }
+        }
+      }
+
+      // Se ainda não encontrou vagas suficientes, buscar vagas recentes
+      if (!data || data.length < limit) {
+        const remainingLimit = limit - (data?.length || 0);
+
+        const { data: recentData, error: recentError } = await supabase
+          .from("jobs")
+          .select("*")
+          .eq("is_active", true)
+          .neq("id", currentJob.id)
+          .order("created_at", { ascending: false })
+          .limit(remainingLimit);
+
+        if (!recentError && recentData) {
+          const existingIds = new Set(data?.map((job) => job.id) || []);
+          const newJobs = recentData.filter((job) => !existingIds.has(job.id));
+          data = [...(data || []), ...newJobs];
+        }
+      }
+
+      // Mapear e retornar os resultados
+      const relatedJobs = (data || []).map(mapSupabaseJobToJob);
+
+      // Ordenar por relevância (categoria > tags > localização > data)
+      return relatedJobs.slice(0, limit);
+    } catch (error) {
+      console.error("Error fetching related jobs:", error);
+      return [];
+    }
+  },
+
   // Verificar se vaga já existe (por título, empresa e URL)
   async checkJobExists(
     job: Omit<Job, "id" | "createdAt" | "updatedAt">
