@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { X, Linkedin } from "lucide-react";
+import { X, Linkedin, RefreshCw } from "lucide-react";
 import { Job } from "@/types/job";
+import { getRandomLinkedInPost, generateLinkedInPostVariations } from "@/lib/linkedin-variations";
 
 interface LinkedInPostModalProps {
   isOpen: boolean;
@@ -8,139 +9,7 @@ interface LinkedInPostModalProps {
   job: Job | null;
 }
 
-function slugify(str: string) {
-  return str
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "")
-    .replace(/-+/g, "-");
-}
 
-function getExperienceEmoji(experience?: string) {
-  const emojis = {
-    intern: "🎓",
-    junior: "👨‍💻",
-    "junior-mid": "👨‍💻",
-    mid: "👨‍💻",
-    "mid-senior": "👨‍💻",
-    senior: "👨‍💻",
-    lead: "👨‍💻",
-    executive: "👨‍💻",
-  };
-  return emojis[experience as keyof typeof emojis] || "👨‍💻";
-}
-
-function getLocationEmoji(location: string) {
-  if (location.toLowerCase().includes("remote")) return "🌍";
-  if (location.toLowerCase().includes("hybrid")) return "🏢";
-  return "📍";
-}
-
-function getTypeEmoji(type: string) {
-  const emojis = {
-    "full-time": "💼",
-    "part-time": "⏰",
-    contract: "📋",
-    internship: "🎓",
-    freelance: "💼",
-  };
-  return emojis[type as keyof typeof emojis] || "💼";
-}
-
-function generateLinkedInPost(job: Job): string {
-  const experienceEmoji = getExperienceEmoji(job.experience);
-  const locationEmoji = getLocationEmoji(job.location);
-  const typeEmoji = getTypeEmoji(job.type);
-
-  const jobUrl = `https://www.talentflight.com/job/${slugify(
-    job.title
-  )}-at-${slugify(job.company)}`;
-
-  // Gerar hashtags baseadas na categoria, experiência e localização
-  const locationTags = job.location
-    ? job.location
-        .split(",")
-        .map((part) => part.trim().replace(/\s+/g, "").toLowerCase())
-    : [];
-
-  const hashtags = [
-    job.category,
-    job.experience,
-    "developer",
-    "work",
-    "hiring",
-    "job",
-    "talentflight",
-    "techjobs",
-    "tech",
-    ...locationTags,
-  ]
-    .filter(Boolean)
-    .filter((tag, index, arr) => arr.indexOf(tag) === index) // Remove duplicatas
-    .map((tag) => `#${tag}`)
-    .join(" ");
-
-  // Gerar descrição personalizada baseada no job
-  const generateJobDescription = (job: Job): string => {
-    const category = job.category || "development";
-    const isRemote = job.isRemote ? "remote" : "on-site";
-    const hasTechStack = job.tags && job.tags.length > 0;
-
-    // Descrições específicas por categoria - mais fluidas e feed-friendly
-    const categoryDescriptions = {
-      frontend: `Join ${job.company} and help build solutions that actually make a difference. You'll work on modern projects with cutting-edge frontend technologies.`,
-      backend: `Join ${job.company} and help build robust systems that power real applications. You'll work with modern backend technologies and best practices.`,
-      fullstack: `Join ${job.company} and help build complete solutions from frontend to backend. You'll work across the entire tech stack on exciting projects.`,
-      mobile: `Join ${job.company} and help create mobile apps that users actually love. You'll work with the latest iOS and Android technologies.`,
-      devops: `Join ${job.company} and help automate everything! You'll build robust pipelines and manage infrastructure at scale.`,
-      ai: `Join ${job.company} and help push the boundaries of AI technology. You'll work on machine learning models that solve real problems.`,
-      design: `Join ${job.company} and help design experiences that users can't live without. You'll create beautiful, intuitive interfaces.`,
-      product: `Join ${job.company} and help shape the future of our products. You'll work with cross-functional teams on exciting solutions.`,
-      engineering: `Join ${job.company} and help solve complex technical challenges. You'll work on innovative projects that make an impact.`,
-      development: `Join ${job.company} and help build software that makes a difference. You'll work on exciting projects with modern technologies.`,
-    };
-
-    // Escolher descrição baseada no contexto
-    if (
-      categoryDescriptions[job.category as keyof typeof categoryDescriptions]
-    ) {
-      return `"${
-        categoryDescriptions[job.category as keyof typeof categoryDescriptions]
-      }"`;
-    } else if (hasTechStack && job.tags!.includes("React")) {
-      return `"Join ${job.company} and help build modern React applications that users actually love. You'll work with the latest frontend technologies."`;
-    } else if (hasTechStack && job.tags!.includes("Vue")) {
-      return `"Join ${job.company} and help create elegant Vue.js applications. You'll work with progressive web technologies and build scalable solutions."`;
-    } else if (hasTechStack && job.tags!.includes("Node.js")) {
-      return `"Join ${job.company} and help build high-performance Node.js applications. You'll work with modern backend technologies and microservices."`;
-    } else if (hasTechStack && job.tags!.includes("Python")) {
-      return `"Join ${job.company} and help develop powerful Python applications. You'll work on data processing, APIs, and automation solutions."`;
-    } else if (
-      (hasTechStack && job.tags!.includes("AI")) ||
-      job.tags!.includes("Machine Learning")
-    ) {
-      return `"Join ${job.company} and help push the boundaries of AI technology. You'll work on machine learning models that solve real problems."`;
-    } else if (isRemote) {
-      return `"Join ${job.company}'s remote team and work on exciting ${category} projects from anywhere. You'll have the flexibility to work from your preferred location."`;
-    } else {
-      return `"Join ${job.company} and help work on exciting ${category} projects with modern technologies. You'll be part of a dynamic team building innovative solutions."`;
-    }
-  };
-
-  const jobDescription = generateJobDescription(job);
-
-  return `${experienceEmoji} ${job.title}
-${locationEmoji} ${job.location}${job.isRemote ? " – Remote friendly" : ""}
-${typeEmoji} ${job.type}
-
-${jobDescription}
-
-👉 Apply here: ${jobUrl}
-
-${hashtags}`;
-}
 
 export default function LinkedInPostModal({
   isOpen,
@@ -149,11 +18,17 @@ export default function LinkedInPostModal({
 }: LinkedInPostModalProps) {
   const [postText, setPostText] = useState("");
   const [showPreview, setShowPreview] = useState(true);
+  const [currentVariation, setCurrentVariation] = useState(0);
+  const [allVariations, setAllVariations] = useState<string[]>([]);
 
   // Gerar post quando job mudar
   useEffect(() => {
     if (job) {
-      setPostText(generateLinkedInPost(job));
+      const variations = generateLinkedInPostVariations(job);
+      const randomIndex = Math.floor(Math.random() * variations.length);
+      setAllVariations(variations);
+      setCurrentVariation(randomIndex);
+      setPostText(variations[randomIndex]);
     }
   }, [job]);
 
@@ -176,6 +51,24 @@ export default function LinkedInPostModal({
     } catch (error) {
       console.error("Erro ao copiar:", error);
     }
+  };
+
+  const handleNextVariation = () => {
+    const nextIndex = (currentVariation + 1) % allVariations.length;
+    setCurrentVariation(nextIndex);
+    setPostText(allVariations[nextIndex]);
+  };
+
+  const handlePreviousVariation = () => {
+    const prevIndex = currentVariation === 0 ? allVariations.length - 1 : currentVariation - 1;
+    setCurrentVariation(prevIndex);
+    setPostText(allVariations[prevIndex]);
+  };
+
+  const handleRandomVariation = () => {
+    const randomIndex = Math.floor(Math.random() * allVariations.length);
+    setCurrentVariation(randomIndex);
+    setPostText(allVariations[randomIndex]);
   };
 
   if (!isOpen || !job) return null;
@@ -245,6 +138,39 @@ export default function LinkedInPostModal({
             >
               Editar
             </button>
+          </div>
+
+          {/* Variações Controls */}
+          <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Variação:</span>
+              <span className="text-sm font-medium text-gray-900">
+                {currentVariation + 1} de {allVariations.length}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handlePreviousVariation}
+                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                title="Variação anterior"
+              >
+                ←
+              </button>
+              <button
+                onClick={handleRandomVariation}
+                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                title="Variação aleatória"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleNextVariation}
+                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                title="Próxima variação"
+              >
+                →
+              </button>
+            </div>
           </div>
 
           {showPreview ? (

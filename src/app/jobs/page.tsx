@@ -284,9 +284,9 @@ export default function JobsPage() {
     scrollToResults();
   };
 
-      return (
-      <div className="min-h-screen bg-[#F3F7FA]">
-        <div className="max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  return (
+    <div className="min-h-screen bg-[#F3F7FA]">
+      <div className="max-w-[1540px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Header */}
         <div className="relative mb-12 animate-fade-in overflow-hidden">
           {/* Gradient Overlay */}
@@ -321,11 +321,11 @@ export default function JobsPage() {
                   {statsLoading ? (
                     <span className="animate-pulse">0</span>
                   ) : (
-                    <AnimatedCounter
-                      value={stats.totalJobs}
-                      duration={2500}
-                      key={animationKey}
-                    />
+                  <AnimatedCounter
+                    value={stats.totalJobs}
+                    duration={2500}
+                    key={animationKey}
+                  />
                   )}
                 </span>
               </div>
@@ -337,11 +337,11 @@ export default function JobsPage() {
                   {statsLoading ? (
                     <span className="animate-pulse">0</span>
                   ) : (
-                    <AnimatedCounter
-                      value={stats.totalCompanies}
-                      duration={2000}
-                      key={animationKey}
-                    />
+                  <AnimatedCounter
+                    value={stats.totalCompanies}
+                    duration={2000}
+                    key={animationKey}
+                  />
                   )}
                 </span>
               </div>
@@ -353,11 +353,11 @@ export default function JobsPage() {
                   {statsLoading ? (
                     <span className="animate-pulse">0</span>
                   ) : (
-                    <AnimatedCounter
-                      value={stats.remoteJobs}
-                      duration={2200}
-                      key={animationKey}
-                    />
+                  <AnimatedCounter
+                    value={stats.remoteJobs}
+                    duration={2200}
+                    key={animationKey}
+                  />
                   )}
                 </span>
               </div>

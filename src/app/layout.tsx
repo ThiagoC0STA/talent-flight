@@ -39,33 +39,33 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  openGraph: {
+      openGraph: {
     title:
       "TalentFlight - Find Remote Jobs & Tech Careers | Professional Growth Platform",
-    description:
+      description:
       "Discover thousands of remote jobs, tech careers, and professional opportunities. Connect with top companies worldwide. Your launchpad for professional growth.",
-    url: "https://talentflight.com",
-    siteName: "TalentFlight",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
+      url: "https://talentflight.com",
+      siteName: "TalentFlight",
+      images: [
+        {
+          url: "/og-image.jpg",
+          width: 1200,
+          height: 630,
         alt: "TalentFlight - Professional job opportunities and tech careers platform",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
+        },
+      ],
+      locale: "en_US",
+      type: "website",
+    },
+      twitter: {
+      card: "summary_large_image",
     title: "TalentFlight - Find Remote Jobs & Tech Careers",
-    description:
+      description:
       "Discover thousands of remote jobs, tech careers, and professional opportunities. Connect with top companies worldwide.",
-    images: ["/og-image.jpg"],
+      images: ["/og-image.jpg"],
     creator: "@talentflight",
     site: "@talentflight",
-  },
+    },
   robots: {
     index: true,
     follow: true,
