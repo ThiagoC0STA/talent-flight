@@ -1232,4 +1232,117 @@ export const trackingService = {
       };
     }
   },
+
+  // Nova função para buscar vagas com invalid clicks
+  async getJobsWithInvalidClicks(): Promise<
+    {
+      jobId: string;
+      title: string;
+      company: string;
+      applicationUrl: string;
+      invalidClicks: number;
+      totalClicks: number;
+      lastInvalidClick: string;
+      invalidUrls: string[];
+    }[]
+  > {
+    try {
+      // Buscar todos os cliques inválidos
+      const { data: invalidClicks, error: clicksError } = await supabase
+        .from("job_clicks")
+        .select("job_id, application_url, clicked_at")
+        .eq("is_valid", false)
+        .order("clicked_at", { ascending: false });
+
+      if (clicksError) {
+        console.error("Erro ao buscar cliques inválidos:", clicksError);
+        return [];
+      }
+
+      if (!invalidClicks || invalidClicks.length === 0) {
+        return [];
+      }
+
+      // Agrupar por job_id
+      const jobClicksMap = new Map<
+        string,
+        {
+          invalidClicks: number;
+          lastClick: string;
+          invalidUrls: Set<string>;
+        }
+      >();
+
+      invalidClicks.forEach((click) => {
+        const jobId = click.job_id;
+        const current = jobClicksMap.get(jobId) || {
+          invalidClicks: 0,
+          lastClick: click.clicked_at,
+          invalidUrls: new Set<string>(),
+        };
+
+        jobClicksMap.set(jobId, {
+          invalidClicks: current.invalidClicks + 1,
+          lastClick:
+            new Date(click.clicked_at) > new Date(current.lastClick)
+              ? click.clicked_at
+              : current.lastClick,
+          invalidUrls: current.invalidUrls.add(click.application_url),
+        });
+      });
+
+      // Buscar jobs correspondentes
+      const jobIds = Array.from(jobClicksMap.keys());
+      const { data: jobs, error: jobsError } = await supabase
+        .from("jobs")
+        .select("id, title, company, application_url")
+        .in("id", jobIds);
+
+      if (jobsError) {
+        console.error("Erro ao buscar jobs:", jobsError);
+        return [];
+      }
+
+      // Buscar total de cliques para cada job
+      const { data: allClicks, error: allClicksError } = await supabase
+        .from("job_clicks")
+        .select("job_id")
+        .in("job_id", jobIds);
+
+      if (allClicksError) {
+        console.error("Erro ao buscar total de cliques:", allClicksError);
+        return [];
+      }
+
+      // Contar total de cliques por job
+      const totalClicksMap = new Map<string, number>();
+      allClicks.forEach((click) => {
+        const jobId = click.job_id;
+        totalClicksMap.set(jobId, (totalClicksMap.get(jobId) || 0) + 1);
+      });
+
+      // Combinar dados
+      const result = jobs.map((job) => {
+        const clickData = jobClicksMap.get(job.id);
+        const totalClicks = totalClicksMap.get(job.id) || 0;
+
+        return {
+          jobId: job.id,
+          title: job.title,
+          company: job.company,
+          applicationUrl: job.application_url,
+          invalidClicks: clickData?.invalidClicks || 0,
+          totalClicks,
+          lastInvalidClick: clickData?.lastClick || "",
+          invalidUrls: Array.from(clickData?.invalidUrls || []),
+        };
+      });
+
+      // Ordenar por número de cliques inválidos (maior primeiro)
+      return result.sort((a, b) => b.invalidClicks - a.invalidClicks);
+    } catch (error) {
+      console.error("Erro ao buscar vagas com cliques inválidos:", error);
+      return [];
+    }
+  },
 };

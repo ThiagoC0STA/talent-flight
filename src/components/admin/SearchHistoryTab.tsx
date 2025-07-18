@@ -394,7 +394,7 @@ export default function SearchHistoryTab({
                                 <Image
                                   width={48}
                                   height={48}
-                                  src={job.companyLogo}
+                                  src={job.companyLogo} 
                                   alt={`${job.company} logo`}
                                   className="w-12 h-12 rounded-lg object-contain bg-white border border-gray-200"
                                 />

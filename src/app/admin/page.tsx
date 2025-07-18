@@ -34,6 +34,7 @@ import Pagination from "@/components/admin/Pagination";
 import JobAggregator from "@/components/admin/JobAggregator";
 import SearchHistoryTab from "@/components/admin/SearchHistoryTab";
 import ImportedHistoryTab from "@/components/admin/ImportedHistoryTab";
+import InvalidClicksTable from "@/components/admin/InvalidClicksTable";
 
 function LoadingSpinner() {
   return (
@@ -583,6 +584,7 @@ export default function AdminPage() {
               { id: "search", label: "Search Jobs", icon: Search },
               { id: "history", label: "History", icon: Clock },
               { id: "imported", label: "Imported History", icon: CheckCircle },
+              { id: "invalid-clicks", label: "Invalid Clicks", icon: XCircle },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -801,6 +803,20 @@ export default function AdminPage() {
             onEdit={handleEdit}
             isSubmitting={isSubmitting}
           />
+        )}
+
+        {activeTab === "invalid-clicks" && (
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+              <h2 className="text-xl sm:text-2xl font-semibold text-[#011640] mb-4">
+                Invalid Clicks Analysis
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Monitor vagas com cliques inválidos para identificar problemas de links ou aplicações.
+              </p>
+              <InvalidClicksTable />
+            </div>
+          </div>
         )}
         <Toast message={toast} onClose={() => setToast("")} />
       </div>
