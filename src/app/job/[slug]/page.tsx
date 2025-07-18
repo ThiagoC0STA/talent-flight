@@ -3,13 +3,9 @@ import { notFound } from "next/navigation";
 import { jobsService } from "@/lib/jobs";
 import JobPagePreview from "@/components/JobPagePreview";
 
-interface JobPageProps {
-  params: { slug: string };
-}
-
-export async function generateMetadata({ params }: JobPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: any): Promise<Metadata> {
   const job = await jobsService.getJobById(params.slug);
-  
+
   if (!job) {
     return {
       title: "Job Not Found - TalentFlight",
@@ -18,8 +14,10 @@ export async function generateMetadata({ params }: JobPageProps): Promise<Metada
   }
 
   const title = `${job.title} at ${job.company} - ${job.location} | TalentFlight`;
-  const description = `${job.title} position at ${job.company} in ${job.location}. ${job.description.substring(0, 150)}...`;
-  
+  const description = `${job.title} position at ${job.company} in ${
+    job.location
+  }. ${job.description.substring(0, 150)}...`;
+
   return {
     title,
     description,
@@ -52,7 +50,7 @@ export async function generateMetadata({ params }: JobPageProps): Promise<Metada
   };
 }
 
-export default async function JobPage({ params }: JobPageProps) {
+export default async function JobPage({ params }: any) {
   const job = await jobsService.getJobById(params.slug);
 
   if (!job) {
