@@ -44,7 +44,49 @@ export default function Schema() {
           }
         }
       ]
-    }
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://talentflight.com/jobs?query={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "areaServed": [
+      {
+        "@type": "Country",
+        "name": "United States"
+      },
+      {
+        "@type": "Country", 
+        "name": "Canada"
+      },
+      {
+        "@type": "Country",
+        "name": "United Kingdom"
+      },
+      {
+        "@type": "Country",
+        "name": "Germany"
+      },
+      {
+        "@type": "Country",
+        "name": "Brazil"
+      }
+    ],
+    "knowsAbout": [
+      "Remote Jobs",
+      "Tech Careers", 
+      "Software Development",
+      "Web Development",
+      "Mobile Development",
+      "Data Science",
+      "Artificial Intelligence",
+      "DevOps",
+      "Product Management",
+      "UI/UX Design"
+    ]
   };
 
   return (

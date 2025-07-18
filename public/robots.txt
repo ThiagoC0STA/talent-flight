@@ -1,11 +1,37 @@
-# *
+# TalentFlight Robots.txt
+# Allow all crawlers
+
 User-agent: *
 Allow: /
+
+# Disallow admin and API routes
 Disallow: /admin/
 Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow important pages
+Allow: /jobs
+Allow: /job/
+Allow: /about
+Allow: /contact
+Allow: /terms
+Allow: /privacy
+
+# Crawl delay (optional)
+Crawl-delay: 1
 
 # Host
 Host: https://talentflight.com
 
 # Sitemaps
 Sitemap: https://talentflight.com/sitemap.xml
+
+# Google AdsBot (for AdSense)
+User-agent: AdsBot-Google
+Allow: /
+
+# Bing Bot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
