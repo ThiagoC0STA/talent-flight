@@ -148,6 +148,9 @@ export default function JobsPage() {
   // Estado para controlar se a busca foi aplicada
   const [hasAppliedSearch, setHasAppliedSearch] = useState(false);
 
+  // Estado para controlar loading de stats separadamente
+  const [statsLoading, setStatsLoading] = useState(false);
+
   // Função utilitária para construir parâmetros da API
   const buildApiParams = (page: number, includeFilters: boolean = false) => {
     const params: any = {
@@ -178,44 +181,58 @@ export default function JobsPage() {
     return params;
   };
 
-  // Load jobs and stats from API with pagination - OTIMIZADO COM AXIOS
+  // Load jobs and stats from API with pagination - ULTRA OTIMIZADO
   useEffect(() => {
     const loadJobsAndStats = async () => {
       try {
         setLoading(true);
 
-        // Carregar jobs e stats em paralelo
+        // Carregar jobs primeiro (prioridade máxima)
         if (currentPage === 1 && !hasAppliedSearch) {
-          const [jobsResponse, statsResponse] = await Promise.all([
-            api.get('/api/jobs', { params: buildApiParams(1, false) }),
-            api.get('/api/jobs/stats')
-          ]);
+          // Carregar jobs imediatamente
+          const jobsResponse = await api.get("/api/jobs", {
+            params: buildApiParams(1, false),
+          });
 
           setJobs(jobsResponse.data.jobs);
           setFilteredJobs(jobsResponse.data.jobs);
           setTotalJobs(jobsResponse.data.total);
           setTotalPages(jobsResponse.data.totalPages);
 
-          setStats({
-            totalJobs: statsResponse.data.totalJobs,
-            totalCompanies: statsResponse.data.totalCompanies,
-            remoteJobs: statsResponse.data.remoteJobs,
-          });
-          setAnimationKey((prev) => prev + 1);
+          // Parar loading dos jobs imediatamente
+          setLoading(false);
+
+          // Carregar stats em background (sem bloquear)
+          setStatsLoading(true);
+          api
+            .get("/api/jobs/stats")
+            .then((statsResponse) => {
+              setStats({
+                totalJobs: statsResponse.data.totalJobs,
+                totalCompanies: statsResponse.data.totalCompanies,
+                remoteJobs: statsResponse.data.remoteJobs,
+              });
+              setAnimationKey((prev) => prev + 1);
+              setStatsLoading(false);
+            })
+            .catch((error) => {
+              console.error("Error loading stats:", error);
+              setStatsLoading(false);
+            });
         } else {
           // Para mudanças de página ou buscas, carregar apenas os jobs
-          const response = await api.get('/api/jobs', { 
-            params: buildApiParams(currentPage, true) 
+          const response = await api.get("/api/jobs", {
+            params: buildApiParams(currentPage, true),
           });
 
           setJobs(response.data.jobs);
           setFilteredJobs(response.data.jobs);
           setTotalJobs(response.data.total);
           setTotalPages(response.data.totalPages);
+          setLoading(false);
         }
       } catch (error) {
         console.error("Error loading jobs:", error);
-      } finally {
         setLoading(false);
       }
     };
@@ -232,8 +249,8 @@ export default function JobsPage() {
       // Reset pagination
       setCurrentPage(1);
 
-      const response = await api.get('/api/jobs', { 
-        params: buildApiParams(1, true) 
+      const response = await api.get("/api/jobs", {
+        params: buildApiParams(1, true),
       });
 
       setJobs(response.data.jobs);
@@ -305,11 +322,15 @@ export default function JobsPage() {
                 <div className="w-2 h-2 bg-[#10B981] rounded-full"></div>
                 <span className="text-[#6B7280]">Live Jobs</span>
                 <span className="font-semibold text-[#011640]">
-                  <AnimatedCounter
-                    value={stats.totalJobs}
-                    duration={2500}
-                    key={animationKey}
-                  />
+                  {statsLoading ? (
+                    <span className="animate-pulse">0</span>
+                  ) : (
+                    <AnimatedCounter
+                      value={stats.totalJobs}
+                      duration={2500}
+                      key={animationKey}
+                    />
+                  )}
                 </span>
               </div>
               <div className="w-px h-4 bg-[#E5EAF1]"></div>
@@ -317,11 +338,15 @@ export default function JobsPage() {
                 <div className="w-2 h-2 bg-[#F59E0B] rounded-full"></div>
                 <span className="text-[#6B7280]">Companies</span>
                 <span className="font-semibold text-[#011640]">
-                  <AnimatedCounter
-                    value={stats.totalCompanies}
-                    duration={2000}
-                    key={animationKey}
-                  />
+                  {statsLoading ? (
+                    <span className="animate-pulse">0</span>
+                  ) : (
+                    <AnimatedCounter
+                      value={stats.totalCompanies}
+                      duration={2000}
+                      key={animationKey}
+                    />
+                  )}
                 </span>
               </div>
               <div className="w-px h-4 bg-[#E5EAF1]"></div>
@@ -329,11 +354,15 @@ export default function JobsPage() {
                 <div className="w-2 h-2 bg-[#8B5CF6] rounded-full"></div>
                 <span className="text-[#6B7280]">Remote</span>
                 <span className="font-semibold text-[#011640]">
-                  <AnimatedCounter
-                    value={stats.remoteJobs}
-                    duration={2200}
-                    key={animationKey}
-                  />
+                  {statsLoading ? (
+                    <span className="animate-pulse">0</span>
+                  ) : (
+                    <AnimatedCounter
+                      value={stats.remoteJobs}
+                      duration={2200}
+                      key={animationKey}
+                    />
+                  )}
                 </span>
               </div>
             </div>

@@ -156,7 +156,7 @@ export const jobsService = {
     return data.map(mapSupabaseJobToJob);
   },
 
-  // Nova função para buscar jobs com paginação e filtros - OTIMIZADA
+  // Nova função para buscar jobs com paginação e filtros - ULTRA OTIMIZADA
   async getJobsWithPagination(params: {
     page: number;
     limit: number;
@@ -179,7 +179,7 @@ export const jobsService = {
     } = params;
     const offset = (page - 1) * limit;
 
-    // Otimização: selecionar apenas campos necessários para melhor performance
+    // Otimização máxima: selecionar apenas campos essenciais
     let query = supabase
       .from("jobs")
       .select(
@@ -296,28 +296,44 @@ export const jobsService = {
     return count || 0;
   },
 
-  // Nova função para buscar apenas estatísticas dos jobs - OTIMIZADA
+  // Nova função para buscar apenas estatísticas dos jobs - ULTRA OTIMIZADA
   async getJobsStats(): Promise<{
     totalJobs: number;
     totalCompanies: number;
     remoteJobs: number;
   }> {
     try {
-      // Otimização máxima: usar query SQL otimizada para estatísticas
-      const { data, error } = await supabase
-        .from("jobs")
-        .select("company, is_remote", { count: "exact" })
-        .eq("is_active", true);
+      // Otimização máxima: usar apenas count para total de jobs
+      const [countResult, companiesResult] = await Promise.all([
+        supabase
+          .from("jobs")
+          .select("*", { count: "exact", head: true })
+          .eq("is_active", true),
+        supabase
+          .from("jobs")
+          .select("company, is_remote")
+          .eq("is_active", true)
+          .limit(1000), // Limitar para performance
+      ]);
 
-      if (error) {
-        console.error("Error fetching jobs stats:", error);
+      if (countResult.error) {
+        console.error("Error fetching jobs count:", countResult.error);
+        return { totalJobs: 0, totalCompanies: 0, remoteJobs: 0 };
+      }
+
+      if (companiesResult.error) {
+        console.error("Error fetching companies:", companiesResult.error);
         return { totalJobs: 0, totalCompanies: 0, remoteJobs: 0 };
       }
 
       // Calcular estatísticas de forma otimizada
-      const totalJobs = data.length;
-      const uniqueCompanies = new Set(data.map((job) => job.company)).size;
-      const remoteJobs = data.filter((job) => job.is_remote).length;
+      const totalJobs = countResult.count || 0;
+      const uniqueCompanies = new Set(
+        companiesResult.data.map((job) => job.company)
+      ).size;
+      const remoteJobs = companiesResult.data.filter(
+        (job) => job.is_remote
+      ).length;
 
       return {
         totalJobs,
