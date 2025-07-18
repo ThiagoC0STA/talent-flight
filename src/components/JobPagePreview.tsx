@@ -1,3 +1,5 @@
+"use client";
+
 import {
   MapPin,
   Clock,
@@ -6,7 +8,10 @@ import {
   ExternalLink,
   CheckCircle,
   ArrowLeft,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
+import { useState } from "react";
 import { Job } from "@/types/job";
 import { formatSalary, formatDate } from "@/lib/utils";
 import Button from "@/components/ui/Button";
@@ -27,6 +32,7 @@ export default function JobPagePreview({
   onBack?: () => void;
   relatedJobs?: Job[];
 }) {
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const getExperienceColor = (experience?: string) => {
     const colors = {
       intern: "bg-green-100 text-green-800",
@@ -167,18 +173,46 @@ export default function JobPagePreview({
               <h2 className="text-xl sm:text-2xl font-bold text-[#011640] mb-4 sm:mb-6">
                 Job Description
               </h2>
-              <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[#010D26] leading-relaxed mb-4 sm:mb-6">
-                {job.description.includes("<") ? (
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(job.description),
-                    }}
-                  />
-                ) : (
-                  <ReactMarkdown remarkPlugins={[remarkBreaks]}>
-                    {job.description}
-                  </ReactMarkdown>
+              
+              <div className="relative">
+                <div className={`prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[#010D26] leading-relaxed transition-all duration-300 ${
+                  isDescriptionExpanded ? "max-h-none" : "max-h-96 overflow-hidden"
+                }`}>
+                  {job.description.includes("<") ? (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(job.description),
+                      }}
+                    />
+                  ) : (
+                    <ReactMarkdown remarkPlugins={[remarkBreaks]}>
+                      {job.description}
+                    </ReactMarkdown>
+                  )}
+                </div>
+                
+                {!isDescriptionExpanded && (
+                  <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                 )}
+              </div>
+              
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                  className="flex items-center gap-2 text-[#0476D9] hover:text-[#011640] transition-colors font-medium text-sm px-4 py-2 rounded-lg hover:bg-[#F3F7FA]"
+                >
+                  {isDescriptionExpanded ? (
+                    <>
+                      <ChevronUp className="w-4 h-4" />
+                      Show Less
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-4 h-4" />
+                      Show More
+                    </>
+                  )}
+                </button>
               </div>
             </div>
             {/* Requirements */}
