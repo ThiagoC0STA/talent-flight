@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { X, Linkedin, RefreshCw } from "lucide-react";
 import { Job } from "@/types/job";
-import { getRandomLinkedInPost, generateLinkedInPostVariations } from "@/lib/linkedin-variations";
+import { generateLinkedInPostVariations } from "@/lib/linkedin-variations";
 
 interface LinkedInPostModalProps {
   isOpen: boolean;
