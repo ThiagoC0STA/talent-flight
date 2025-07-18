@@ -16,6 +16,7 @@ import Image from "next/image";
 import DOMPurify from "isomorphic-dompurify";
 import NewsletterSignup from "./NewsletterSignup";
 import RelatedJobs from "./RelatedJobs";
+import AffiliateProduct from "./AffiliateProduct";
 
 export default function JobPagePreview({
   job,
@@ -55,7 +56,7 @@ export default function JobPagePreview({
 
   return (
     <div className="bg-[#F3F7FA] rounded-2xl p-2 sm:p-4">
-      <div className="max-w-[1200px] mx-auto px-2 sm:px-4 py-4 sm:py-6">
+      <div className="max-w-[1180px] mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Back Button */}
         {onBack && (
           <button
@@ -248,6 +249,9 @@ export default function JobPagePreview({
 
               {/* Newsletter */}
               <NewsletterSignup />
+
+              {/* Affiliate Product */}
+              <AffiliateProduct />
             </div>
           </div>
         </div>

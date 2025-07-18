@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Briefcase, Info, Mail, BookOpen } from "lucide-react";
 import Image from "next/image";
 
 export default function Header() {
@@ -31,21 +31,33 @@ export default function Header() {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/jobs"
-              className="text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
+              className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
             >
+              <Briefcase className="w-4 h-4" />
               Jobs
             </Link>
             <Link
               href="/about"
-              className="text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
+              className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
             >
+              <Info className="w-4 h-4" />
               About
             </Link>
             <Link
               href="/contact"
-              className="text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
+              className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
             >
+              <Mail className="w-4 h-4" />
               Contact
+            </Link>
+            <Link
+              href="https://go.hotmart.com/B100903492J"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
+            >
+              <BookOpen className="w-4 h-4" />
+              Interview Preparation
             </Link>
           </nav>
 
@@ -69,31 +81,37 @@ export default function Header() {
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link
                 href="/jobs"
-                className="block px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
+                className="flex items-center gap-3 px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <Briefcase className="w-4 h-4" />
                 Jobs
               </Link>
               <Link
                 href="/about"
-                className="block px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
+                className="flex items-center gap-3 px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <Info className="w-4 h-4" />
                 About
               </Link>
               <Link
                 href="/contact"
-                className="block px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
+                className="flex items-center gap-3 px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <Mail className="w-4 h-4" />
                 Contact
               </Link>
               <Link
-                href="/admin"
-                className="block px-3 py-2 bg-[#0476D9] text-white hover:bg-[#011640] rounded-lg font-medium transition-colors mt-4"
+                href="https://go.hotmart.com/B100903492J"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Post a Job
+                <BookOpen className="w-4 h-4" />
+                Interview Preparation
               </Link>
             </div>
           </div>
