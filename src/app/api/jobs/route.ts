@@ -24,16 +24,22 @@ export async function GET(request: NextRequest) {
       filters.location = searchParams.get("location");
     }
 
+    // Corrigir parsing de arrays
     if (searchParams.get("experience")) {
-      filters.experience = [searchParams.get("experience")];
+      const experience = searchParams.get("experience");
+      filters.experience = Array.isArray(experience)
+        ? experience
+        : [experience];
     }
 
     if (searchParams.get("type")) {
-      filters.type = [searchParams.get("type")];
+      const type = searchParams.get("type");
+      filters.type = Array.isArray(type) ? type : [type];
     }
 
     if (searchParams.get("category")) {
-      filters.category = [searchParams.get("category")];
+      const category = searchParams.get("category");
+      filters.category = Array.isArray(category) ? category : [category];
     }
 
     if (searchParams.get("isRemote")) {

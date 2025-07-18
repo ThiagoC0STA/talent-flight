@@ -5,13 +5,13 @@ import { Search, Briefcase, Filter } from "lucide-react";
 import JobCard from "@/components/JobCard";
 import JobCardHorizontal from "@/components/JobCardHorizontal";
 import JobFilters from "@/components/JobFilters";
-import ActiveFilters from "@/components/ActiveFilters";
 import ViewToggle from "@/components/ViewToggle";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import Pagination from "@/components/Pagination";
-import { jobsService } from "@/lib/jobs";
 import { Job, JobFilters as JobFiltersType } from "@/types/job";
 import Button from "@/components/ui/Button";
+import { performanceUtils } from "@/lib/utils";
+import api from "@/lib/api";
 
 // Loading Skeleton Components
 const JobCardSkeleton = () => (
@@ -131,6 +131,7 @@ export default function JobsPage() {
     console.log("ViewMode changing from", viewMode, "to", mode);
     setViewMode(mode);
   };
+
   const [stats, setStats] = useState({
     totalJobs: 0,
     totalCompanies: 0,
@@ -146,77 +147,72 @@ export default function JobsPage() {
 
   // Estado para controlar se a busca foi aplicada
   const [hasAppliedSearch, setHasAppliedSearch] = useState(false);
-  const [statsLoaded, setStatsLoaded] = useState(false);
-
-  // Função para carregar estatísticas totais (independente dos filtros)
-  const loadTotalStats = async () => {
-    try {
-      // Usar a nova rota otimizada para estatísticas
-      const response = await fetch("/api/jobs/stats");
-      const stats = await response.json();
-
-      const newStats = {
-        totalJobs: stats.totalJobs,
-        totalCompanies: stats.totalCompanies,
-        remoteJobs: stats.remoteJobs,
-      };
-
-      setStats(newStats);
-      setStatsLoaded(true);
-      setAnimationKey((prev) => prev + 1);
-    } catch (error) {
-      console.error("Error loading total stats:", error);
-    }
-  };
 
   // Função utilitária para construir parâmetros da API
   const buildApiParams = (page: number, includeFilters: boolean = false) => {
-    const params = new URLSearchParams({
+    const params: any = {
       page: page.toString(),
       limit: jobsPerPage.toString(),
       sortBy: "date",
       sortOrder: "desc",
-    });
+    };
 
     // Adicionar filtros ativos à query apenas se solicitado
     if (includeFilters && hasAppliedSearch) {
-      if (filters.query) params.append("query", filters.query);
-      if (filters.location) params.append("location", filters.location);
+      if (filters.query) params.query = filters.query;
+      if (filters.location) params.location = filters.location;
       if (filters.experience?.length) {
-        filters.experience.forEach((exp) => params.append("experience", exp));
+        // Axios precisa de arrays como parâmetros separados
+        params.experience = filters.experience;
       }
       if (filters.type?.length) {
-        filters.type.forEach((type) => params.append("type", type));
+        params.type = filters.type;
       }
       if (filters.category?.length) {
-        filters.category.forEach((cat) => params.append("category", cat));
+        params.category = filters.category;
       }
-      if (filters.isRemote) params.append("isRemote", "true");
-      if (filters.isFeatured) params.append("isFeatured", "true");
+      if (filters.isRemote) params.isRemote = "true";
+      if (filters.isFeatured) params.isFeatured = "true";
     }
 
     return params;
   };
 
-  // Load jobs and stats from API with pagination
+  // Load jobs and stats from API with pagination - OTIMIZADO COM AXIOS
   useEffect(() => {
     const loadJobsAndStats = async () => {
       try {
         setLoading(true);
 
-        // Carregar estatísticas totais apenas uma vez no carregamento inicial
-        if (currentPage === 1 && !hasAppliedSearch && !statsLoaded) {
-          await loadTotalStats();
+        // Carregar jobs e stats em paralelo
+        if (currentPage === 1 && !hasAppliedSearch) {
+          const [jobsResponse, statsResponse] = await Promise.all([
+            api.get('/api/jobs', { params: buildApiParams(1, false) }),
+            api.get('/api/jobs/stats')
+          ]);
+
+          setJobs(jobsResponse.data.jobs);
+          setFilteredJobs(jobsResponse.data.jobs);
+          setTotalJobs(jobsResponse.data.total);
+          setTotalPages(jobsResponse.data.totalPages);
+
+          setStats({
+            totalJobs: statsResponse.data.totalJobs,
+            totalCompanies: statsResponse.data.totalCompanies,
+            remoteJobs: statsResponse.data.remoteJobs,
+          });
+          setAnimationKey((prev) => prev + 1);
+        } else {
+          // Para mudanças de página ou buscas, carregar apenas os jobs
+          const response = await api.get('/api/jobs', { 
+            params: buildApiParams(currentPage, true) 
+          });
+
+          setJobs(response.data.jobs);
+          setFilteredJobs(response.data.jobs);
+          setTotalJobs(response.data.total);
+          setTotalPages(response.data.totalPages);
         }
-
-        const params = buildApiParams(currentPage, true);
-        const response = await fetch(`/api/jobs?${params.toString()}`);
-        const result = await response.json();
-
-        setJobs(result.jobs);
-        setFilteredJobs(result.jobs);
-        setTotalJobs(result.total);
-        setTotalPages(result.totalPages);
       } catch (error) {
         console.error("Error loading jobs:", error);
       } finally {
@@ -225,10 +221,10 @@ export default function JobsPage() {
     };
 
     loadJobsAndStats();
-  }, [currentPage, hasAppliedSearch, statsLoaded]); // Mantido apenas as dependências essenciais
+  }, [currentPage, hasAppliedSearch]);
 
-  // Função para aplicar busca manualmente
-  const applySearch = async () => {
+  // Função para aplicar busca manualmente - OTIMIZADA COM DEBOUNCE
+  const applySearch = performanceUtils.debounce(async () => {
     try {
       setLoading(true);
       setHasAppliedSearch(true);
@@ -236,16 +232,14 @@ export default function JobsPage() {
       // Reset pagination
       setCurrentPage(1);
 
-      const params = buildApiParams(1, true);
-      const response = await fetch(`/api/jobs?${params.toString()}`);
-      const result = await response.json();
+      const response = await api.get('/api/jobs', { 
+        params: buildApiParams(1, true) 
+      });
 
-      setJobs(result.jobs);
-      setFilteredJobs(result.jobs);
-      setTotalJobs(result.total);
-      setTotalPages(result.totalPages);
-
-      // Não recarregar estatísticas - manter as totais
+      setJobs(response.data.jobs);
+      setFilteredJobs(response.data.jobs);
+      setTotalJobs(response.data.total);
+      setTotalPages(response.data.totalPages);
 
       // Scroll para o elemento de resultados após a busca
       scrollToResults();
@@ -254,11 +248,12 @@ export default function JobsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, 300); // 300ms de debounce
 
-  // Função utilitária para scroll suave
+  // Função utilitária para scroll suave - OTIMIZADA
   const scrollToResults = () => {
-    setTimeout(() => {
+    // Usar requestAnimationFrame para melhor performance
+    requestAnimationFrame(() => {
       const element = document.getElementById("jobs-results");
       if (element) {
         const elementPosition = element.offsetTop - 100; // Offset de 100px para subir mais
@@ -267,10 +262,10 @@ export default function JobsPage() {
           behavior: "smooth",
         });
       }
-    }, 100);
+    });
   };
 
-  // Função para mudar de página
+  // Função para mudar de página - OTIMIZADA
   const handlePageChange = async (page: number) => {
     setCurrentPage(page);
     scrollToResults();

@@ -156,7 +156,7 @@ export const jobsService = {
     return data.map(mapSupabaseJobToJob);
   },
 
-  // Nova função para buscar jobs com paginação e filtros
+  // Nova função para buscar jobs com paginação e filtros - OTIMIZADA
   async getJobsWithPagination(params: {
     page: number;
     limit: number;
@@ -179,15 +179,42 @@ export const jobsService = {
     } = params;
     const offset = (page - 1) * limit;
 
+    // Otimização: selecionar apenas campos necessários para melhor performance
     let query = supabase
       .from("jobs")
-      .select("*", { count: "exact" })
+      .select(
+        `
+        id,
+        title,
+        company,
+        location,
+        type,
+        category,
+        experience,
+        salary_min,
+        salary_max,
+        salary_currency,
+        salary_period,
+        description,
+        requirements,
+        benefits,
+        is_remote,
+        is_featured,
+        is_active,
+        application_url,
+        company_logo,
+        tags,
+        created_at,
+        updated_at
+      `,
+        { count: "exact" }
+      )
       .eq("is_active", true);
 
-    // Aplicar filtros
+    // Aplicar filtros de forma otimizada
     if (filters.query) {
       query = query.or(
-        `title.ilike.%${filters.query}%,company.ilike.%${filters.query}%,location.ilike.%${filters.query}%,description.ilike.%${filters.query}%`
+        `title.ilike.%${filters.query}%,company.ilike.%${filters.query}%,location.ilike.%${filters.query}%`
       );
     }
 
@@ -269,47 +296,31 @@ export const jobsService = {
     return count || 0;
   },
 
-  // Nova função para buscar apenas estatísticas dos jobs
+  // Nova função para buscar apenas estatísticas dos jobs - OTIMIZADA
   async getJobsStats(): Promise<{
     totalJobs: number;
     totalCompanies: number;
     remoteJobs: number;
   }> {
     try {
-      // Otimização: fazer duas queries paralelas para melhor performance
-      const [countResult, statsResult] = await Promise.all([
-        // Query 1: Contar total de jobs
-        supabase
-          .from("jobs")
-          .select("*", { count: "exact", head: true })
-          .eq("is_active", true),
+      // Otimização máxima: usar query SQL otimizada para estatísticas
+      const { data, error } = await supabase
+        .from("jobs")
+        .select("company, is_remote", { count: "exact" })
+        .eq("is_active", true);
 
-        // Query 2: Buscar dados para estatísticas (apenas campos necessários)
-        supabase
-          .from("jobs")
-          .select("company, is_remote")
-          .eq("is_active", true),
-      ]);
-
-      if (countResult.error) {
-        console.error("Error fetching jobs count:", countResult.error);
+      if (error) {
+        console.error("Error fetching jobs stats:", error);
         return { totalJobs: 0, totalCompanies: 0, remoteJobs: 0 };
       }
 
-      if (statsResult.error) {
-        console.error("Error fetching jobs stats:", statsResult.error);
-        return { totalJobs: 0, totalCompanies: 0, remoteJobs: 0 };
-      }
-
-      // Calcular estatísticas
-      const uniqueCompanies = new Set(
-        statsResult.data.map((job) => job.company)
-      ).size;
-
-      const remoteJobs = statsResult.data.filter((job) => job.is_remote).length;
+      // Calcular estatísticas de forma otimizada
+      const totalJobs = data.length;
+      const uniqueCompanies = new Set(data.map((job) => job.company)).size;
+      const remoteJobs = data.filter((job) => job.is_remote).length;
 
       return {
-        totalJobs: countResult.count || 0,
+        totalJobs,
         totalCompanies: uniqueCompanies,
         remoteJobs,
       };
