@@ -169,6 +169,35 @@ export default function JobsPage() {
     }
   };
 
+  // Função utilitária para construir parâmetros da API
+  const buildApiParams = (page: number, includeFilters: boolean = false) => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: jobsPerPage.toString(),
+      sortBy: "date",
+      sortOrder: "desc",
+    });
+
+    // Adicionar filtros ativos à query apenas se solicitado
+    if (includeFilters && hasAppliedSearch) {
+      if (filters.query) params.append("query", filters.query);
+      if (filters.location) params.append("location", filters.location);
+      if (filters.experience?.length) {
+        filters.experience.forEach((exp) => params.append("experience", exp));
+      }
+      if (filters.type?.length) {
+        filters.type.forEach((type) => params.append("type", type));
+      }
+      if (filters.category?.length) {
+        filters.category.forEach((cat) => params.append("category", cat));
+      }
+      if (filters.isRemote) params.append("isRemote", "true");
+      if (filters.isFeatured) params.append("isFeatured", "true");
+    }
+
+    return params;
+  };
+
   // Load jobs and stats from API with pagination
   useEffect(() => {
     const loadJobsAndStats = async () => {
@@ -180,32 +209,7 @@ export default function JobsPage() {
           await loadTotalStats();
         }
 
-        const params = new URLSearchParams({
-          page: currentPage.toString(),
-          limit: jobsPerPage.toString(),
-          sortBy: "date",
-          sortOrder: "desc",
-        });
-
-        // Adicionar filtros ativos à query apenas se a busca foi aplicada
-        if (hasAppliedSearch) {
-          if (filters.query) params.append("query", filters.query);
-          if (filters.location) params.append("location", filters.location);
-          if (filters.experience?.length) {
-            filters.experience.forEach((exp) =>
-              params.append("experience", exp)
-            );
-          }
-          if (filters.type?.length) {
-            filters.type.forEach((type) => params.append("type", type));
-          }
-          if (filters.category?.length) {
-            filters.category.forEach((cat) => params.append("category", cat));
-          }
-          if (filters.isRemote) params.append("isRemote", "true");
-          if (filters.isFeatured) params.append("isFeatured", "true");
-        }
-
+        const params = buildApiParams(currentPage, true);
         const response = await fetch(`/api/jobs?${params.toString()}`);
         const result = await response.json();
 
@@ -221,7 +225,7 @@ export default function JobsPage() {
     };
 
     loadJobsAndStats();
-  }, [currentPage, hasAppliedSearch, statsLoaded]); // Adicionado statsLoaded
+  }, [currentPage, hasAppliedSearch, statsLoaded]); // Mantido apenas as dependências essenciais
 
   // Função para aplicar busca manualmente
   const applySearch = async () => {
@@ -232,28 +236,7 @@ export default function JobsPage() {
       // Reset pagination
       setCurrentPage(1);
 
-      const params = new URLSearchParams({
-        page: "1",
-        limit: jobsPerPage.toString(),
-        sortBy: "date",
-        sortOrder: "desc",
-      });
-
-      // Adicionar filtros à query
-      if (filters.query) params.append("query", filters.query);
-      if (filters.location) params.append("location", filters.location);
-      if (filters.experience?.length) {
-        filters.experience.forEach((exp) => params.append("experience", exp));
-      }
-      if (filters.type?.length) {
-        filters.type.forEach((type) => params.append("type", type));
-      }
-      if (filters.category?.length) {
-        filters.category.forEach((cat) => params.append("category", cat));
-      }
-      if (filters.isRemote) params.append("isRemote", "true");
-      if (filters.isFeatured) params.append("isFeatured", "true");
-
+      const params = buildApiParams(1, true);
       const response = await fetch(`/api/jobs?${params.toString()}`);
       const result = await response.json();
 
@@ -265,16 +248,7 @@ export default function JobsPage() {
       // Não recarregar estatísticas - manter as totais
 
       // Scroll para o elemento de resultados após a busca
-      setTimeout(() => {
-        const element = document.getElementById("jobs-results");
-        if (element) {
-          const elementPosition = element.offsetTop - 100; // Offset de 100px para subir mais
-          window.scrollTo({
-            top: elementPosition,
-            behavior: "smooth",
-          });
-        }
-      }, 100);
+      scrollToResults();
     } catch (error) {
       console.error("Error filtering jobs:", error);
     } finally {
@@ -282,10 +256,8 @@ export default function JobsPage() {
     }
   };
 
-  // Função para mudar de página
-  const handlePageChange = async (page: number) => {
-    setCurrentPage(page);
-    // Scroll para o elemento de resultados com offset
+  // Função utilitária para scroll suave
+  const scrollToResults = () => {
     setTimeout(() => {
       const element = document.getElementById("jobs-results");
       if (element) {
@@ -296,6 +268,12 @@ export default function JobsPage() {
         });
       }
     }, 100);
+  };
+
+  // Função para mudar de página
+  const handlePageChange = async (page: number) => {
+    setCurrentPage(page);
+    scrollToResults();
   };
 
   return (
