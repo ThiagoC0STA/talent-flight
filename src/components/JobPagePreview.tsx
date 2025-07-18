@@ -52,76 +52,76 @@ export default function JobPagePreview({
   };
 
   return (
-    <div className="bg-[#F3F7FA] rounded-2xl p-4">
-      <div className="max-w-[1100px] mx-auto px-2 py-6">
+    <div className="bg-[#F3F7FA] rounded-2xl p-2 sm:p-4">
+      <div className="max-w-[1100px] mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Back Button */}
         {onBack && (
           <button
             onClick={onBack}
-            className="inline-flex items-center text-[#0476D9] hover:text-[#011640] transition-colors font-medium mb-6"
+            className="inline-flex items-center text-[#0476D9] hover:text-[#011640] transition-colors font-medium mb-4 sm:mb-6"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </button>
         )}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Job Header */}
-            <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-fade-in">
-              <div className="flex items-start justify-between mb-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 shadow-sm animate-fade-in">
+              <div className="flex items-start justify-between mb-4 sm:mb-6">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
                     {job.companyLogo && (
                       <Image
                         width={64}
                         height={64}
                         src={job.companyLogo}
                         alt={`${job.company} logo`}
-                        className="w-16 h-16 rounded-xl object-cover border border-[#E5EAF1]"
+                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover border border-[#E5EAF1] self-start sm:self-center"
                       />
                     )}
-                    <div>
-                      <h1 className="text-3xl font-bold text-[#011640] mb-2">
+                    <div className="flex-1">
+                      <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#011640] mb-2">
                         {job.title}
                       </h1>
-                      <p className="text-xl text-[#0476D9] font-medium">
+                      <p className="text-lg sm:text-xl text-[#0476D9] font-medium">
                         {job.company}
                       </p>
                     </div>
                   </div>
                   {/* Job Meta */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="flex items-center gap-2 text-[#010D26]">
-                      <MapPin className="w-5 h-5 text-[#0476D9]" />
-                      <span>{job.location}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                    <div className="flex items-center gap-2 text-[#010D26] text-sm sm:text-base">
+                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9] flex-shrink-0" />
+                      <span className="truncate">{job.location}</span>
                       {job.isRemote && (
-                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex-shrink-0">
                           Remote
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 text-[#010D26]">
-                      <Clock className="w-5 h-5 text-[#0476D9]" />
+                    <div className="flex items-center gap-2 text-[#010D26] text-sm sm:text-base">
+                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9] flex-shrink-0" />
                       <span className="capitalize">
                         {job.type.replace("-", " ")}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-[#010D26]">
-                      <DollarSign className="w-5 h-5 text-[#0476D9]" />
+                    <div className="flex items-center gap-2 text-[#010D26] text-sm sm:text-base">
+                      <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9] flex-shrink-0" />
                       <span className="font-medium">
                         {formatSalary(job.salary)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-[#010D26]">
-                      <Calendar className="w-5 h-5 text-[#0476D9]" />
+                    <div className="flex items-center gap-2 text-[#010D26] text-sm sm:text-base">
+                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9] flex-shrink-0" />
                       <span>Posted {formatDate(job.createdAt)}</span>
                     </div>
                   </div>
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-6">
+                  <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
                     <span
-                      className={`text-sm font-medium px-3 py-1 rounded-full ${getExperienceColor(
+                      className={`text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full ${getExperienceColor(
                         job.experience
                       )}`}
                     >
@@ -131,14 +131,14 @@ export default function JobPagePreview({
                         : "N/A"}
                     </span>
                     <span
-                      className={`text-sm font-medium px-3 py-1 rounded-full ${getTypeColor(
+                      className={`text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full ${getTypeColor(
                         job.type
                       )}`}
                     >
                       {job.type.replace("-", " ")}
                     </span>
                     {job.isFeatured && (
-                      <span className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] text-white text-sm font-medium px-3 py-1 rounded-full">
+                      <span className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] text-white text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full">
                         Featured
                       </span>
                     )}
@@ -149,7 +149,7 @@ export default function JobPagePreview({
                       {(job.tags ?? []).map((tag, index) => (
                         <span
                           key={index}
-                          className="bg-[#F3F7FA] text-[#0476D9] text-sm px-3 py-1 rounded-full border border-[#E5EAF1]"
+                          className="bg-[#F3F7FA] text-[#0476D9] text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full border border-[#E5EAF1]"
                         >
                           {tag}
                         </span>
@@ -160,11 +160,11 @@ export default function JobPagePreview({
               </div>
             </div>
             {/* Job Description */}
-            <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-slide-in-left">
-              <h2 className="text-2xl font-bold text-[#011640] mb-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 shadow-sm animate-slide-in-left">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#011640] mb-4 sm:mb-6">
                 Job Description
               </h2>
-              <div className="prose prose-lg max-w-none text-[#010D26] leading-relaxed mb-6">
+              <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[#010D26] leading-relaxed mb-4 sm:mb-6">
                 {job.description.includes("<") ? (
                   <div
                     dangerouslySetInnerHTML={{
@@ -180,15 +180,15 @@ export default function JobPagePreview({
             </div>
             {/* Requirements */}
             {job.requirements && job.requirements.length > 0 && (
-              <div className="bg-white rounded-2xl p-8 mb-8 shadow-sm animate-slide-in-left">
-                <h2 className="text-2xl font-bold text-[#011640] mb-6">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 shadow-sm animate-slide-in-left">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#011640] mb-4 sm:mb-6">
                   Requirements
                 </h2>
-                <ul className="space-y-3">
+                <ul className="space-y-2 sm:space-y-3">
                   {job.requirements.map((requirement, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-[#0476D9] mt-0.5 flex-shrink-0" />
-                      <span className="text-[#010D26]">{requirement}</span>
+                    <li key={index} className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-[#0476D9] mt-0.5 flex-shrink-0" />
+                      <span className="text-[#010D26] text-sm sm:text-base">{requirement}</span>
                     </li>
                   ))}
                 </ul>
@@ -196,15 +196,15 @@ export default function JobPagePreview({
             )}
             {/* Benefits */}
             {job.benefits && job.benefits.length > 0 && (
-              <div className="bg-white rounded-2xl p-8 shadow-sm animate-slide-in-left">
-                <h2 className="text-2xl font-bold text-[#011640] mb-6">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm animate-slide-in-left">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#011640] mb-4 sm:mb-6">
                   Benefits
                 </h2>
-                <ul className="space-y-3">
+                <ul className="space-y-2 sm:space-y-3">
                   {job.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start gap-3">
+                    <li key={index} className="flex items-start gap-2 sm:gap-3">
                       <div className="w-2 h-2 bg-[#0476D9] rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-[#010D26]">{benefit}</span>
+                      <span className="text-[#010D26] text-sm sm:text-base">{benefit}</span>
                     </li>
                   ))}
                 </ul>
@@ -213,80 +213,80 @@ export default function JobPagePreview({
           </div>
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
+            <div className="sticky top-24 space-y-4 sm:space-y-6">
               {/* Apply Button */}
-              <div className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in">
-                <h3 className="text-lg font-semibold text-[#011640] mb-4">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm animate-scale-in">
+                <h3 className="text-base sm:text-lg font-semibold text-[#011640] mb-3 sm:mb-4">
                   Apply for this position
                 </h3>
                 <Button
                   href={job.applicationUrl}
-                  className="w-full mb-4"
+                  className="w-full mb-3 sm:mb-4"
                   size="lg"
                 >
                   Apply Now
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
-                <p className="text-sm text-[#010D26] text-center">
+                <p className="text-xs sm:text-sm text-[#010D26] text-center">
                   You&apos;ll be redirected to the company&apos;s application
                   page
                 </p>
               </div>
               {/* Company Info */}
               <div
-                className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
+                className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm animate-scale-in"
                 style={{ animationDelay: "0.1s" }}
               >
-                <h3 className="text-lg font-semibold text-[#011640] mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-[#011640] mb-3 sm:mb-4">
                   About {job.company}
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   <div className="flex items-center gap-2 text-[#010D26]">
-                    <Building2 className="w-4 h-4 text-[#0476D9]" />
-                    <span className="text-sm">{job.company}</span>
+                    <Building2 className="w-4 h-4 text-[#0476D9] flex-shrink-0" />
+                    <span className="text-xs sm:text-sm truncate">{job.company}</span>
                   </div>
                   <div className="flex items-center gap-2 text-[#010D26]">
-                    <MapPin className="w-4 h-4 text-[#0476D9]" />
-                    <span className="text-sm">{job.location}</span>
+                    <MapPin className="w-4 h-4 text-[#0476D9] flex-shrink-0" />
+                    <span className="text-xs sm:text-sm truncate">{job.location}</span>
                   </div>
                   {job.isRemote && (
                     <div className="flex items-center gap-2 text-[#010D26]">
-                      <Users className="w-4 h-4 text-[#0476D9]" />
-                      <span className="text-sm">Remote-friendly</span>
+                      <Users className="w-4 h-4 text-[#0476D9] flex-shrink-0" />
+                      <span className="text-xs sm:text-sm">Remote-friendly</span>
                     </div>
                   )}
                 </div>
               </div>
               {/* Job Summary */}
               <div
-                className="bg-white rounded-2xl p-6 shadow-sm animate-scale-in"
+                className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm animate-scale-in"
                 style={{ animationDelay: "0.2s" }}
               >
-                <h3 className="text-lg font-semibold text-[#011640] mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-[#011640] mb-3 sm:mb-4">
                   Job Summary
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-[#010D26]">Experience:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">
+                    <span className="text-[#010D26] text-xs sm:text-sm">Experience:</span>
+                    <span className="font-medium text-[#0476D9] capitalize text-xs sm:text-sm">
                       {job.experience ? job.experience : "N/A"}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#010D26]">Type:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">
+                    <span className="text-[#010D26] text-xs sm:text-sm">Type:</span>
+                    <span className="font-medium text-[#0476D9] capitalize text-xs sm:text-sm">
                       {job.type.replace("-", " ")}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#010D26]">Category:</span>
-                    <span className="font-medium text-[#0476D9] capitalize">
+                    <span className="text-[#010D26] text-xs sm:text-sm">Category:</span>
+                    <span className="font-medium text-[#0476D9] capitalize text-xs sm:text-sm">
                       {job.category}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#010D26]">Salary:</span>
-                    <span className="font-medium text-[#0476D9]">
+                    <span className="text-[#010D26] text-xs sm:text-sm">Salary:</span>
+                    <span className="font-medium text-[#0476D9] text-xs sm:text-sm">
                       {formatSalary(job.salary)}
                     </span>
                   </div>
