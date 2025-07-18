@@ -12,12 +12,30 @@ export default function NewsletterSignup() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simular API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
-    setIsSubscribed(true);
-    setIsLoading(false);
-    setEmail("");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to subscribe");
+      }
+
+      setIsSubscribed(true);
+      setEmail("");
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      // Aqui você pode adicionar um toast ou alert para mostrar o erro
+      alert(error instanceof Error ? error.message : "Failed to subscribe");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubscribed) {
@@ -66,16 +84,15 @@ export default function NewsletterSignup() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all relative z-10"
               required
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-xl"></div>
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-white text-[#0476D9] px-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full cursor-pointer bg-white text-[#0476D9] px-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-[#0476D9] border-t-transparent rounded-full animate-spin"></div>

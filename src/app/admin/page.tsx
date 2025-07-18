@@ -16,6 +16,7 @@ import {
   X,
   Search,
   Clock,
+  Mail,
 } from "lucide-react";
 import { Job } from "@/types/job";
 import { jobsService, trackingService } from "@/lib/jobs";
@@ -35,6 +36,7 @@ import JobAggregator from "@/components/admin/JobAggregator";
 import SearchHistoryTab from "@/components/admin/SearchHistoryTab";
 import ImportedHistoryTab from "@/components/admin/ImportedHistoryTab";
 import InvalidClicksTable from "@/components/admin/InvalidClicksTable";
+import NewsletterManager from "@/components/admin/NewsletterManager";
 
 function LoadingSpinner() {
   return (
@@ -585,6 +587,7 @@ export default function AdminPage() {
               { id: "history", label: "History", icon: Clock },
               { id: "imported", label: "Imported History", icon: CheckCircle },
               { id: "invalid-clicks", label: "Invalid Clicks", icon: XCircle },
+              { id: "newsletter", label: "Newsletter", icon: Mail },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -815,6 +818,14 @@ export default function AdminPage() {
                 Monitor vagas com cliques inválidos para identificar problemas de links ou aplicações.
               </p>
               <InvalidClicksTable />
+            </div>
+          </div>
+        )}
+
+        {activeTab === "newsletter" && (
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+              <NewsletterManager />
             </div>
           </div>
         )}

@@ -321,11 +321,11 @@ export default function JobsPage() {
                   {statsLoading ? (
                     <span className="animate-pulse">0</span>
                   ) : (
-                  <AnimatedCounter
-                    value={stats.totalJobs}
-                    duration={2500}
-                    key={animationKey}
-                  />
+                    <AnimatedCounter
+                      value={stats.totalJobs}
+                      duration={2500}
+                      key={animationKey}
+                    />
                   )}
                 </span>
               </div>
@@ -337,11 +337,11 @@ export default function JobsPage() {
                   {statsLoading ? (
                     <span className="animate-pulse">0</span>
                   ) : (
-                  <AnimatedCounter
-                    value={stats.totalCompanies}
-                    duration={2000}
-                    key={animationKey}
-                  />
+                    <AnimatedCounter
+                      value={stats.totalCompanies}
+                      duration={2000}
+                      key={animationKey}
+                    />
                   )}
                 </span>
               </div>
@@ -353,11 +353,11 @@ export default function JobsPage() {
                   {statsLoading ? (
                     <span className="animate-pulse">0</span>
                   ) : (
-                  <AnimatedCounter
-                    value={stats.remoteJobs}
-                    duration={2200}
-                    key={animationKey}
-                  />
+                    <AnimatedCounter
+                      value={stats.remoteJobs}
+                      duration={2200}
+                      key={animationKey}
+                    />
                   )}
                 </span>
               </div>

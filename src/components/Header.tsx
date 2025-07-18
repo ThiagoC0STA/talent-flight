@@ -54,7 +54,7 @@ export default function Header() {
               href="https://go.hotmart.com/B100903492J"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
+              className="flex items-center gap-2 bg-gradient-to-r transition from-[#0476D9] to-[#0487D9] text-white px-4 py-2 rounded-xl font-medium hover:from-[#011640] hover:to-[#0476D9] shadow-sm hover:shadow-md"
             >
               <BookOpen className="w-4 h-4" />
               Interview Preparation
@@ -107,7 +107,7 @@ export default function Header() {
                 href="https://go.hotmart.com/B100903492J"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
+                className="flex items-center gap-3 px-3 py-2 bg-gradient-to-r from-[#0476D9] to-[#0487D9] text-white hover:from-[#011640] hover:to-[#0476D9] rounded-lg font-medium shadow-sm"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <BookOpen className="w-4 h-4" />
