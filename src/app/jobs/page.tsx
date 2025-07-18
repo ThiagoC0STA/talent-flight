@@ -125,10 +125,10 @@ export default function JobsPage() {
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
-  
+
   // Debug function for viewMode changes
   const handleViewModeChange = (mode: "grid" | "list") => {
-    console.log('ViewMode changing from', viewMode, 'to', mode);
+    console.log("ViewMode changing from", viewMode, "to", mode);
     setViewMode(mode);
   };
   const [stats, setStats] = useState({
@@ -151,24 +151,14 @@ export default function JobsPage() {
   // Função para carregar estatísticas totais (independente dos filtros)
   const loadTotalStats = async () => {
     try {
-      const response = await fetch("/api/jobs?page=1&limit=1");
-      const result = await response.json();
-
-      // Buscar todos os jobs para calcular estatísticas
-      const allJobsResponse = await fetch("/api/jobs?page=1&limit=1000");
-      const allJobsResult = await allJobsResponse.json();
-
-      const uniqueCompanies = new Set(
-        allJobsResult.jobs.map((job: Job) => job.company)
-      ).size;
-      const remoteJobsCount = allJobsResult.jobs.filter(
-        (job: Job) => job.isRemote
-      ).length;
+      // Usar a nova rota otimizada para estatísticas
+      const response = await fetch("/api/jobs/stats");
+      const stats = await response.json();
 
       const newStats = {
-        totalJobs: result.total,
-        totalCompanies: uniqueCompanies,
-        remoteJobs: remoteJobsCount,
+        totalJobs: stats.totalJobs,
+        totalCompanies: stats.totalCompanies,
+        remoteJobs: stats.remoteJobs,
       };
 
       setStats(newStats);
@@ -273,7 +263,7 @@ export default function JobsPage() {
       setTotalPages(result.totalPages);
 
       // Não recarregar estatísticas - manter as totais
-      
+
       // Scroll para o elemento de resultados após a busca
       setTimeout(() => {
         const element = document.getElementById("jobs-results");
@@ -281,7 +271,7 @@ export default function JobsPage() {
           const elementPosition = element.offsetTop - 100; // Offset de 100px para subir mais
           window.scrollTo({
             top: elementPosition,
-            behavior: "smooth"
+            behavior: "smooth",
           });
         }
       }, 100);
@@ -302,7 +292,7 @@ export default function JobsPage() {
         const elementPosition = element.offsetTop - 100; // Offset de 100px para subir mais
         window.scrollTo({
           top: elementPosition,
-          behavior: "smooth"
+          behavior: "smooth",
         });
       }
     }, 100);

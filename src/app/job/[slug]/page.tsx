@@ -147,7 +147,7 @@ export default async function JobPage({ params }: any) {
         />
       </head>
       <div className="min-h-screen bg-[#F3F7FA]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Breadcrumbs */}
           <Breadcrumbs
             items={[

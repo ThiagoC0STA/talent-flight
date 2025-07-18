@@ -269,6 +269,56 @@ export const jobsService = {
     return count || 0;
   },
 
+  // Nova função para buscar apenas estatísticas dos jobs
+  async getJobsStats(): Promise<{
+    totalJobs: number;
+    totalCompanies: number;
+    remoteJobs: number;
+  }> {
+    try {
+      // Otimização: fazer duas queries paralelas para melhor performance
+      const [countResult, statsResult] = await Promise.all([
+        // Query 1: Contar total de jobs
+        supabase
+          .from("jobs")
+          .select("*", { count: "exact", head: true })
+          .eq("is_active", true),
+
+        // Query 2: Buscar dados para estatísticas (apenas campos necessários)
+        supabase
+          .from("jobs")
+          .select("company, is_remote")
+          .eq("is_active", true),
+      ]);
+
+      if (countResult.error) {
+        console.error("Error fetching jobs count:", countResult.error);
+        return { totalJobs: 0, totalCompanies: 0, remoteJobs: 0 };
+      }
+
+      if (statsResult.error) {
+        console.error("Error fetching jobs stats:", statsResult.error);
+        return { totalJobs: 0, totalCompanies: 0, remoteJobs: 0 };
+      }
+
+      // Calcular estatísticas
+      const uniqueCompanies = new Set(
+        statsResult.data.map((job) => job.company)
+      ).size;
+
+      const remoteJobs = statsResult.data.filter((job) => job.is_remote).length;
+
+      return {
+        totalJobs: countResult.count || 0,
+        totalCompanies: uniqueCompanies,
+        remoteJobs,
+      };
+    } catch (error) {
+      console.error("Error in getJobsStats:", error);
+      return { totalJobs: 0, totalCompanies: 0, remoteJobs: 0 };
+    }
+  },
+
   // Buscar vagas em destaque
   async getFeaturedJobs(): Promise<Job[]> {
     const { data, error } = await supabase

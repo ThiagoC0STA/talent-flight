@@ -66,9 +66,7 @@ export default function Pagination({
   const itemRange = getItemRange();
 
   return (
-    <div
-      className={`bg-white/80 backdrop-blur-sm rounded-2xl border border-[#E5EAF1] p-6 ${className}`}
-    >
+    <div className={`${className}`}>
       {/* Items info */}
       {itemRange && (
         <div className="text-center mb-6">
