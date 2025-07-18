@@ -28,8 +28,8 @@ export default function NotFound() {
           Page Not Found
         </h2>
         <p className="text-xl text-[#0476D9] mb-8 leading-relaxed">
-          The page you're looking for doesn't exist or has been moved. 
-          Don't worry, you can still find amazing job opportunities!
+          The page you&apos;re looking for doesn&apos;t exist or has been moved. 
+          Don&apos;t worry, you can still find amazing job opportunities!
         </p>
 
         {/* Action Buttons */}

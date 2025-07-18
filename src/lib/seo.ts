@@ -102,7 +102,7 @@ export function generateJobSEO(job: any, slug: string) {
   });
 }
 
-export function generateJobsListSEO(filters?: any) {
+export function generateJobsListSEO() {
   const title = "Job Opportunities - Find Your Next Career Move";
   const description =
     "Discover thousands of job opportunities and find the perfect match for your career goals. From startups to Fortune 500 companies.";
