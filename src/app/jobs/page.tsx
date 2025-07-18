@@ -119,7 +119,6 @@ const JobCardGridSkeleton = () => (
 );
 
 export default function JobsPage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [filters, setFilters] = useState<JobFiltersType>({});
   const [loading, setLoading] = useState(true);
@@ -194,7 +193,6 @@ export default function JobsPage() {
             params: buildApiParams(1, false),
           });
 
-          setJobs(jobsResponse.data.jobs);
           setFilteredJobs(jobsResponse.data.jobs);
           setTotalJobs(jobsResponse.data.total);
           setTotalPages(jobsResponse.data.totalPages);
@@ -225,7 +223,6 @@ export default function JobsPage() {
             params: buildApiParams(currentPage, true),
           });
 
-          setJobs(response.data.jobs);
           setFilteredJobs(response.data.jobs);
           setTotalJobs(response.data.total);
           setTotalPages(response.data.totalPages);
@@ -253,7 +250,6 @@ export default function JobsPage() {
         params: buildApiParams(1, true),
       });
 
-      setJobs(response.data.jobs);
       setFilteredJobs(response.data.jobs);
       setTotalJobs(response.data.total);
       setTotalPages(response.data.totalPages);

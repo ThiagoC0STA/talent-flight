@@ -1,9 +1,8 @@
 import { jobsService } from "@/lib/jobs";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    // Buscar apenas as estatísticas necessárias
     const stats = await jobsService.getJobsStats();
 
     return NextResponse.json(stats);

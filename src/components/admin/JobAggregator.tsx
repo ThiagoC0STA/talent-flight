@@ -14,6 +14,7 @@ import { Job } from "@/types/job";
 import { SearchHistory } from "@/types/common";
 import { searchExternalJobs, ExternalJob } from "@/lib/external-apis";
 import { jobsService, trackingService } from "@/lib/jobs";
+import Image from "next/image";
 
 interface JobAggregatorProps {
   onImportJob: (
@@ -432,7 +433,9 @@ export default function JobAggregator({
                 <div className="flex items-start gap-4">
                   {/* Company Logo */}
                   {job.companyLogo ? (
-                    <img
+                    <Image
+                      width={48}
+                      height={48}
                       src={job.companyLogo}
                       alt={`${job.company} logo`}
                       className="w-12 h-12 rounded-lg object-contain bg-white border border-gray-200"

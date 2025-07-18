@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import {
   JobFilters as JobFiltersType,
-  JobCategory,
   JobType,
   ExperienceLevel,
 } from "@/types/job";
