@@ -15,6 +15,7 @@ import Button from "@/components/ui/Button";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import Image from "next/image";
+import DOMPurify from "isomorphic-dompurify";
 
 export default function JobPagePreview({
   job,
@@ -52,7 +53,7 @@ export default function JobPagePreview({
 
   return (
     <div className="bg-[#F3F7FA] rounded-2xl p-4">
-      <div className="max-w-4xl mx-auto px-2 py-6">
+      <div className="max-w-[1100px] mx-auto px-2 py-6">
         {/* Back Button */}
         {onBack && (
           <button
@@ -143,16 +144,18 @@ export default function JobPagePreview({
                     )}
                   </div>
                   {/* Skills */}
-                  <div className="flex flex-wrap gap-2">
-                    {(job.tags ?? []).map((tag, index) => (
-                      <span
-                        key={index}
-                        className="bg-[#F3F7FA] text-[#0476D9] text-sm px-3 py-1 rounded-full border border-[#E5EAF1]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  {job.tags && job.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {(job.tags ?? []).map((tag, index) => (
+                        <span
+                          key={index}
+                          className="bg-[#F3F7FA] text-[#0476D9] text-sm px-3 py-1 rounded-full border border-[#E5EAF1]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -162,9 +165,17 @@ export default function JobPagePreview({
                 Job Description
               </h2>
               <div className="prose prose-lg max-w-none text-[#010D26] leading-relaxed mb-6">
-                <ReactMarkdown remarkPlugins={[remarkBreaks]}>
-                  {job.description}
-                </ReactMarkdown>
+                {job.description.includes("<") ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(job.description),
+                    }}
+                  />
+                ) : (
+                  <ReactMarkdown remarkPlugins={[remarkBreaks]}>
+                    {job.description}
+                  </ReactMarkdown>
+                )}
               </div>
             </div>
             {/* Requirements */}
@@ -217,7 +228,8 @@ export default function JobPagePreview({
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
                 <p className="text-sm text-[#010D26] text-center">
-                  You&apos;ll be redirected to the company&apos;s application page
+                  You&apos;ll be redirected to the company&apos;s application
+                  page
                 </p>
               </div>
               {/* Company Info */}

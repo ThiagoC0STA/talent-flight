@@ -21,6 +21,7 @@
     "dompurify": "^3.2.6",
     "google-auth-library": "^10.1.0",
     "gtag": "^1.0.1",
+    "isomorphic-dompurify": "^2.26.0",
     "lucide-react": "^0.525.0",
     "markdown-it": "^14.1.0",
     "marked": "^16.0.0",
