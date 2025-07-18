@@ -70,8 +70,11 @@ function generateLinkedInPost(job: Job): string {
     job.experience,
     "developer",
     "work",
+    "hiring",
     "job",
     "talentflight",
+    "#techjobs",
+    "#tech",
     ...locationTags,
   ]
     .filter(Boolean)
