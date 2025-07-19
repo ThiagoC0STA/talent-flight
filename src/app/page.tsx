@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRight,
@@ -6,35 +8,12 @@ import {
   MapPin,
   Users,
   TrendingUp,
+  CheckCircle,
 } from "lucide-react";
 import Hero from "@/components/Hero";
 import JobCard from "@/components/JobCard";
 import { jobsService } from "@/lib/jobs";
-import { Metadata } from "next";
-import { Suspense } from "react";
-
-export const metadata: Metadata = {
-  title: "TalentFlight - Your talent, ready for takeoff",
-  description:
-    "Connect with exciting job opportunities. Your launchpad for professional growth. Find remote jobs, tech careers, and career opportunities.",
-  keywords:
-    "jobs, careers, opportunities, professional growth, recruitment, hiring, remote jobs, tech jobs, career opportunities",
-  openGraph: {
-    title: "TalentFlight - Your talent, ready for takeoff",
-    description:
-      "Connect with exciting job opportunities. Your launchpad for professional growth.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "TalentFlight - Your talent, ready for takeoff",
-    description:
-      "Connect with exciting job opportunities. Your launchpad for professional growth.",
-  },
-  alternates: {
-    canonical: "https://talentflight.com",
-  },
-};
+import { Suspense, useState } from "react";
 
 // Home Job Card Skeleton
 const HomeJobCardSkeleton = () => (
@@ -104,6 +83,96 @@ async function JobsSection() {
         <JobCard key={job.id} job={job} />
       ))}
     </div>
+  );
+}
+
+// Newsletter Component
+function NewsletterSection() {
+  const [email, setEmail] = useState("");
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to subscribe");
+      }
+
+      setIsSubscribed(true);
+      setEmail("");
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      setError(error instanceof Error ? error.message : "Failed to subscribe");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isSubscribed) {
+    return (
+      <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 text-white relative overflow-hidden max-w-md mx-auto">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10 flex items-center gap-3">
+          <CheckCircle className="w-6 h-6 text-green-200" />
+          <div>
+            <h3 className="font-semibold text-lg">Subscribed!</h3>
+            <p className="text-green-100 text-sm">
+              You&apos;ll receive similar jobs in your inbox
+            </p>
+          </div>
+        </div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+      <div className="flex-1">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Your email address"
+          className="w-full px-6 py-4 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg shadow-sm"
+          required
+          disabled={isLoading}
+        />
+        {error && (
+          <p className="text-red-500 text-sm mt-2">{error}</p>
+        )}
+      </div>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="btn-primary whitespace-nowrap text-lg px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            Subscribing...
+          </div>
+        ) : (
+          "Subscribe"
+        )}
+      </button>
+    </form>
   );
 }
 
@@ -202,19 +271,7 @@ export default function HomePage() {
             spam, just opportunities that matter to you.
           </p>
 
-          <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="flex-1 px-6 py-4 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent text-lg shadow-sm"
-            />
-            <button
-              type="submit"
-              className="btn-primary whitespace-nowrap text-lg px-8 py-4"
-            >
-              Subscribe
-            </button>
-          </form>
+          <NewsletterSection />
 
           <p className="text-sm text-[#010D26] mt-6">
             You can unsubscribe at any time.
