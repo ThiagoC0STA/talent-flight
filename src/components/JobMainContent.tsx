@@ -13,7 +13,6 @@ import {
   Users,
   Zap,
   Award,
-  Heart,
   Share2,
   Earth,
 } from "lucide-react";
@@ -36,27 +35,6 @@ export default function JobMainContent({
   onModalOpen,
 }: JobMainContentProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-
-  console.log(job);
-
-  const getExperienceColor = (experience?: string) => {
-    const colors = {
-      intern: "bg-gradient-to-r from-green-400 to-emerald-500 text-white",
-      junior: "bg-gradient-to-r from-blue-400 to-cyan-500 text-white",
-      "junior-mid": "bg-gradient-to-r from-cyan-400 to-teal-500 text-white",
-      mid: "bg-gradient-to-r from-yellow-400 to-orange-500 text-white",
-      "mid-senior": "bg-gradient-to-r from-orange-400 to-red-500 text-white",
-      senior: "bg-gradient-to-r from-purple-400 to-pink-500 text-white",
-      between: "bg-gradient-to-r from-gray-400 to-slate-500 text-white",
-    };
-    if (!experience)
-      return "bg-gradient-to-r from-gray-400 to-slate-500 text-white";
-    return (
-      colors[experience as keyof typeof colors] ||
-      "bg-gradient-to-r from-gray-400 to-slate-500 text-white"
-    );
-  };
 
   const getTypeColor = (type: string) => {
     const colors = {
@@ -75,25 +53,22 @@ export default function JobMainContent({
   return (
     <div className="lg:col-span-2 space-y-6">
       {/* Hero Section with Enhanced Design */}
-      <div className="relative overflow-hidden bg-gradient-to-br rounded-3xl p-6 sm:p-8 shadow bg-white border border-blue-100/50">
+      <div className="relative overflow-hidden bg-gradient-to-br rounded-2xl p-6 sm:p-8 shadow-sm bg-white">
         {/* Background Pattern */}
 
         <div className="relative">
           <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-            {/* Company Logo with Enhanced Styling */}
-
             <div className="flex-1 space-y-4">
               {/* Title and Company */}
-
               <div className="space-y-2 flex items-center gap-4">
                 {job.companyLogo && (
-                  <div className="relative group w-32">
+                  <div className="relative group">
                     <Image
                       width={80}
                       height={80}
                       src={job.companyLogo}
                       alt={`${job.company} logo`}
-                      className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl object-cover border-2 border-white/20  group-hover:scale-105 transition-transform duration-300"
+                      className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl object-cover border border-gray-200 group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                 )}
@@ -107,7 +82,7 @@ export default function JobMainContent({
                       {job.company}
                     </p>
                     {job.isFeatured && (
-                      <div className="flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      <div className="flex items-center gap-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
                         <Star className="w-4 h-4" />
                         Featured
                       </div>
@@ -117,94 +92,122 @@ export default function JobMainContent({
               </div>
 
               {/* Enhanced Meta Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div className="flex items-center gap-3 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/80 transition-all duration-300 group">
-                  <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white">
-                    <MapPin className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Location</p>
-                    <p className="font-medium text-[#011640]">{job.location}</p>
-                    {job.isRemote && (
-                      <span className="inline-block mt-1 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                        <Earth className="w-4 h-4" /> Remote
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/80 transition-all duration-300 group">
-                  <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg text-white">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Type</p>
-                    <p className="font-medium text-[#011640] capitalize">
-                      {job.type.replace("-", " ")}
-                    </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="group relative overflow-hidden bg-gradient-to-br from-white/80 to-blue-50/80 backdrop-blur-sm rounded-xl border border-blue-200/30 hover:border-blue-300/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center gap-3 p-3">
+                    <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white shadow-md group-hover:scale-110 transition-transform duration-300">
+                      <MapPin className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 font-medium">
+                        Location
+                      </p>
+                      <p className="font-semibold text-[#011640]">
+                        {job.location}
+                      </p>
+                      {job.isRemote && (
+                        <span className="inline-flex items-center gap-1 mt-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                          <Earth className="w-3 h-3" />
+                          Remote
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/80 transition-all duration-300 group">
-                  <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg text-white">
-                    <DollarSign className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Salary</p>
-                    <p className="font-medium text-[#011640]">
-                      {formatSalary(job.salary)}
-                    </p>
+                <div className="group relative overflow-hidden bg-gradient-to-br from-white/80 to-green-50/80 backdrop-blur-sm rounded-xl border border-green-200/30 hover:border-green-300/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center gap-3 p-3">
+                    <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg text-white shadow-md group-hover:scale-110 transition-transform duration-300">
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 font-medium">Type</p>
+                      <p className="font-semibold text-[#011640] capitalize">
+                        {job.type.replace("-", " ")}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/80 transition-all duration-300 group">
-                  <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white">
-                    <Calendar className="w-4 h-4" />
+                <div className="group relative overflow-hidden bg-gradient-to-br from-white/80 to-yellow-50/80 backdrop-blur-sm rounded-xl border border-yellow-200/30 hover:border-yellow-300/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center gap-3 p-3">
+                    <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg text-white shadow-md group-hover:scale-110 transition-transform duration-300">
+                      <DollarSign className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 font-medium">
+                        Salary
+                      </p>
+                      <p className="font-semibold text-[#011640]">
+                        {formatSalary(job.salary)}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Posted</p>
-                    <p className="font-medium text-[#011640]">
-                      {formatDate(job.createdAt)}
-                    </p>
+                </div>
+
+                <div className="group relative overflow-hidden bg-gradient-to-br from-white/80 to-purple-50/80 backdrop-blur-sm rounded-xl border border-purple-200/30 hover:border-purple-300/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center gap-3 p-3">
+                    <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white shadow-md group-hover:scale-110 transition-transform duration-300">
+                      <Calendar className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 font-medium">
+                        Posted
+                      </p>
+                      <p className="font-semibold text-[#011640]">
+                        {formatDate(job.createdAt)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Enhanced Tags */}
-              <div className="flex flex-wrap gap-3">
-                <span
-                  className={`text-sm font-medium px-4 py-2 rounded-full shadow bg-gray-100`}
-                >
-                  {job.experience
-                    ? job.experience.charAt(0).toUpperCase() +
-                      job.experience.slice(1)
-                    : "N/A"}
+              <div className="flex flex-wrap gap-3 ">
+                <span className="group relative overflow-hidden bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 text-sm font-semibold px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 border border-gray-300/50">
+                  <span className="relative z-10">
+                    {job.experience
+                      ? job.experience.charAt(0).toUpperCase() +
+                        job.experience.slice(1)
+                      : "N/A"}
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </span>
+
                 <span
-                  className={`text-sm font-medium px-4 py-2 rounded-full shadow-lg ${getTypeColor(
+                  className={`group relative overflow-hidden text-sm font-semibold px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${getTypeColor(
                     job.type
                   )}`}
                 >
-                  {job.type.replace("-", " ")}
-                </span>
-                {job.isFeatured && (
-                  <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-sm font-medium px-4 py-2 rounded-full shadow-lg">
-                    ⭐ Featured
+                  <span className="relative z-10">
+                    {job.type.replace("-", " ")}
                   </span>
-                )}
+                  <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </span>
               </div>
 
-              {/* Enhanced Skills */}
+              {/* Skills Section */}
               {/* {job.tags && job.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {job.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-gradient-to-r from-blue-50 to-indigo-50 text-[#0476D9] text-sm px-3 py-1.5 rounded-full border border-blue-200/50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 cursor-pointer"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-[#011640] flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+                    Key Skills
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {job.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="group relative overflow-hidden bg-gradient-to-r from-blue-50 to-indigo-50 text-[#0476D9] text-sm font-medium px-3 py-1.5 rounded-full border border-blue-200/50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-y-0.5"
+                      >
+                        <span className="relative z-10">{tag}</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-indigo-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )} */}
             </div>
@@ -213,7 +216,7 @@ export default function JobMainContent({
       </div>
 
       {/* Job Description with Enhanced Design */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-sm transition-all duration-300">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#011640] to-[#0476D9] bg-clip-text text-transparent">
             Job Description
