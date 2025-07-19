@@ -8,7 +8,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Job } from "@/types/job";
-import { formatSalary, formatDate } from "@/lib/utils";
+import { formatSalary, formatDate, generateJobSlug } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -114,7 +114,7 @@ export default function RelatedJobs({ relatedJobs }: RelatedJobsProps) {
           {relatedJobs.slice(0, 12).map((job) => (
             <SwiperSlide key={job.id}>
               <Link
-                href={`/job/${job.id}`}
+                href={`/job/${generateJobSlug(job.title, job.company)}`}
                 className="group block bg-white rounded-2xl p-6 hover:bg-gradient-to-br hover:from-[#F3F7FA] hover:to-white hover:shadow-xl transition-all duration-500 border border-[#E5EAF1] hover:border-[#0476D9] hover:scale-102 relative overflow-hidden"
               >
                 {/* Background gradient overlay */}
