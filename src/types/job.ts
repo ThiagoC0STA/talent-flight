@@ -17,6 +17,7 @@ export interface Job extends BaseEntity {
   applicationUrl?: string;
   companyLogo?: string;
   tags?: string[];
+  slug?: string;
 }
 
 export type JobType =

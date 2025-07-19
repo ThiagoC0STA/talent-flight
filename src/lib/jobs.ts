@@ -61,6 +61,7 @@ const mapSupabaseJobToJob = (supabaseJob: any): Job => {
     applicationUrl: fixedJob.application_url,
     companyLogo: fixedJob.company_logo,
     tags: fixedJob.tags || [],
+    slug: fixedJob.slug,
     createdAt: new Date(fixedJob.created_at),
     updatedAt: new Date(fixedJob.updated_at),
   };
