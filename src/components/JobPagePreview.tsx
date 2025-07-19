@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   ChevronDown,
   ChevronUp,
+  TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 import { Job } from "@/types/job";
@@ -261,25 +262,30 @@ export default function JobPagePreview({
             )}
 
             {/* Apply Now Section */}
-            <div className="bg-gradient-to-r from-[#0476D9] to-[#0487D9] rounded-2xl p-8 text-white shadow-lg animate-fade-in">
-              <div className="text-center max-w-2xl mx-auto">
-                <h2 className="text-2xl sm:text-3xl font-bold mb-4">
-                  Ready to Apply?
-                </h2>
-                <p className="text-blue-100 mb-6 text-lg">
-                  Join {job.company} and help build the future of technology
+            <div className="bg-gradient-to-br from-[#0476D9] via-[#0487D9] to-[#011640] rounded-3xl p-8 lg:p-8 text-white shadow-2xl animate-fade-in">
+              <div className="text-center max-w-3xl mx-auto">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <TrendingUp className="w-8 h-8" />
+                  <h2 className="text-3xl font-bold">
+                    Ready to Join the Team?
+                  </h2>
+                </div>
+                <p className="text-blue-100 mb-8 text-base leading-relaxed">
+                  Take the next step in your career and help {job.company} build
+                  amazing products that impact millions of users worldwide.
                 </p>
-                <Button
-                  onClick={() => {
-                    setIsModalOpen(true);
-                    window.open(job.applicationUrl, "_blank");
-                  }}
-                  className="bg-white text-[#0476D9] hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
-                  size="lg"
-                >
-                  Apply Now
-                  <ExternalLink className="w-5 h-5 ml-2" />
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      window.open(job.applicationUrl, "_blank");
+                    }}
+                    className="bg-white text-[#0476D9] cursor-pointer hover:bg-blue-50 px-8 py-4 text-base font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                    size="lg"
+                  >
+                    🚀 Apply Now
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
