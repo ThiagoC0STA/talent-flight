@@ -5,13 +5,13 @@ import Image from "next/image";
 export default function Footer() {
   return (
     <footer className="bg-[#F3F7FA] border-t border-[#E5EAF1]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
           {/* Brand */}
           <div className="md:col-span-2 mb-8 md:mb-0">
             <Link href="/" className="flex items-center space-x-3 mb-4">
               <Image
-                src="/logo.png"
+                src="/logos/logo.png"
                 alt="TalentFlight"
                 width={140}
                 height={200}

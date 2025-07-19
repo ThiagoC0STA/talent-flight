@@ -22,7 +22,7 @@ export default function JobPagePreview({
 
   return (
     <div className="bg-[#F3F7FA] rounded-2xl p-2 sm:p-4">
-      <div className="max-w-[1180px] mx-auto px-2 sm:px-4 py-4 sm:py-6">
+      <div className="max-w-[1280px] mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Back Button */}
         {onBack && (
           <button
