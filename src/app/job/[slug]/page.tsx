@@ -28,12 +28,12 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       url: `https://talentflight.com/job/${params.slug}`,
       siteName: "TalentFlight",
       images: [
-        {
+            {
           url: job.companyLogo || "/og-image.jpg",
           width: 1200,
           height: 630,
           alt: `${job.title} at ${job.company}`,
-        },
+            },
       ],
       locale: "en_US",
       type: "article",

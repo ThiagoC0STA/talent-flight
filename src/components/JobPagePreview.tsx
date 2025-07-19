@@ -21,7 +21,6 @@ import Image from "next/image";
 import DOMPurify from "isomorphic-dompurify";
 import NewsletterSignup from "./NewsletterSignup";
 import RelatedJobs from "./RelatedJobs";
-import AffiliateProduct from "./AffiliateProduct";
 
 export default function JobPagePreview({
   job,
@@ -173,11 +172,15 @@ export default function JobPagePreview({
               <h2 className="text-xl sm:text-2xl font-bold text-[#011640] mb-4 sm:mb-6">
                 Job Description
               </h2>
-              
+
               <div className="relative">
-                <div className={`prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[#010D26] leading-relaxed transition-all duration-300 ${
-                  isDescriptionExpanded ? "max-h-none" : "max-h-96 overflow-hidden"
-                }`}>
+                <div
+                  className={`prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[#010D26] leading-relaxed transition-all duration-300 ${
+                    isDescriptionExpanded
+                      ? "max-h-none"
+                      : "max-h-[600px] overflow-hidden"
+                  }`}
+                >
                   {job.description.includes("<") ? (
                     <div
                       dangerouslySetInnerHTML={{
@@ -190,15 +193,17 @@ export default function JobPagePreview({
                     </ReactMarkdown>
                   )}
                 </div>
-                
+
                 {!isDescriptionExpanded && (
                   <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                 )}
               </div>
-              
+
               <div className="flex justify-center mt-4">
                 <button
-                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                  onClick={() =>
+                    setIsDescriptionExpanded(!isDescriptionExpanded)
+                  }
                   className="flex items-center gap-2 text-[#0476D9] hover:text-[#011640] transition-colors font-medium text-sm px-4 py-2 rounded-lg hover:bg-[#F3F7FA]"
                 >
                   {isDescriptionExpanded ? (
@@ -279,19 +284,86 @@ export default function JobPagePreview({
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 space-y-4 sm:space-y-6">
-              {/* Company Summary */}
-
               {/* Newsletter */}
-              <NewsletterSignup />
 
-              {/* Affiliate Product */}
-              <AffiliateProduct />
+              {/* Related Jobs Sidebar */}
+              {relatedJobs.length > 0 && (
+                <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+                  <h3 className="text-lg sm:text-xl font-bold text-[#011640] mb-4">
+                    Related Jobs
+                  </h3>
+                  <div className="max-h-96 overflow-y-auto scrollbar-hide">
+                    <div className="space-y-3">
+                      {relatedJobs.map((relatedJob) => (
+                        <div
+                          key={relatedJob.id}
+                          className="border border-[#E5EAF1] rounded-xl p-3 hover:border-[#0476D9] transition-colors cursor-pointer"
+                        >
+                          <div className="flex items-start gap-3">
+                            {relatedJob.companyLogo && (
+                              <Image
+                                width={40}
+                                height={40}
+                                src={relatedJob.companyLogo}
+                                alt={`${relatedJob.company} logo`}
+                                className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg object-cover border border-[#E5EAF1] flex-shrink-0"
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-semibold text-[#011640] text-sm sm:text-base truncate">
+                                {relatedJob.title}
+                              </h4>
+                              <p className="text-[#0476D9] text-xs sm:text-sm font-medium truncate">
+                                {relatedJob.company}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[#010D26] text-xs">
+                                  {relatedJob.location}
+                                </span>
+                                <span className="text-[#010D26] text-xs">
+                                  •
+                                </span>
+                                <span className="text-[#010D26] text-xs capitalize">
+                                  {relatedJob.type.replace("-", " ")}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[#010D26] text-xs font-medium">
+                                  {formatSalary(relatedJob.salary)}
+                                </span>
+                                <span className="text-[#010D26] text-xs">
+                                  •
+                                </span>
+                                <span className="text-[#010D26] text-xs capitalize">
+                                  {relatedJob.experience || "N/A"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {relatedJobs.length > 5 && (
+                    <div className="mt-4 text-center">
+                      <Button
+                        href="/jobs"
+                        className=" text-white text-sm font-medium w-full"
+                      >
+                        View All Jobs →
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <NewsletterSignup />
             </div>
           </div>
         </div>
 
-        {/* Related Jobs */}
-        <RelatedJobs relatedJobs={relatedJobs} />
+        {/* Related Jobs Carousel - Only show if not in sidebar */}
+        {relatedJobs.length > 0 && <RelatedJobs relatedJobs={relatedJobs} />}
       </div>
     </div>
   );

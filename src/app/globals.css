@@ -20,79 +20,90 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
-  
+
   /* Focus styles for accessibility */
   *:focus {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
-  
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   ::-webkit-scrollbar-track {
     background: var(--background);
   }
-  
+
   ::-webkit-scrollbar-thumb {
     background: var(--primary);
     border-radius: 4px;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-dark);
+  }
+
+  /* Hide scrollbar for related jobs carousel */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 
 /* Component Styles */
 @layer components {
+
   /* Hero Gradient */
   .hero-gradient {
     background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
   }
-  
+
   /* Button Styles */
   .btn-primary {
     @apply bg-[#0476D9] text-white font-medium px-6 py-3 rounded-xl hover:bg-[#0366C4] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0476D9] focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
   }
-  
+
   .btn-secondary {
     @apply bg-[#011640] text-white font-medium px-6 py-3 rounded-xl hover:bg-[#00070D] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#011640] focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
   }
-  
+
   .btn-outline {
     @apply border-2 border-[#0476D9] text-[#0476D9] font-medium px-6 py-3 rounded-xl hover:bg-[#0476D9] hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0476D9] focus:ring-offset-2;
   }
-  
+
   /* Card Styles */
   .card {
     @apply bg-white rounded-2xl border border-[#E5EAF1] shadow-sm hover:shadow-lg transition-all duration-300;
   }
-  
+
   /* Input Styles */
   .input-primary {
     @apply w-full px-4 py-3 border border-[#E5EAF1] rounded-xl focus:ring-2 focus:ring-[#0476D9] focus:border-transparent transition-all duration-200 placeholder:text-[#9CA3AF];
   }
-  
+
   /* Badge Styles */
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
-  
+
   .badge-primary {
     @apply bg-[#0476D9] text-white;
   }
-  
+
   .badge-secondary {
     @apply bg-[#011640] text-white;
   }
-  
+
   .badge-outline {
     @apply border border-[#0476D9] text-[#0476D9];
   }
@@ -100,121 +111,132 @@
 
 /* Animation Classes */
 @layer utilities {
+
   /* Fade In */
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out;
   }
-  
+
   @keyframes fadeIn {
     from {
       opacity: 0;
       transform: translateY(20px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-  
+
   /* Slide In */
   .animate-slide-in-left {
     animation: slideInLeft 0.6s ease-out;
   }
-  
+
   @keyframes slideInLeft {
     from {
       opacity: 0;
       transform: translateX(-30px);
     }
+
     to {
       opacity: 1;
       transform: translateX(0);
     }
   }
-  
+
   .animate-slide-in-right {
     animation: slideInRight 0.6s ease-out;
   }
-  
+
   @keyframes slideInRight {
     from {
       opacity: 0;
       transform: translateX(30px);
     }
+
     to {
       opacity: 1;
       transform: translateX(0);
     }
   }
-  
+
   /* Scale In */
   .animate-scale-in {
     animation: scaleIn 0.4s ease-out;
   }
-  
+
   @keyframes scaleIn {
     from {
       opacity: 0;
       transform: scale(0.9);
     }
+
     to {
       opacity: 1;
       transform: scale(1);
     }
   }
-  
+
   /* Bounce */
   .animate-bounce-in {
     animation: bounceIn 0.6s ease-out;
   }
-  
+
   @keyframes bounceIn {
     0% {
       opacity: 0;
       transform: scale(0.3);
     }
+
     50% {
       opacity: 1;
       transform: scale(1.05);
     }
+
     70% {
       transform: scale(0.9);
     }
+
     100% {
       opacity: 1;
       transform: scale(1);
     }
   }
-  
+
   /* Pulse */
   .animate-pulse-slow {
     animation: pulseSlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
-  
+
   @keyframes pulseSlow {
-    0%, 100% {
+
+    0%,
+    100% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.8;
     }
   }
-  
+
   /* Hover Effects */
   .hover-lift {
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
   }
-  
+
   .hover-lift:hover {
     transform: translateY(-4px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
-  
+
   /* Loading Spinner */
   .spinner {
     @apply animate-spin rounded-full border-2 border-[#E5EAF1] border-t-[#0476D9];
   }
-  
+
   /* Gradient Text */
   .gradient-text {
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -222,14 +244,14 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   /* Glass Effect */
   .glass {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
-  
+
   /* Text Gradients */
   .text-gradient-primary {
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -237,16 +259,16 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   /* Responsive Typography */
   .text-responsive {
     @apply text-base md:text-lg lg:text-xl;
   }
-  
+
   .heading-responsive {
     @apply text-2xl md:text-3xl lg:text-4xl xl:text-5xl;
   }
-  
+
   /* Line Clamp Utilities */
   .line-clamp-1 {
     overflow: hidden;
@@ -254,104 +276,104 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
   }
-  
+
   .line-clamp-2 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
-  
+
   .line-clamp-3 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
-  
+
   .line-clamp-4 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
   }
-  
+
   /* Filter Styles */
   .filter-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   .filter-scrollbar::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 3px;
   }
-  
+
   .filter-scrollbar::-webkit-scrollbar-thumb {
     background: #c1c1c1;
     border-radius: 3px;
   }
-  
+
   .filter-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
   }
-  
+
   /* Sticky sidebar animation */
   .sticky-sidebar {
     transition: transform 0.2s ease-in-out;
   }
-  
+
   /* Mobile filter slide animation */
   .mobile-filters-enter {
     transform: translateY(-10px);
     opacity: 0;
   }
-  
+
   .mobile-filters-enter-active {
     transform: translateY(0);
     opacity: 1;
     transition: all 0.3s ease-out;
   }
-  
+
   .mobile-filters-exit {
     transform: translateY(0);
     opacity: 1;
   }
-  
+
   .mobile-filters-exit-active {
     transform: translateY(-10px);
     opacity: 0;
     transition: all 0.3s ease-in;
   }
-  
+
   /* View Toggle Styles */
   .view-toggle-button {
     transition: all 0.2s ease-in-out;
   }
-  
+
   .view-toggle-button:hover {
     transform: translateY(-1px);
   }
-  
+
   /* Horizontal Card Styles */
   .job-card-horizontal {
     transition: all 0.3s ease-in-out;
   }
-  
+
   .job-card-horizontal:hover {
     transform: translateY(-2px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
-  
+
   /* Filter Quick Actions */
   .filter-quick-action {
     transition: all 0.2s ease-in-out;
   }
-  
+
   .filter-quick-action:hover {
     background-color: #F3F7FA;
     transform: translateX(4px);
   }
-  
+
   /* Custom Checkbox Styles */
   .custom-checkbox {
     appearance: none;
@@ -364,12 +386,12 @@
     position: relative;
     transition: all 0.2s ease-in-out;
   }
-  
+
   .custom-checkbox:checked {
     background: #0476D9;
     border-color: #0476D9;
   }
-  
+
   .custom-checkbox:checked::after {
     content: '';
     position: absolute;
@@ -381,13 +403,13 @@
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
   }
-  
+
   /* Filter Section Animations */
   .filter-section-enter {
     opacity: 0;
     transform: translateY(10px);
   }
-  
+
   .filter-section-enter-active {
     opacity: 1;
     transform: translateY(0);
