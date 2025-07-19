@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Briefcase, Filter } from "lucide-react";
 import JobCard from "@/components/JobCard";
 import JobCardHorizontal from "@/components/JobCardHorizontal";
@@ -63,7 +63,10 @@ const JobCardSkeleton = () => (
         {/* Tags Skeleton */}
         <div className="flex flex-wrap gap-1 sm:gap-2">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-5 sm:h-7 bg-gray-200 rounded-full w-12 sm:w-16"></div>
+            <div
+              key={i}
+              className="h-5 sm:h-7 bg-gray-200 rounded-full w-12 sm:w-16"
+            ></div>
           ))}
         </div>
       </div>
@@ -111,7 +114,10 @@ const JobCardGridSkeleton = () => (
       {/* Tags */}
       <div className="flex flex-wrap gap-1">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-4 sm:h-5 bg-gray-200 rounded-full w-10 sm:w-12"></div>
+          <div
+            key={i}
+            className="h-4 sm:h-5 bg-gray-200 rounded-full w-10 sm:w-12"
+          ></div>
         ))}
       </div>
     </div>
@@ -132,7 +138,20 @@ export default function JobsPage() {
   };
 
   // For mobile, always use grid view
-  const effectiveViewMode = window.innerWidth < 1024 ? "grid" : viewMode;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  const effectiveViewMode = isMobile ? "grid" : viewMode;
 
   const [stats, setStats] = useState({
     totalJobs: 0,
@@ -154,7 +173,7 @@ export default function JobsPage() {
   const [statsLoading, setStatsLoading] = useState(false);
 
   // Função utilitária para construir parâmetros da API
-  const buildApiParams = (page: number, includeFilters: boolean = false) => {
+  const buildApiParams = useCallback((page: number, includeFilters: boolean = false) => {
     const params: any = {
       page: page.toString(),
       limit: jobsPerPage.toString(),
@@ -181,11 +200,11 @@ export default function JobsPage() {
     }
 
     return params;
-  };
+  }, [filters, hasAppliedSearch, jobsPerPage]);
 
   // Load jobs and stats from API with pagination - ULTRA OTIMIZADO
   useEffect(() => {
-    const loadJobsAndStats = async () => {
+    const loadJobsAndStats = async () => {  
       try {
         setLoading(true);
 
@@ -490,7 +509,10 @@ export default function JobsPage() {
                   Try adjusting your search criteria or filters to find more
                   opportunities
                 </p>
-                <button onClick={() => setFilters({})} className="btn-primary text-sm sm:text-base">
+                <button
+                  onClick={() => setFilters({})}
+                  className="btn-primary text-sm sm:text-base"
+                >
                   Clear all filters
                 </button>
               </div>

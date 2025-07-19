@@ -2,14 +2,13 @@ import { useState, useEffect } from "react";
 import { X, Linkedin, RefreshCw } from "lucide-react";
 import { Job } from "@/types/job";
 import { generateLinkedInPostVariations } from "@/lib/linkedin-variations";
+import Image from "next/image";
 
 interface LinkedInPostModalProps {
   isOpen: boolean;
   onClose: () => void;
   job: Job | null;
 }
-
-
 
 export default function LinkedInPostModal({
   isOpen,
@@ -60,7 +59,8 @@ export default function LinkedInPostModal({
   };
 
   const handlePreviousVariation = () => {
-    const prevIndex = currentVariation === 0 ? allVariations.length - 1 : currentVariation - 1;
+    const prevIndex =
+      currentVariation === 0 ? allVariations.length - 1 : currentVariation - 1;
     setCurrentVariation(prevIndex);
     setPostText(allVariations[prevIndex]);
   };
@@ -96,9 +96,11 @@ export default function LinkedInPostModal({
           <div className="mb-6 p-4 bg-gray-50 rounded-xl">
             <div className="flex items-start gap-3">
               {job.companyLogo ? (
-                <img
+                <Image
                   src={job.companyLogo}
                   alt={`${job.company} logo`}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-lg object-contain bg-white border"
                 />
               ) : (
