@@ -35,6 +35,7 @@ export default function JobMainContent({
   onModalOpen,
 }: JobMainContentProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [showShareFeedback, setShowShareFeedback] = useState(false);
 
   const getTypeColor = (type: string) => {
     const colors = {
@@ -48,6 +49,16 @@ export default function JobMainContent({
       colors[type as keyof typeof colors] ||
       "bg-gradient-to-r from-gray-500 to-gray-600 text-white"
     );
+  };
+
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShowShareFeedback(true);
+      setTimeout(() => setShowShareFeedback(false), 2000);
+    } catch (error) {
+      console.error("Erro ao copiar link:", error);
+    }
   };
 
   return (
@@ -221,10 +232,19 @@ export default function JobMainContent({
           <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#011640] to-[#0476D9] bg-clip-text text-transparent">
             Job Description
           </h2>
-          <div className="flex items-center gap-2">
-            <button className="p-2 bg-gray-100 text-gray-500 hover:bg-gray-200 rounded-full transition-all duration-300">
+          <div className="flex items-center gap-2 relative">
+            <button
+              onClick={handleShare}
+              className="p-2 bg-gray-100 text-gray-500 hover:bg-gray-200 rounded-full transition-all duration-300 hover:scale-110"
+              title="Compartilhar vaga"
+            >
               <Share2 className="w-5 h-5" />
             </button>
+            {showShareFeedback && (
+              <div className="absolute text-nowrap -top-12 right-0 bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-lg animate-in slide-in-from-top-2">
+                Link copied to clipboard!{" "}
+              </div>
+            )}
           </div>
         </div>
 
