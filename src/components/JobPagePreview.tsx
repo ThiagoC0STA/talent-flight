@@ -5,7 +5,6 @@ import {
   Clock,
   DollarSign,
   Calendar,
-  ExternalLink,
   CheckCircle,
   ArrowLeft,
   ChevronDown,
