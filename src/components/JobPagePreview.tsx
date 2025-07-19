@@ -50,7 +50,11 @@ export default function JobPagePreview({
         </div>
 
         {/* Related Jobs Carousel - Only show if not in sidebar */}
-        {relatedJobs.length > 0 && <RelatedJobs relatedJobs={relatedJobs} />}
+        {relatedJobs.length > 0 && (
+          <div className="hidden md:block">
+            <RelatedJobs relatedJobs={relatedJobs} />
+          </div>
+        )}
       </div>
 
       {/* Related Jobs Modal */}
