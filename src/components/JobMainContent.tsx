@@ -19,7 +19,6 @@ import {
 import { useState } from "react";
 import { Job } from "@/types/job";
 import { formatSalary, formatDate } from "@/lib/utils";
-import Button from "@/components/ui/Button";
 import ApplyButton from "@/components/ApplyButton";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
@@ -31,10 +30,7 @@ interface JobMainContentProps {
   onModalOpen: () => void;
 }
 
-export default function JobMainContent({
-  job,
-  onModalOpen,
-}: JobMainContentProps) {
+export default function JobMainContent({ job }: JobMainContentProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showShareFeedback, setShowShareFeedback] = useState(false);
 
