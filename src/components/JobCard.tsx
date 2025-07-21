@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, Clock, DollarSign, Building2, Calendar } from "lucide-react";
 import {
@@ -10,6 +12,7 @@ import {
 import Card from "@/components/ui/Card";
 import { Job } from "@/types/job";
 import Image from "next/image";
+import { useState } from "react";
 
 interface JobCardProps {
   job: Job;
@@ -17,6 +20,8 @@ interface JobCardProps {
 }
 
 export default function JobCard({ job, className }: JobCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   const getExperienceColor = (experience?: string) => {
     const colors = {
       intern: "bg-green-100 text-green-800",
@@ -51,16 +56,17 @@ export default function JobCard({ job, className }: JobCardProps) {
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-start gap-2 mb-2">
-            {job.companyLogo ? (
+            {(job.company_logo || job.companyLogo) && !imageError ? (
               <Image
                 width={40}
                 height={40}
-                src={job.companyLogo}
+                src={job.company_logo || job.companyLogo || ""}
                 alt={`${job.company} logo`}
                 className="w-10 h-10 rounded-lg object-cover border border-[#E5EAF1] bg-white"
+                onError={() => setImageError(true)}
               />
             ) : (
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center shadow-sm">
                 <Building2 className="w-5 h-5 text-gray-500" />
               </div>
             )}

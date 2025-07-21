@@ -27,10 +27,10 @@ export function formatSalary(salary?: {
     salary.period === "yearly"
       ? "year"
       : salary.period === "monthly"
-      ? "month"
-      : salary.period === "hourly"
-      ? "hour"
-      : "";
+        ? "month"
+        : salary.period === "hourly"
+          ? "hour"
+          : "";
   if (salary.min === salary.max) {
     return `${formatNumber(salary.min)}${period ? "/" + period : ""}`;
   }
@@ -85,7 +85,7 @@ export const performanceUtils = {
     func: T,
     wait: number
   ): ((...args: Parameters<T>) => void) => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     return (...args: Parameters<T>) => {
       clearTimeout(timeout);
       timeout = setTimeout(() => func(...args), wait);

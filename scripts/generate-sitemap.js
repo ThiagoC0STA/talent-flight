@@ -80,9 +80,6 @@ ${allUrls
 
     // Salvar arquivo
     writeFileSync("public/sitemap.xml", xml);
-    console.log(
-      `✅ Sitemap gerado com ${allUrls.length} URLs (${jobUrls.length} jobs)`
-    );
   } catch (error) {
     console.error("❌ Erro ao gerar sitemap:", error);
   }

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, Clock, Building2, Calendar, ExternalLink } from "lucide-react";
 import {
@@ -10,6 +12,7 @@ import {
 import Card from "@/components/ui/Card";
 import { Job } from "@/types/job";
 import Image from "next/image";
+import { useState } from "react";
 
 interface JobCardHorizontalProps {
   job: Job;
@@ -20,6 +23,8 @@ export default function JobCardHorizontal({
   job,
   className,
 }: JobCardHorizontalProps) {
+  const [imageError, setImageError] = useState(false);
+
   const getExperienceColor = (experience?: string) => {
     const colors = {
       intern: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -55,22 +60,23 @@ export default function JobCardHorizontal({
       <div className="flex items-start gap-8 p-8">
         {/* Company Logo */}
         <div className="flex-shrink-0">
-          {job.companyLogo ? (
-            <div className="relative">
+          <div className="relative">
+            {(job.company_logo || job.companyLogo) && !imageError ? (
               <Image
                 width={80}
                 height={80}
-                src={job.companyLogo}
+                src={(job.company_logo || job.companyLogo) as string}
                 alt={`${job.company} logo`}
                 className="w-20 h-20 rounded-2xl object-cover border border-gray-100 bg-white"
+                onError={() => setImageError(true)}
               />
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
-            </div>
-          ) : (
-            <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-              <Building2 className="w-10 h-10 text-gray-400" />
-            </div>
-          )}
+            ) : (
+              <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                <Building2 className="w-10 h-10 text-gray-400" />
+              </div>
+            )}
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+          </div>
         </div>
 
         {/* Main Content */}

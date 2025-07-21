@@ -19,17 +19,13 @@ const DYNAMIC_URLS = ["/api/jobs", "/api/jobs/stats"];
 
 // Install event - cache static assets
 self.addEventListener("install", (event) => {
-  console.log("Service Worker: Installing...");
-
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
       .then((cache) => {
-        console.log("Service Worker: Caching static assets");
         return cache.addAll(STATIC_URLS);
       })
       .then(() => {
-        console.log("Service Worker: Static assets cached");
         return self.skipWaiting();
       })
       .catch((error) => {
@@ -40,8 +36,6 @@ self.addEventListener("install", (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener("activate", (event) => {
-  console.log("Service Worker: Activating...");
-
   event.waitUntil(
     caches
       .keys()
@@ -49,14 +43,12 @@ self.addEventListener("activate", (event) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-              console.log("Service Worker: Deleting old cache", cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       })
       .then(() => {
-        console.log("Service Worker: Activated");
         return self.clients.claim();
       })
   );
@@ -201,9 +193,8 @@ self.addEventListener("sync", (event) => {
 async function doBackgroundSync() {
   try {
     // Sync any pending data when connection is restored
-    console.log("Service Worker: Background sync completed");
   } catch (error) {
-    console.error("Service Worker: Background sync failed", error);
+    console.error("Background sync failed", error);
   }
 }
 

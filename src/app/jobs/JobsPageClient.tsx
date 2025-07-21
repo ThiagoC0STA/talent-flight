@@ -10,7 +10,6 @@ import AnimatedCounter from "@/components/AnimatedCounter";
 import Pagination from "@/components/Pagination";
 import { Job, JobFilters as JobFiltersType } from "@/types/job";
 import Button from "@/components/ui/Button";
-import { performanceUtils } from "@/lib/utils";
 import api from "@/lib/api";
 
 // Loading Skeleton Components
@@ -139,7 +138,7 @@ export default function JobsPageClient({
   initialStats,
   totalJobs: initialTotalJobs,
 }: JobsPageClientProps) {
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>(initialJobs);
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>(initialJobs || []);
   const [filters, setFilters] = useState<JobFiltersType>({});
   const [loading, setLoading] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -166,13 +165,15 @@ export default function JobsPageClient({
 
   const effectiveViewMode = isMobile ? "grid" : viewMode;
 
-  const [stats, setStats] = useState(initialStats);
+  const [stats, setStats] = useState(
+    initialStats || { totalJobs: 0, totalCompanies: 0, remoteJobs: 0 }
+  );
   const [animationKey, setAnimationKey] = useState(0);
 
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalJobs, setTotalJobs] = useState(initialTotalJobs);
+  const [totalJobs, setTotalJobs] = useState(initialTotalJobs || 0);
   const jobsPerPage = 12;
 
   // Estado para controlar se a busca foi aplicada
@@ -196,7 +197,6 @@ export default function JobsPageClient({
         if (filters.query) params.query = filters.query;
         if (filters.location) params.location = filters.location;
         if (filters.experience?.length) {
-          // Axios precisa de arrays como parâmetros separados
           params.experience = filters.experience;
         }
         if (filters.type?.length) {
@@ -272,7 +272,7 @@ export default function JobsPageClient({
   }, [currentPage, hasAppliedSearch]);
 
   // Função para aplicar busca manualmente - OTIMIZADA COM DEBOUNCE
-  const applySearch = performanceUtils.debounce(async () => {
+  const applySearch = useCallback(async () => {
     try {
       setLoading(true);
       setHasAppliedSearch(true);
@@ -295,7 +295,18 @@ export default function JobsPageClient({
     } finally {
       setLoading(false);
     }
-  }, 300); // 300ms de debounce
+  }, [buildApiParams]);
+
+  // Debounce para a busca
+  const debouncedSearch = useCallback(() => {
+    let timeoutId: NodeJS.Timeout;
+    return () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        applySearch();
+      }, 300);
+    };
+  }, [applySearch])();
 
   // Função utilitária para scroll suave - OTIMIZADA
   const scrollToResults = () => {
@@ -417,7 +428,7 @@ export default function JobsPageClient({
             <JobFilters
               filters={filters}
               onFiltersChange={setFilters}
-              onSearch={applySearch}
+              onSearch={debouncedSearch}
               isSearching={loading}
               isMobile={true}
             />
@@ -431,7 +442,7 @@ export default function JobsPageClient({
               <JobFilters
                 filters={filters}
                 onFiltersChange={setFilters}
-                onSearch={applySearch}
+                onSearch={debouncedSearch}
                 isSearching={loading}
               />
             </div>
@@ -484,7 +495,7 @@ export default function JobsPageClient({
               </div>
             ) : filteredJobs.length > 0 ? (
               effectiveViewMode === "grid" ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 animate-fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 animate-fade-in">
                   {filteredJobs.map((job, index) => (
                     <div
                       key={job.id}

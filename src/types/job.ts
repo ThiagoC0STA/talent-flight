@@ -16,6 +16,7 @@ export interface Job extends BaseEntity {
   isActive?: boolean;
   applicationUrl?: string;
   companyLogo?: string;
+  company_logo?: string;
   tags?: string[];
   slug?: string;
 }
