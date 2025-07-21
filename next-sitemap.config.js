@@ -3,7 +3,7 @@ module.exports = {
   siteUrl: process.env.SITE_URL || "https://talentflight.com",
   generateRobotsTxt: false, // We have our own robots.txt
   generateIndexSitemap: false,
-  exclude: ["/admin/*", "/api/*"],
+  exclude: ["/admin", "/admin/*", "/api/*"],
   robotsTxtOptions: {
     policies: [
       {

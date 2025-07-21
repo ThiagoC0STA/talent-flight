@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "next-sitemap",
+    "postbuild": "node scripts/generate-sitemap.js",
     "start": "next start",
     "lint": "next lint",
-    "sitemap": "next-sitemap",
+    "sitemap": "node scripts/generate-sitemap.js",
     "test-filters": "node test-filters.js"
   },
   "dependencies": {
