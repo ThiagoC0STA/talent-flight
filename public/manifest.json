@@ -1,13 +1,14 @@
 {
-  "name": "TalentFlight - Your talent, ready for takeoff",
+  "name": "TalentFlight - Job Search",
   "short_name": "TalentFlight",
-  "description": "Your launchpad for professional opportunities. Find remote jobs, tech careers, and connect with top companies worldwide.",
+  "description": "Find your next career opportunity. Remote jobs, tech careers, and professional growth.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F3F7FA",
   "theme_color": "#0476D9",
   "orientation": "portrait-primary",
   "scope": "/",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icon-192x192.png",
@@ -58,23 +59,9 @@
       "purpose": "any"
     }
   ],
-  "categories": ["business", "productivity", "employment", "job search", "career"],
+  "categories": ["business", "productivity", "employment"],
   "lang": "en-US",
   "dir": "ltr",
-  "screenshots": [
-    {
-      "src": "/screenshot-wide.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/screenshot-narrow.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Search Jobs",
