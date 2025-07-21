@@ -1,5 +1,7 @@
+import { Metadata } from "next";
 import JobAlertForm from "@/components/JobAlertForm";
 import FAQItem from "@/components/FAQItem";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   Bell,
   Search,
@@ -10,12 +12,154 @@ import {
   Lightbulb,
 } from "lucide-react";
 
+export const metadata: Metadata = {
+  title: "Job Alerts - Get Email Notifications for New Tech Jobs | TalentFlight",
+  description: "Set up personalized job alerts and get email notifications when new tech jobs matching your skills are posted. Never miss the perfect opportunity with our intelligent job matching system.",
+  keywords: [
+    "job alerts",
+    "tech job notifications",
+    "developer job alerts",
+    "programmer job alerts",
+    "software engineer alerts",
+    "remote job notifications",
+    "tech career alerts",
+    "job matching",
+    "career opportunities",
+    "tech job search",
+    "developer opportunities",
+    "programming jobs",
+    "software development jobs",
+    "IT job alerts",
+    "tech industry jobs"
+  ],
+  openGraph: {
+    title: "Job Alerts - Get Email Notifications for New Tech Jobs",
+    description: "Set up personalized job alerts and get email notifications when new tech jobs matching your skills are posted. Never miss the perfect opportunity.",
+    url: "https://talentflight.com/alerts",
+    siteName: "TalentFlight",
+    images: [
+      {
+        url: "https://talentflight.com/og-job-alerts.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Job Alerts - TalentFlight",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Job Alerts - Get Email Notifications for New Tech Jobs",
+    description: "Set up personalized job alerts and get email notifications when new tech jobs matching your skills are posted.",
+    images: ["https://talentflight.com/og-job-alerts.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://talentflight.com/alerts",
+  },
+  other: {
+    "google-site-verification": "your-verification-code",
+  },
+};
+
 export default function AlertsPage() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Job Alerts - Get Email Notifications for New Tech Jobs",
+    "description": "Set up personalized job alerts and get email notifications when new tech jobs matching your skills are posted. Never miss the perfect opportunity with our intelligent job matching system.",
+    "url": "https://talentflight.com/alerts",
+    "mainEntity": {
+      "@type": "Service",
+      "name": "Job Alert Service",
+      "description": "Personalized job alert service for tech professionals",
+      "provider": {
+        "@type": "Organization",
+        "name": "TalentFlight",
+        "url": "https://talentflight.com"
+      },
+      "serviceType": "Job Alert Service",
+      "areaServed": "Worldwide",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Job Alert Features",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Email Notifications",
+              "description": "Get automatic emails when we find jobs that match your profile"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Custom Filters",
+              "description": "Use keywords to find exactly what you're looking for"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Instant Notifications",
+              "description": "Be the first to know about new opportunities"
+            }
+          }
+        ]
+      }
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://talentflight.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Job Alerts",
+          "item": "https://talentflight.com/alerts"
+        }
+      ]
+    }
+  };
+
   return (
-    <div className="min-h-screen py-16">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
+            <div className="min-h-screen py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumbs */}
+          <Breadcrumbs 
+            items={[
+              { label: "Job Alerts" }
+            ]} 
+          />
+          
+          {/* Header */}
+          <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-6 shadow-lg">
             <Bell className="w-8 h-8 text-white" />
           </div>
@@ -274,5 +418,6 @@ export default function AlertsPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
