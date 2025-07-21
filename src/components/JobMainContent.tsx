@@ -20,6 +20,7 @@ import { useState } from "react";
 import { Job } from "@/types/job";
 import { formatSalary, formatDate } from "@/lib/utils";
 import Button from "@/components/ui/Button";
+import ApplyButton from "@/components/ApplyButton";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import Image from "next/image";
@@ -396,16 +397,16 @@ export default function JobMainContent({
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center cursor-pointer">
-            <Button
-              onClick={() => {
-                onModalOpen();
-                window.open(job.applicationUrl, "_blank");
-              }}
-              className="bg-gradient-to-r cursor-pointer px-6 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 border-2 border-white/20"
-              size="lg"
-            >
-              🚀 Apply Now
-            </Button>
+            {job.applicationUrl && (
+              <ApplyButton
+                jobId={job.id}
+                applicationUrl={job.applicationUrl}
+                jobTitle={job.title}
+                company={job.company}
+                className="bg-gradient-to-r cursor-pointer px-6 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 border-2 border-white/20"
+                size="lg"
+              />
+            )}
           </div>
         </div>
       </div>
