@@ -15,9 +15,14 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Função para gerar slug (igual à usada no site)
 function generateJobSlug(title, company) {
-  return `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-at-${company
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")}`;
+  const titleSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const companySlug = company.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+  // Remover hífens duplos e hífens no início/fim
+  const cleanTitle = titleSlug.replace(/-+/g, "-").replace(/^-|-$/g, "");
+  const cleanCompany = companySlug.replace(/-+/g, "-").replace(/^-|-$/g, "");
+
+  return `${cleanTitle}-at-${cleanCompany}`;
 }
 
 async function generateSitemap() {

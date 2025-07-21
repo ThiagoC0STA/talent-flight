@@ -57,7 +57,8 @@ export function generateSlug(text: string) {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+    .replace(/-+/g, "-") // Remove hífens duplos
+    .replace(/(^-|-$)/g, ""); // Remove hífens no início/fim
 }
 
 export function generateJobSlug(jobTitle: string, companyName: string) {
