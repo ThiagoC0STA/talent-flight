@@ -30,7 +30,10 @@ interface JobMainContentProps {
   onModalOpen: () => void;
 }
 
-export default function JobMainContent({ job }: JobMainContentProps) {
+export default function JobMainContent({
+  job,
+  onModalOpen,
+}: JobMainContentProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showShareFeedback, setShowShareFeedback] = useState(false);
 
@@ -401,6 +404,7 @@ export default function JobMainContent({ job }: JobMainContentProps) {
                 company={job.company}
                 className="bg-gradient-to-r cursor-pointer px-6 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 border-2 border-white/20"
                 size="lg"
+                onClick={onModalOpen}
               />
             )}
           </div>

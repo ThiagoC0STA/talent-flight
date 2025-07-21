@@ -37,6 +37,7 @@ import SearchHistoryTab from "@/components/admin/SearchHistoryTab";
 import ImportedHistoryTab from "@/components/admin/ImportedHistoryTab";
 import InvalidClicksTable from "@/components/admin/InvalidClicksTable";
 import NewsletterManager from "@/components/admin/NewsletterManager";
+import JobAlertsManager from "@/components/admin/JobAlertsManager";
 
 function LoadingSpinner() {
   return (
@@ -293,11 +294,11 @@ export default function AdminPage() {
         setJobs((prevJobs) =>
           prevJobs.map((j) => (j.id === job.id ? updatedJob : j))
         );
-      setToast(
+        setToast(
           `Job ${
             updatedJob.isActive ? "activated" : "deactivated"
           } successfully!`
-      );
+        );
       }
     } catch (error) {
       console.error("Erro ao alterar status da vaga:", error);
@@ -373,11 +374,11 @@ export default function AdminPage() {
       const safeHtml = DOMPurify.sanitize(rawHtml);
 
       let createdAtDate: Date;
-      
+
       if (isEditing && editingJob && formData.created_at) {
         // Se é edição e tem data, usar a data do form
         createdAtDate = new Date(formData.created_at + "T00:00:00");
-        
+
         // Validar se a data é válida
         if (isNaN(createdAtDate.getTime())) {
           createdAtDate = new Date();
@@ -386,7 +387,7 @@ export default function AdminPage() {
         // Se é nova vaga, usar data atual
         createdAtDate = new Date();
       }
-      
+
       console.log("=== ADMIN DEBUG ===");
       console.log("formData.created_at:", formData.created_at);
       console.log("createdAtDate:", createdAtDate);
@@ -588,6 +589,7 @@ export default function AdminPage() {
               { id: "imported", label: "Imported History", icon: CheckCircle },
               { id: "invalid-clicks", label: "Invalid Clicks", icon: XCircle },
               { id: "newsletter", label: "Newsletter", icon: Mail },
+              { id: "alerts", label: "Alerts", icon: Eye },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -708,7 +710,9 @@ export default function AdminPage() {
               onSearch={async () => {
                 setSearchLoading(true);
                 try {
-                  const searchResults = await jobsService.searchJobsAdmin(filters);
+                  const searchResults = await jobsService.searchJobsAdmin(
+                    filters
+                  );
                   setJobs(searchResults);
                   setCurrentPage(1);
                 } catch (error) {
@@ -747,7 +751,7 @@ export default function AdminPage() {
               types={types}
               loading={searchLoading}
             />
-            
+
             {/* Botão para limpar dados inconsistentes */}
             <div className="flex justify-end">
               <button
@@ -758,7 +762,7 @@ export default function AdminPage() {
                 Clean Inconsistent Data
               </button>
             </div>
-            
+
             <JobTable
               jobs={paginatedJobs}
               onEdit={handleEdit}
@@ -815,7 +819,8 @@ export default function AdminPage() {
                 Invalid Clicks Analysis
               </h2>
               <p className="text-gray-600 mb-6">
-                Monitor vagas com cliques inválidos para identificar problemas de links ou aplicações.
+                Monitor vagas com cliques inválidos para identificar problemas
+                de links ou aplicações.
               </p>
               <InvalidClicksTable />
             </div>
@@ -826,6 +831,14 @@ export default function AdminPage() {
           <div className="space-y-4 sm:space-y-6">
             <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
               <NewsletterManager />
+            </div>
+          </div>
+        )}
+
+        {activeTab === "alerts" && (
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+              <JobAlertsManager />
             </div>
           </div>
         )}

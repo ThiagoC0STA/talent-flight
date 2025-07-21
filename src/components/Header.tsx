@@ -37,6 +37,12 @@ export default function Header() {
               Jobs
             </Link>
             <Link
+              href="/alerts"
+              className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
+            >
+              Job Alerts
+            </Link>
+            <Link
               href="/about"
               className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
             >
@@ -77,6 +83,13 @@ export default function Header() {
               >
                 <Briefcase className="w-4 h-4" />
                 Jobs
+              </Link>
+              <Link
+                href="/alerts"
+                className="flex items-center gap-3 px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Job Alerts
               </Link>
               <Link
                 href="/about"

@@ -1,80 +1,153 @@
-import { jobsService } from "@/lib/jobs";
+import { checkAndNotifyAlerts } from "@/lib/jobAlerts";
+import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const {
+      title,
+      company,
+      description,
+      applicationUrl,
+      location,
+      isRemote,
+      technologies,
+      salary,
+    } = body;
+
+    // Validate required fields
+    if (!title || !company || !description || !applicationUrl) {
+      return NextResponse.json(
+        {
+          error: "Required fields: title, company, description, applicationUrl",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Insert job
+    const { data: job, error } = await supabase
+      .from("jobs")
+      .insert({
+        title,
+        company,
+        description,
+        application_url: applicationUrl,
+        location: location || "Remote",
+        is_remote: isRemote || false,
+        technologies: technologies || [],
+        salary: salary || null,
+        is_active: true,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error inserting job:", error);
+      return NextResponse.json(
+        { error: "Error creating job" },
+        { status: 500 }
+      );
+    }
+
+    // Check and notify alerts (in background)
+    try {
+      await checkAndNotifyAlerts(job);
+    } catch (alertError) {
+      console.error("Error checking alerts:", alertError);
+      // Don't fail job creation due to alert errors
+    }
+
+    return NextResponse.json({
+      success: true,
+      job,
+      message: "Job created successfully!",
+    });
+  } catch (error) {
+    console.error("Error in jobs API:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-
-    // Extrair parâmetros de paginação
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "12");
-    const sortBy =
-      (searchParams.get("sortBy") as "date" | "salary" | "relevance") || "date";
-    const sortOrder =
-      (searchParams.get("sortOrder") as "asc" | "desc") || "desc";
+    const search = searchParams.get("search") || "";
+    const company = searchParams.get("company") || "";
+    const location = searchParams.get("location") || "";
+    const isRemote = searchParams.get("remote") || "";
+    const technologies = searchParams.get("technologies") || "";
 
-    // Extrair filtros da query string
-    const filters: any = {};
+    let query = supabase
+      .from("jobs")
+      .select("*")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
 
-    if (searchParams.get("query")) {
-      filters.query = searchParams.get("query");
+    // Apply filters
+    if (search) {
+      query = query.or(
+        `title.ilike.%${search}%,description.ilike.%${search}%,company.ilike.%${search}%`
+      );
     }
 
-    if (searchParams.get("location")) {
-      filters.location = searchParams.get("location");
+    if (company) {
+      query = query.eq("company", company);
     }
 
-    // Corrigir parsing de arrays
-    if (searchParams.get("experience")) {
-      const experience = searchParams.get("experience");
-      filters.experience = Array.isArray(experience)
-        ? experience
-        : [experience];
+    if (location) {
+      query = query.eq("location", location);
     }
 
-    if (searchParams.get("type")) {
-      const type = searchParams.get("type");
-      filters.type = Array.isArray(type) ? type : [type];
+    if (isRemote === "true") {
+      query = query.eq("is_remote", true);
     }
 
-    if (searchParams.get("category")) {
-      const category = searchParams.get("category");
-      filters.category = Array.isArray(category) ? category : [category];
+    if (technologies) {
+      const techArray = technologies.split(",").map((t) => t.trim());
+      query = query.overlaps("technologies", techArray);
     }
 
-    if (searchParams.get("isRemote")) {
-      filters.isRemote = searchParams.get("isRemote") === "true";
+    // Count total
+    const { count } = await query;
+
+    // Apply pagination
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    query = query.range(from, to);
+
+    const { data: jobs, error } = await query;
+
+    if (error) {
+      console.error("Error fetching jobs:", error);
+      return NextResponse.json(
+        { error: "Error fetching jobs" },
+        { status: 500 }
+      );
     }
 
-    if (searchParams.get("isFeatured")) {
-      filters.isFeatured = searchParams.get("isFeatured") === "true";
-    }
-
-    console.log("API Jobs - Filtros recebidos:", filters);
-    console.log("API Jobs - Paginação:", { page, limit, sortBy, sortOrder });
-
-    // Buscar jobs com paginação e filtros
-    const result = await jobsService.getJobsWithPagination({
+    return NextResponse.json({
+      jobs: jobs || [],
+      total: count || 0,
       page,
       limit,
-      filters,
-      sortBy,
-      sortOrder,
+      totalPages: Math.ceil((count || 0) / limit),
     });
-
-    console.log("API Jobs - Resultados:", {
-      jobs: result.jobs.length,
-      total: result.total,
-      totalPages: result.totalPages,
-      currentPage: result.currentPage,
-      hasMore: result.hasMore,
-    });
-
-    return NextResponse.json(result);
   } catch (error) {
-    console.error("Erro na API de jobs:", error);
+    console.error("Error in jobs API:", error);
     return NextResponse.json(
-      { error: "Erro interno do servidor" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

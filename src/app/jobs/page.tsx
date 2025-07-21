@@ -22,7 +22,7 @@ async function getInitialData() {
       stats,
       totalJobs: jobs.filter((job) => job.isActive).length,
     };
-  } catch (error) {
+      } catch (error) {
     console.error("Erro ao carregar dados iniciais:", error);
     return {
       initialJobs: [],

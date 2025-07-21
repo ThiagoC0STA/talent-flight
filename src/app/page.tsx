@@ -13,6 +13,7 @@ import {
 import Hero from "@/components/Hero";
 import JobCard from "@/components/JobCard";
 import { jobsService } from "@/lib/jobs";
+import JobAlertForm from "@/components/JobAlertForm";
 import { Suspense, useState } from "react";
 
 // Home Job Card Skeleton
@@ -143,7 +144,10 @@ function NewsletterSection() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+    >
       <div className="flex-1">
         <input
           type="email"
@@ -154,9 +158,7 @@ function NewsletterSection() {
           required
           disabled={isLoading}
         />
-        {error && (
-          <p className="text-red-500 text-sm mt-2">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </div>
       <button
         type="submit"
@@ -254,7 +256,51 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                🚀 Never Miss a Great Opportunity
+              </h2>
+              <p className="text-xl text-gray-600 mb-6">
+                Create job alerts and get notified when new positions matching
+                your skills and interests are posted.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 text-sm">✓</span>
+                  </div>
+                  <span className="text-gray-700">
+                    Get instant email notifications
+                  </span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 text-sm">✓</span>
+                  </div>
+                  <span className="text-gray-700">
+                    Filter by keywords and technologies
+                  </span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 text-sm">✓</span>
+                  </div>
+                  <span className="text-gray-700">Be the first to apply</span>
+                </div>
+              </div>
+            </div>
 
+            <div className="flex justify-center">
+              <div className="w-full max-w-lg">
+                <JobAlertForm />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* Newsletter Section */}
       <section className="bg-[#F3F7FA] py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -278,6 +324,8 @@ export default function HomePage() {
           </p>
         </div>
       </section>
+
+      {/* Job Alerts Section */}
     </div>
   );
 }

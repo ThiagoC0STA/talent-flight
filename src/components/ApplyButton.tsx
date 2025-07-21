@@ -13,6 +13,7 @@ interface ApplyButtonProps {
   company?: string;
   className?: string;
   size?: "sm" | "md" | "lg";
+  onClick?: () => void;
 }
 
 export default function ApplyButton({
@@ -22,6 +23,7 @@ export default function ApplyButton({
   company,
   className = "",
   size = "lg",
+  onClick,
 }: ApplyButtonProps) {
   const [isTracking, setIsTracking] = useState(false);
   const { trackApply } = useAnalytics();
@@ -45,7 +47,10 @@ export default function ApplyButton({
     } finally {
       setIsTracking(false);
     }
-
+    
+    if (onClick) {
+      onClick();
+    }
     // Sempre abrir o link, independente do tracking
     window.open(applicationUrl, "_blank", "noopener,noreferrer");
   };
