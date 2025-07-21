@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import JobAlertForm from "@/components/JobAlertForm";
 import FAQItem from "@/components/FAQItem";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import FAQStructuredData from "@/components/FAQStructuredData";
 import {
   Bell,
   Search,
@@ -141,7 +142,7 @@ export default function AlertsPage() {
     }
   };
 
-  return (
+    return (
     <>
       <script
         type="application/ld+json"
@@ -149,7 +150,8 @@ export default function AlertsPage() {
           __html: JSON.stringify(structuredData),
         }}
       />
-            <div className="min-h-screen py-16">
+      <FAQStructuredData />
+      <div className="min-h-screen py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
           <Breadcrumbs 

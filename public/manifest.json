@@ -1,12 +1,13 @@
 {
   "name": "TalentFlight - Your talent, ready for takeoff",
   "short_name": "TalentFlight",
-  "description": "Your launchpad for professional opportunities",
+  "description": "Your launchpad for professional opportunities. Find remote jobs, tech careers, and connect with top companies worldwide.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F3F7FA",
   "theme_color": "#0476D9",
   "orientation": "portrait-primary",
+  "scope": "/",
   "icons": [
     {
       "src": "/icon-192x192.png",
@@ -19,9 +20,87 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "categories": ["business", "productivity", "employment"],
+  "categories": ["business", "productivity", "employment", "job search", "career"],
   "lang": "en-US",
-  "dir": "ltr"
+  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Jobs",
+      "short_name": "Jobs",
+      "description": "Search for job opportunities",
+      "url": "/jobs",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Job Alerts",
+      "short_name": "Alerts",
+      "description": "Set up job notifications",
+      "url": "/alerts",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 } 

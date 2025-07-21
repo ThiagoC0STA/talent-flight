@@ -2,9 +2,44 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { jobsService } from "@/lib/jobs";
 import JobPagePreview from "@/components/JobPagePreview";
+import JobStructuredData from "@/components/JobStructuredData";
+
+// Função para limpar HTML e criar description perfeita
+function createJobDescription(job: any): string {
+  // Remover HTML tags e entidades
+  let cleanDescription = job.description
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&amp;/g, '&') // Decodifica entidades HTML
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ') // Remove espaços extras
+    .trim();
+
+  // Criar description otimizada
+  const baseDescription = `${job.title} position at ${job.company} in ${job.location}`;
+  
+  // Adicionar informações relevantes
+  let additionalInfo = '';
+  if (job.type) additionalInfo += ` ${job.type} position`;
+  if (job.experience) additionalInfo += ` for ${job.experience} level`;
+  if (job.isRemote) additionalInfo += ' with remote work options';
+  
+  // Pegar primeiros 100 caracteres da descrição limpa
+  const descriptionSnippet = cleanDescription.substring(0, 100).replace(/\s+\w*$/, '');
+  
+  const fullDescription = `${baseDescription}.${additionalInfo} ${descriptionSnippet}...`;
+  
+  // Garantir que não passe de 160 caracteres
+  return fullDescription.length > 160 
+    ? fullDescription.substring(0, 157) + '...'
+    : fullDescription;
+}
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const job = await jobsService.getJobById(params.slug);
+  const { slug } = await params;
+  const job = await jobsService.getJobById(slug);
 
   if (!job) {
     return {
@@ -14,9 +49,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
   }
 
   const title = `${job.title} at ${job.company} - ${job.location} | TalentFlight`;
-  const description = `${job.title} position at ${job.company} in ${
-    job.location
-  }. ${job.description.substring(0, 150)}...`;
+  const description = createJobDescription(job);
 
   return {
     title,
@@ -25,7 +58,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: `https://talentflight.com/job/${params.slug}`,
+      url: `https://talentflight.com/job/${slug}`,
       siteName: "TalentFlight",
       images: [
             {
@@ -45,13 +78,14 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       images: [job.companyLogo || "/og-image.jpg"],
     },
     alternates: {
-      canonical: `https://talentflight.com/job/${params.slug}`,
+      canonical: `https://talentflight.com/job/${slug}`,
     },
   };
 }
 
 export default async function JobPage({ params }: any) {
-  const job = await jobsService.getJobById(params.slug);
+  const { slug } = await params;
+  const job = await jobsService.getJobById(slug);
 
   if (!job) {
     notFound();
@@ -60,5 +94,10 @@ export default async function JobPage({ params }: any) {
   // Buscar trabalhos relacionados
   const relatedJobs = await jobsService.getRelatedJobs(job, 12);
 
-  return <JobPagePreview job={job} relatedJobs={relatedJobs} />;
+  return (
+    <>
+      <JobStructuredData job={job} />
+      <JobPagePreview job={job} relatedJobs={relatedJobs} />
+    </>
+  );
 }
