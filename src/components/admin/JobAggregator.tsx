@@ -58,8 +58,6 @@ export default function JobAggregator({
   }, []);
 
   const searchJobs = async () => {
-    console.log("Iniciando busca com query:", searchQuery);
-
     setLoading(true);
     setError("");
     setDuplicateJobs(new Set()); // Limpar duplicatas
@@ -72,7 +70,6 @@ export default function JobAggregator({
         selectedSources
       );
 
-      console.log("Jobs encontrados:", externalJobs.length);
       setJobs(externalJobs);
 
       // Salvar no histórico apenas se encontrou resultados

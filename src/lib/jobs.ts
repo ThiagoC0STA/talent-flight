@@ -73,12 +73,6 @@ const mapJobToSupabaseJob = (
     createdAt?: Date | string;
   }
 ) => {
-  console.log("=== mapJobToSupabaseJob DEBUG ===");
-  console.log("Job recebido:", job);
-  console.log("job.createdAt:", job.createdAt);
-  console.log("typeof job.createdAt:", typeof job.createdAt);
-  console.log("job.createdAt instanceof Date:", job.createdAt instanceof Date);
-
   const created_at = job.createdAt
     ? job.createdAt instanceof Date
       ? job.createdAt.toISOString().split("T")[0] + "T00:00:00.000Z"
@@ -94,8 +88,6 @@ const mapJobToSupabaseJob = (
           }
         })()
     : new Date().toISOString().split("T")[0] + "T00:00:00.000Z";
-
-  console.log("created_at final:", created_at);
 
   return {
     title: job.title,
@@ -541,8 +533,6 @@ export const jobsService = {
   // Função para limpar dados inconsistentes no banco
   async cleanInconsistentData(): Promise<boolean> {
     try {
-      console.log("=== CLEANING INCONSISTENT DATA ===");
-
       // Buscar todos os jobs com dados inconsistentes
       const { data: inconsistentJobs, error: fetchError } = await supabase
         .from("jobs")
@@ -554,13 +544,7 @@ export const jobsService = {
         return false;
       }
 
-      console.log(
-        "Jobs com dados inconsistentes encontrados:",
-        inconsistentJobs?.length || 0
-      );
-
       if (!inconsistentJobs || inconsistentJobs.length === 0) {
-        console.log("Nenhum dado inconsistente encontrado");
         return true;
       }
 
@@ -579,14 +563,9 @@ export const jobsService = {
 
         if (updateError) {
           console.error(`Erro ao atualizar job ${job.id}:`, updateError);
-        } else {
-          console.log(
-            `Job ${job.id} atualizado: ${job.experience} -> ${newExperience}`
-          );
         }
       }
 
-      console.log("Limpeza de dados inconsistentes concluída");
       return true;
     } catch (error) {
       console.error("Erro na limpeza de dados:", error);
@@ -742,14 +721,9 @@ export const jobsService = {
       createdAt?: Date | string;
     }
   ): Promise<Job | null> {
-    console.log("=== createJob DEBUG ===");
-    console.log("Job recebido para criar:", job);
-
     // Gerar slug
     const slug = `${slugify(job.title)}-at-${slugify(job.company)}`;
     const supabaseJob = { ...mapJobToSupabaseJob(job), slug };
-
-    console.log("Supabase job para inserir:", supabaseJob);
 
     const { data, error } = await supabase
       .from("jobs")
@@ -762,16 +736,22 @@ export const jobsService = {
       return null;
     }
 
-    console.log("Job criado com sucesso:", data);
-    return mapSupabaseJobToJob(data);
+    const createdJob = mapSupabaseJobToJob(data);
+
+    // Check and notify alerts (in background)
+    try {
+      const { checkAndNotifyAlerts } = await import("@/lib/jobAlerts");
+      await checkAndNotifyAlerts(createdJob);
+    } catch (alertError) {
+      console.error("Error checking alerts:", alertError);
+      // Don't fail job creation due to alert errors
+    }
+
+    return createdJob;
   },
 
   // Atualizar vaga
   async updateJob(id: string, updates: Partial<Job>): Promise<Job | null> {
-    console.log("=== UPDATE JOB DEBUG ===");
-    console.log("ID recebido:", id);
-    console.log("Updates recebidos:", updates);
-
     const supabaseUpdates: any = {};
 
     if (updates.title) supabaseUpdates.title = updates.title;
@@ -810,16 +790,11 @@ export const jobsService = {
       )}`;
     }
 
-    console.log("Payload para Supabase:", supabaseUpdates);
-    console.log("Campos que serão atualizados:", Object.keys(supabaseUpdates));
-
     const { data: updateData, error: updateError } = await supabase
       .from("jobs")
       .update(supabaseUpdates)
       .eq("id", id)
       .select();
-
-    console.log("Resposta do Supabase UPDATE:", { updateData, updateError });
 
     if (updateError) {
       console.error("Error updating job:", updateError);
@@ -832,8 +807,6 @@ export const jobsService = {
       return null;
     }
 
-    console.log("Update realizado com sucesso. Dados retornados:", updateData);
-
     // Se o update retornou dados, usar eles diretamente
     if (updateData && updateData.length > 0) {
       return mapSupabaseJobToJob(updateData[0]);
@@ -845,8 +818,6 @@ export const jobsService = {
       .select("*")
       .eq("id", id)
       .single();
-
-    console.log("Busca após update:", { data, error });
 
     if (error) {
       console.error("Error fetching updated job:", error);
@@ -1287,38 +1258,41 @@ export const trackingService = {
       const invalidClicks = totalClicks - validClicks;
 
       // Agrupar por vaga
-      const clicksByJob = clicksWithJobs.reduce((acc, click) => {
-        const jobTitle = click.job.title || "Unknown";
-        const jobCompany = click.job.company || "Unknown";
-        const key = `${jobTitle} at ${jobCompany}`;
+      const clicksByJob = clicksWithJobs.reduce(
+        (acc, click) => {
+          const jobTitle = click.job.title || "Unknown";
+          const jobCompany = click.job.company || "Unknown";
+          const key = `${jobTitle} at ${jobCompany}`;
 
-        if (!acc[key]) {
-          acc[key] = {
-            jobTitle,
-            jobCompany,
-            totalClicks: 0,
-            validClicks: 0,
-            invalidClicks: 0,
-            lastClick: null,
-          };
-        }
+          if (!acc[key]) {
+            acc[key] = {
+              jobTitle,
+              jobCompany,
+              totalClicks: 0,
+              validClicks: 0,
+              invalidClicks: 0,
+              lastClick: null,
+            };
+          }
 
-        acc[key].totalClicks++;
-        if (click.is_valid) {
-          acc[key].validClicks++;
-        } else {
-          acc[key].invalidClicks++;
-        }
+          acc[key].totalClicks++;
+          if (click.is_valid) {
+            acc[key].validClicks++;
+          } else {
+            acc[key].invalidClicks++;
+          }
 
-        if (
-          !acc[key].lastClick ||
-          new Date(click.clicked_at) > new Date(acc[key].lastClick)
-        ) {
-          acc[key].lastClick = click.clicked_at;
-        }
+          if (
+            !acc[key].lastClick ||
+            new Date(click.clicked_at) > new Date(acc[key].lastClick)
+          ) {
+            acc[key].lastClick = click.clicked_at;
+          }
 
-        return acc;
-      }, {} as Record<string, any>);
+          return acc;
+        },
+        {} as Record<string, any>
+      );
 
       return {
         totalClicks,

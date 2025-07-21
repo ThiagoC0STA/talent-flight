@@ -388,11 +388,6 @@ export default function AdminPage() {
         createdAtDate = new Date();
       }
 
-      console.log("=== ADMIN DEBUG ===");
-      console.log("formData.created_at:", formData.created_at);
-      console.log("createdAtDate:", createdAtDate);
-      console.log("createdAtDate.toISOString():", createdAtDate.toISOString());
-
       const jobData = {
         title: formData.title,
         company: formData.company,
@@ -428,7 +423,6 @@ export default function AdminPage() {
         createdAt: createdAtDate,
       };
 
-      console.log("jobData enviado:", jobData);
       let result;
       if (isEditing && editingJob) {
         result = await jobsService.updateJob(editingJob.id, jobData);
@@ -710,9 +704,8 @@ export default function AdminPage() {
               onSearch={async () => {
                 setSearchLoading(true);
                 try {
-                  const searchResults = await jobsService.searchJobsAdmin(
-                    filters
-                  );
+                  const searchResults =
+                    await jobsService.searchJobsAdmin(filters);
                   setJobs(searchResults);
                   setCurrentPage(1);
                 } catch (error) {

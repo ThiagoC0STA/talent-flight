@@ -134,10 +134,10 @@ interface JobsPageClientProps {
   totalJobs: number;
 }
 
-export default function JobsPageClient({ 
-  initialJobs, 
-  initialStats, 
-  totalJobs: initialTotalJobs 
+export default function JobsPageClient({
+  initialJobs,
+  initialStats,
+  totalJobs: initialTotalJobs,
 }: JobsPageClientProps) {
   const [filteredJobs, setFilteredJobs] = useState<Job[]>(initialJobs);
   const [filters, setFilters] = useState<JobFiltersType>({});
@@ -147,7 +147,6 @@ export default function JobsPageClient({
 
   // Debug function for viewMode changes
   const handleViewModeChange = (mode: "grid" | "list") => {
-    console.log("ViewMode changing from", viewMode, "to", mode);
     setViewMode(mode);
   };
 
@@ -183,38 +182,41 @@ export default function JobsPageClient({
   const [statsLoading, setStatsLoading] = useState(false);
 
   // Função utilitária para construir parâmetros da API
-  const buildApiParams = useCallback((page: number, includeFilters: boolean = false) => {
-    const params: any = {
-      page: page.toString(),
-      limit: jobsPerPage.toString(),
-      sortBy: "date",
-      sortOrder: "desc",
-    };
+  const buildApiParams = useCallback(
+    (page: number, includeFilters: boolean = false) => {
+      const params: any = {
+        page: page.toString(),
+        limit: jobsPerPage.toString(),
+        sortBy: "date",
+        sortOrder: "desc",
+      };
 
-    // Adicionar filtros ativos à query apenas se solicitado
-    if (includeFilters && hasAppliedSearch) {
-      if (filters.query) params.query = filters.query;
-      if (filters.location) params.location = filters.location;
-      if (filters.experience?.length) {
-        // Axios precisa de arrays como parâmetros separados
-        params.experience = filters.experience;
+      // Adicionar filtros ativos à query apenas se solicitado
+      if (includeFilters && hasAppliedSearch) {
+        if (filters.query) params.query = filters.query;
+        if (filters.location) params.location = filters.location;
+        if (filters.experience?.length) {
+          // Axios precisa de arrays como parâmetros separados
+          params.experience = filters.experience;
+        }
+        if (filters.type?.length) {
+          params.type = filters.type;
+        }
+        if (filters.category?.length) {
+          params.category = filters.category;
+        }
+        if (filters.isRemote) params.isRemote = "true";
+        if (filters.isFeatured) params.isFeatured = "true";
       }
-      if (filters.type?.length) {
-        params.type = filters.type;
-      }
-      if (filters.category?.length) {
-        params.category = filters.category;
-      }
-      if (filters.isRemote) params.isRemote = "true";
-      if (filters.isFeatured) params.isFeatured = "true";
-    }
 
-    return params;
-  }, [filters, hasAppliedSearch, jobsPerPage]);
+      return params;
+    },
+    [filters, hasAppliedSearch, jobsPerPage]
+  );
 
   // Load jobs and stats from API with pagination - ULTRA OTIMIZADO
   useEffect(() => {
-    const loadJobsAndStats = async () => {  
+    const loadJobsAndStats = async () => {
       try {
         setLoading(true);
 
@@ -444,10 +446,10 @@ export default function JobsPageClient({
                   {loading
                     ? "Loading opportunities..."
                     : hasAppliedSearch
-                    ? `${totalJobs} job${totalJobs !== 1 ? "s" : ""} found`
-                    : `${stats.totalJobs} job${
-                        stats.totalJobs !== 1 ? "s" : ""
-                      } found`}
+                      ? `${totalJobs} job${totalJobs !== 1 ? "s" : ""} found`
+                      : `${stats.totalJobs} job${
+                          stats.totalJobs !== 1 ? "s" : ""
+                        } found`}
                 </p>
                 <div className="hidden lg:block">
                   <ViewToggle
@@ -545,4 +547,4 @@ export default function JobsPageClient({
       </div>
     </div>
   );
-} 
+}

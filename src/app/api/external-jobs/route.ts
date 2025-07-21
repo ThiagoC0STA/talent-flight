@@ -160,13 +160,11 @@ export async function GET(request: NextRequest) {
     if (sources.includes("theirstack")) {
       try {
         const THEIRSTACK_API_KEY = process.env.THEIRSTACK_API_KEY;
-        console.log("TheirStack API key configurada:", !!THEIRSTACK_API_KEY);
 
         if (!THEIRSTACK_API_KEY) {
           console.log("TheirStack API key não configurada - pulando");
         } else {
           const apiUrl = `https://api.theirstack.com/v1/jobs/search`;
-          console.log("Chamando TheirStack API:", apiUrl);
 
           // Payload conforme documentação - precisa de pelo menos um filtro obrigatório
           const payload = {
@@ -185,15 +183,8 @@ export async function GET(request: NextRequest) {
             body: JSON.stringify(payload),
           });
 
-          console.log("TheirStack response status:", response.status);
-
           if (response.ok) {
             const data = await response.json();
-            console.log(
-              "TheirStack data received:",
-              data.data?.length || 0,
-              "jobs"
-            );
 
             const theirstackJobs =
               data.data?.map((job: any) => ({
@@ -225,7 +216,6 @@ export async function GET(request: NextRequest) {
                 createdAt: parseDate(job.date_posted),
               })) || [];
 
-            console.log("TheirStack jobs processed:", theirstackJobs.length);
             allJobs.push(...theirstackJobs);
           } else {
             const errorText = await response.text();

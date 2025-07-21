@@ -61,7 +61,7 @@ export default function ContentProtection({
       if (isBot || suspiciousBehavior) {
         setIsBlocked(true);
         setIsHuman(false);
-        console.log("Bot detected, blocking content");
+
         return true;
       }
 

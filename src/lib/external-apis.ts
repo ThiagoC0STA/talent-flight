@@ -150,8 +150,6 @@ export async function searchExternalJobs(
   query: string,
   sources: string[]
 ): Promise<ExternalJob[]> {
-  console.log("Buscando em fontes:", sources);
-
   try {
     const params = new URLSearchParams({
       query,
@@ -165,7 +163,6 @@ export async function searchExternalJobs(
       throw new Error(data.error);
     }
 
-    console.log(`Total de vagas encontradas: ${data.total}`);
     return data.jobs;
   } catch (error) {
     console.error("Erro na busca externa:", error);

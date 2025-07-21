@@ -16,8 +16,7 @@ export default function ViewToggle({
   return (
     <div className="flex items-center bg-white rounded-xl border border-[#E5EAF1] p-1">
       <button
-        onClick={() => {
-          console.log("Grid clicked");
+        onClick={() => {  
           onViewModeChange("grid");
         }}
         className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${
@@ -32,7 +31,6 @@ export default function ViewToggle({
 
       <button
         onClick={() => {
-          console.log("List clicked");
           onViewModeChange("list");
         }}
         className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer ${

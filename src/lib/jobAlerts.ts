@@ -57,13 +57,20 @@ export async function getActiveAlerts() {
 
 // Check if job is compatible with alert
 export function isJobCompatibleWithAlert(job: any, alert: JobAlert): boolean {
-  // Check keywords
-  const jobText = `${job.title} ${job.description}`.toLowerCase();
-  const hasKeywordMatch = alert.keywords.some((keyword) =>
-    jobText.includes(keyword.toLowerCase())
-  );
+  // Check keywords - improved matching
+  const jobText = `${job.title} ${job.description} ${job.company} ${(
+    job.tags || []
+  ).join(" ")}`.toLowerCase();
 
-  if (!hasKeywordMatch) return false;
+  const hasKeywordMatch = alert.keywords.some((keyword) => {
+    const keywordLower = keyword.toLowerCase();
+    const isMatch = jobText.includes(keywordLower);
+    return isMatch;
+  });
+
+  if (!hasKeywordMatch) {
+    return false;
+  }
 
   // Check technologies (if specified)
   if (alert.technologies && alert.technologies.length > 0) {
@@ -71,7 +78,9 @@ export function isJobCompatibleWithAlert(job: any, alert: JobAlert): boolean {
     const hasTechMatch = alert.technologies.some((tech) =>
       jobTechnologies.includes(tech)
     );
-    if (!hasTechMatch) return false;
+    if (!hasTechMatch) {
+      return false;
+    }
   }
 
   // Check location (if specified)
@@ -80,7 +89,9 @@ export function isJobCompatibleWithAlert(job: any, alert: JobAlert): boolean {
     const hasLocationMatch = alert.locations.some((location) =>
       jobLocation.includes(location.toLowerCase())
     );
-    if (!hasLocationMatch) return false;
+    if (!hasLocationMatch) {
+      return false;
+    }
   }
 
   return true;
@@ -97,15 +108,104 @@ export async function sendJobAlertNotification(alert: JobAlert, job: any) {
 
     if (error) {
       console.error("Error registering notification:", error);
-      return;
+      return false;
     }
 
-    // Here you can integrate with email service (Resend, SendGrid, etc.)
-    console.log(
-      `Notification sent to ${alert.user_email} about job: ${job.title}`
-    );
+    // Send email notification
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Job Alert - TalentFlight</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #011640 0%, #0476D9 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+          .job-title { font-size: 24px; font-weight: bold; color: #011640; margin-bottom: 10px; }
+          .company { font-size: 18px; color: #0476D9; margin-bottom: 20px; }
+          .details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
+          .detail-item { margin: 10px 0; }
+          .label { font-weight: bold; color: #666; }
+          .value { color: #333; }
+          .cta-button { display: inline-block; background: #0476D9; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+          .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+          .keywords { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; }
+          .keyword-tag { display: inline-block; background: #0476D9; color: white; padding: 5px 10px; border-radius: 15px; margin: 2px; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🎯 New Job Alert</h1>
+            <p>We found a job that matches your preferences!</p>
+          </div>
+          
+          <div class="content">
+            <div class="job-title">${job.title}</div>
+            <div class="company">${job.company}</div>
+            
+            <div class="keywords">
+              <strong>Matched Keywords:</strong><br>
+              ${alert.keywords.map((keyword) => `<span class="keyword-tag">${keyword}</span>`).join(" ")}
+            </div>
+            
+            <div class="details">
+              <div class="detail-item">
+                <span class="label">📍 Location:</span>
+                <span class="value">${job.location || "Not specified"}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">💼 Type:</span>
+                <span class="value">${job.type || "Not specified"}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">🎯 Experience:</span>
+                <span class="value">${job.experience || "Not specified"}</span>
+              </div>
+              ${job.isRemote ? '<div class="detail-item"><span class="label">🏠 Remote:</span><span class="value">Yes</span></div>' : ""}
+            </div>
+            
+            <p style="margin: 20px 0; line-height: 1.8;">
+              ${job.description ? job.description.substring(0, 300) + "..." : "No description available"}
+            </p>
+            
+            <div style="text-align: center;">
+              <a href="${job.applicationUrl}" class="cta-button" target="_blank">
+                🚀 Apply Now
+              </a>
+            </div>
+            
+            <div class="footer">
+              <p>This alert was triggered because the job matches your keywords: ${alert.keywords.join(", ")}</p>
+              <p>You can manage your alerts at <a href="https://talentflight.com/alerts">talentflight.com/alerts</a></p>
+              <p>© 2024 TalentFlight. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
 
-    // For now, just log. Later we can integrate with real email
+    const response = await fetch("/api/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: alert.user_email,
+        subject: `🎯 New Job Alert: ${job.title} at ${job.company}`,
+        html: emailHtml,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to send email notification");
+      return false;
+    }
+
     return true;
   } catch (error) {
     console.error("Error sending notification:", error);
