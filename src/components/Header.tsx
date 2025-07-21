@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Briefcase, Info, Mail } from "lucide-react";
+import { Menu, X, Briefcase, Info, Mail, Bell } from "lucide-react";
 import Image from "next/image";
 
 export default function Header() {
@@ -40,6 +40,7 @@ export default function Header() {
               href="/alerts"
               className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
             >
+              <Bell className="w-4 h-4" />
               Job Alerts
             </Link>
             <Link

@@ -1,6 +1,14 @@
 import JobAlertForm from "@/components/JobAlertForm";
 import FAQItem from "@/components/FAQItem";
-import { Bell, Search, Zap, Mail, MapPin, Users } from "lucide-react";
+import {
+  Bell,
+  Search,
+  Zap,
+  Mail,
+  MapPin,
+  Users,
+  Lightbulb,
+} from "lucide-react";
 
 export default function AlertsPage() {
   return (
@@ -146,7 +154,7 @@ export default function AlertsPage() {
             <div className="max-w-4xl mx-auto py-4">
               <div className="flex items-center justify-center mb-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-white text-xl">💡</span>
+                  <Lightbulb className="w-7 h-7 text-white" />
                 </div>
                 <h4 className="text-2xl font-bold text-gray-900">
                   Pro Tips for Better Results
@@ -196,9 +204,9 @@ export default function AlertsPage() {
                     Add Technology Names
                   </h5>
                   <p className="text-orange-800 text-sm">
-                    Include &quot;React&quot;, &quot;Node.js&quot;, &quot;AWS&quot;,
-                    or &quot;Docker&quot; to find jobs with specific tech
-                    stacks.
+                    Include &quot;React&quot;, &quot;Node.js&quot;,
+                    &quot;AWS&quot;, or &quot;Docker&quot; to find jobs with
+                    specific tech stacks.
                   </p>
                 </div>
               </div>
@@ -207,7 +215,7 @@ export default function AlertsPage() {
         </div>
 
         {/* FAQ */}
-        <div className="bg-white rounded-2xl shadow py-8">
+        <div className="bg-white rounded-2xl shadow p-6 md:py-8 md:px-0">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Frequently Asked Questions
           </h2>
