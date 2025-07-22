@@ -38,6 +38,7 @@ import ImportedHistoryTab from "@/components/admin/ImportedHistoryTab";
 import InvalidClicksTable from "@/components/admin/InvalidClicksTable";
 import NewsletterManager from "@/components/admin/NewsletterManager";
 import JobAlertsManager from "@/components/admin/JobAlertsManager";
+import RateLimitStats from "@/components/admin/RateLimitStats";
 
 function LoadingSpinner() {
   return (
@@ -830,6 +831,7 @@ export default function AdminPage() {
 
         {activeTab === "alerts" && (
           <div className="space-y-4 sm:space-y-6">
+            <RateLimitStats />
             <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
               <JobAlertsManager />
             </div>

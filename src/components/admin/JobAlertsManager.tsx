@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import {
-  getActiveAlerts,
+  getAllAlerts,
   deactivateAlert,
   getAlertStats,
 } from "@/lib/jobAlerts";
@@ -22,7 +22,7 @@ export default function JobAlertsManager() {
   const loadData = async () => {
     try {
       const [alertsData, statsData] = await Promise.all([
-        getActiveAlerts(),
+        getAllAlerts(),
         getAlertStats(),
       ]);
 
@@ -39,7 +39,12 @@ export default function JobAlertsManager() {
     setDeactivating(alertId);
     try {
       await deactivateAlert(alertId);
-      setAlerts(alerts.filter((alert) => alert.id !== alertId));
+      // Atualiza o alert localmente
+      setAlerts(alerts.map(alert => 
+        alert.id === alertId 
+          ? { ...alert, is_active: false }
+          : alert
+      ));
       await loadData(); // Recarregar stats
     } catch (error) {
       console.error("Error deactivating alert:", error);
@@ -50,9 +55,9 @@ export default function JobAlertsManager() {
 
   if (loading) {
     return (
-              <div className="flex justify-center items-center h-64">
-          <div className="text-lg">Loading...</div>
-        </div>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-lg">Loading...</div>
+      </div>
     );
   }
 
@@ -99,7 +104,7 @@ export default function JobAlertsManager() {
         <div className="divide-y divide-gray-200">
           {alerts.length === 0 ? (
             <div className="px-6 py-8 text-center text-gray-500">
-              No active alerts found.
+              No alerts found.
             </div>
           ) : (
             alerts.map((alert) => (
@@ -115,9 +120,20 @@ export default function JobAlertsManager() {
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {alert.user_email}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {alert.user_email}
+                          </p>
+                          <span
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                              alert.is_active
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {alert.is_active ? "Active" : "Inactive"}
+                          </span>
+                        </div>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {alert.keywords.map((keyword, index) => (
                             <span
@@ -152,15 +168,21 @@ export default function JobAlertsManager() {
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <Button
-                      onClick={() => handleDeactivate(alert.id!)}
-                      disabled={deactivating === alert.id}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-sm"
-                    >
-                      {deactivating === alert.id
-                        ? "Deactivating..."
-                        : "Deactivate"}
-                    </Button>
+                    {alert.is_active ? (
+                      <Button
+                        onClick={() => handleDeactivate(alert.id!)}
+                        disabled={deactivating === alert.id}
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-sm"
+                      >
+                        {deactivating === alert.id
+                          ? "Deactivating..."
+                          : "Deactivate"}
+                      </Button>
+                    ) : (
+                      <span className="text-xs text-gray-500 px-3 py-1">
+                        Deactivated
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

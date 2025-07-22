@@ -1,4 +1,4 @@
-import { Users, Target, Award, Globe } from 'lucide-react';
+import { Users, Target, Award, Globe, Linkedin, ExternalLink } from 'lucide-react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -263,15 +263,43 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Connect Section */}
       <section className="bg-gradient-to-br from-[#011640] to-[#0476D9] text-white py-12 sm:py-16 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
-            Ready to Take Flight?
+            Connect with Our Founder
           </h2>
           <p className="text-lg sm:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2">
-            Join thousands of professionals who have found their dream jobs through TalentFlight.
+            Meet the visionary behind TalentFlight and discover how we&apos;re revolutionizing the job search experience.
           </p>
+          
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 sm:p-8 mb-6 sm:mb-8 max-w-2xl mx-auto">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full flex items-center justify-center">
+                <Linkedin className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              </div>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">
+              TalentFlight Company
+            </h3>
+            <p className="text-white/90 mb-4 sm:mb-6 text-sm sm:text-base leading-relaxed">
+              Your talent, ready to take off. We&apos;re not just another job board — we&apos;re a launchpad. 
+              Connecting driven professionals to high-impact opportunities across tech, design, marketing, and beyond.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <a 
+                href="https://www.linkedin.com/company/talent-flight-jobs/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-white text-[#0476D9] hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+              >
+                <Linkedin className="w-5 h-5" />
+                Follow TalentFlight
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+          
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <a href="/jobs" className="btn-primary bg-white text-[#0476D9] hover:bg-gray-100 text-sm sm:text-base">
               Browse Jobs

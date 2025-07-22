@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Briefcase, Info, Mail, Bell } from "lucide-react";
+import { Menu, X, Briefcase, Info, Mail, Bell, Linkedin } from "lucide-react";
 import Image from "next/image";
 
 export default function Header() {
@@ -57,6 +57,15 @@ export default function Header() {
               <Mail className="w-4 h-4" />
               Contact
             </Link>
+            <Link
+              href="https://www.linkedin.com/company/talent-flight-jobs/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[#010D26] hover:text-[#0476D9] font-medium transition-colors duration-200"
+            >
+              <Linkedin className="w-4 h-4" />
+              LinkedIn
+            </Link>
           </nav>
 
           {/* Mobile menu button */}
@@ -108,6 +117,16 @@ export default function Header() {
                 <Mail className="w-4 h-4" />
                 Contact
               </Link>
+              <a
+                href="https://www.linkedin.com/company/talent-flight-jobs/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-3 py-2 text-[#010D26] hover:text-[#0476D9] hover:bg-[#F3F7FA] rounded-lg font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Linkedin className="w-4 h-4" />
+                LinkedIn
+              </a>
             </div>
           </div>
         )}
