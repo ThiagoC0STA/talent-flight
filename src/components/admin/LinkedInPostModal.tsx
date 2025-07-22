@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { X, Linkedin, RefreshCw } from "lucide-react";
+import { X, Linkedin, RefreshCw, Mail, CheckCircle } from "lucide-react";
 import { Job } from "@/types/job";
 import { generateLinkedInPostVariations } from "@/lib/linkedin-variations";
+import { checkAndNotifyAlerts } from "@/lib/jobAlerts";
 import Image from "next/image";
 
 interface LinkedInPostModalProps {
@@ -19,6 +20,8 @@ export default function LinkedInPostModal({
   const [showPreview, setShowPreview] = useState(true);
   const [currentVariation, setCurrentVariation] = useState(0);
   const [allVariations, setAllVariations] = useState<string[]>([]);
+  const [isSendingAlerts, setIsSendingAlerts] = useState(false);
+  const [alertsSent, setAlertsSent] = useState(false);
 
   // Gerar post quando job mudar
   useEffect(() => {
@@ -69,6 +72,22 @@ export default function LinkedInPostModal({
     const randomIndex = Math.floor(Math.random() * allVariations.length);
     setCurrentVariation(randomIndex);
     setPostText(allVariations[randomIndex]);
+  };
+
+  const handleSendAlerts = async () => {
+    if (!job || isSendingAlerts) return;
+    
+    setIsSendingAlerts(true);
+    try {
+      await checkAndNotifyAlerts(job);
+      setAlertsSent(true);
+      // Reset after 3 seconds
+      setTimeout(() => setAlertsSent(false), 3000);
+    } catch (error) {
+      console.error("Erro ao enviar alerts:", error);
+    } finally {
+      setIsSendingAlerts(false);
+    }
   };
 
   if (!isOpen || !job) return null;
@@ -210,6 +229,35 @@ export default function LinkedInPostModal({
               className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
             >
               Copiar Texto
+            </button>
+            
+            <button
+              onClick={handleSendAlerts}
+              disabled={isSendingAlerts || alertsSent}
+              className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+                alertsSent
+                  ? "bg-green-100 text-green-700"
+                  : isSendingAlerts
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-orange-100 text-orange-700 hover:bg-orange-200"
+              }`}
+            >
+              {alertsSent ? (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  Enviados!
+                </>
+              ) : isSendingAlerts ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Mail className="w-4 h-4" />
+                  Enviar Alerts
+                </>
+              )}
             </button>
           </div>
         </div>

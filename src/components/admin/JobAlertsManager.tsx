@@ -55,9 +55,9 @@ export default function JobAlertsManager() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg">Loading...</div>
-      </div>
+              <div className="flex justify-center items-center h-64">
+          <div className="text-lg">Loading...</div>
+        </div>
     );
   }
 
@@ -121,9 +121,9 @@ export default function JobAlertsManager() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {alert.user_email}
-                          </p>
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {alert.user_email}
+                        </p>
                           <span
                             className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                               alert.is_active
@@ -169,15 +169,15 @@ export default function JobAlertsManager() {
 
                   <div className="flex items-center space-x-2">
                     {alert.is_active ? (
-                      <Button
-                        onClick={() => handleDeactivate(alert.id!)}
-                        disabled={deactivating === alert.id}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-sm"
-                      >
-                        {deactivating === alert.id
-                          ? "Deactivating..."
-                          : "Deactivate"}
-                      </Button>
+                    <Button
+                      onClick={() => handleDeactivate(alert.id!)}
+                      disabled={deactivating === alert.id}
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-sm"
+                    >
+                      {deactivating === alert.id
+                        ? "Deactivating..."
+                        : "Deactivate"}
+                    </Button>
                     ) : (
                       <span className="text-xs text-gray-500 px-3 py-1">
                         Deactivated

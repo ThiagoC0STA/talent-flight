@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
             limit: 50,
             posted_at_max_age_days: 30, // Vagas dos últimos 30 dias (filtro obrigatório)
             job_title_or: query ? [query] : [], // Busca por título se query fornecida
-            remote: null, // Todas as vagas (remote e não-remote)
+            remote: true, // Apenas vagas remotas
           };
 
           const response = await fetch(apiUrl, {

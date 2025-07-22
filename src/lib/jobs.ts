@@ -738,14 +738,14 @@ export const jobsService = {
 
     const createdJob = mapSupabaseJobToJob(data);
 
-    // Check and notify alerts (in background)
-    try {
-      const { checkAndNotifyAlerts } = await import("@/lib/jobAlerts");
-      await checkAndNotifyAlerts(createdJob);
-    } catch (alertError) {
-      console.error("Error checking alerts:", alertError);
-      // Don't fail job creation due to alert errors
-    }
+    // Check and notify alerts (in background) - DISABLED FOR MANUAL CONTROL
+    // try {
+    //   const { checkAndNotifyAlerts } = await import("@/lib/jobAlerts");
+    //   await checkAndNotifyAlerts(createdJob);
+    // } catch (alertError) {
+    //   console.error("Error checking alerts:", alertError);
+    //   // Don't fail job creation due to alert errors
+    // }
 
     return createdJob;
   },
@@ -1053,7 +1053,7 @@ export const trackingService = {
       } = await supabase.auth.getUser();
       if (!user) return [];
 
-      // Primeiro, buscar os registros de vagas importadas
+      // Buscar registros de vagas importadas
       const { data: importedJobs, error: importedError } = await supabase
         .from("imported_jobs")
         .select("*")
@@ -1070,43 +1070,44 @@ export const trackingService = {
         return [];
       }
 
-      // Buscar as vagas correspondentes na tabela jobs
-      // Vamos buscar por título e empresa para encontrar as vagas importadas
+      // Criar arrays de títulos e empresas para busca em lote
+      const titles = importedJobs.map((job) => job.job_title);
+      const companies = importedJobs.map((job) => job.company_name);
+
+      // Buscar todas as vagas em uma única query usando OR
+      const { data: jobsData, error: jobsError } = await supabase
+        .from("jobs")
+        .select("*")
+        .eq("is_active", true)
+        .or(
+          `title.in.(${titles.map((t) => `"${t}"`).join(",")}),company.in.(${companies.map((c) => `"${c}"`).join(",")})`
+        );
+
+      if (jobsError) {
+        console.error("Erro ao buscar jobs:", jobsError);
+        return [];
+      }
+
+      if (!jobsData) return [];
+
+      // Mapear jobs para manter a ordem de importação
+      const jobsMap = new Map();
+      jobsData.forEach((job) => {
+        const key = `${job.title}-${job.company}`;
+        jobsMap.set(key, mapSupabaseJobToJob(job));
+      });
+
+      // Retornar jobs na ordem de importação
       const importedJobsData: Job[] = [];
-
       for (const importedJob of importedJobs) {
-        // Buscar a vaga na tabela jobs por título e empresa
-        const { data: jobData, error: jobError } = await supabase
-          .from("jobs")
-          .select("*")
-          .eq("title", importedJob.job_title)
-          .eq("company", importedJob.company_name)
-          .eq("is_active", true)
-          .single();
-
-        if (jobData && !jobError) {
-          importedJobsData.push(mapSupabaseJobToJob(jobData));
+        const key = `${importedJob.job_title}-${importedJob.company_name}`;
+        const job = jobsMap.get(key);
+        if (job) {
+          importedJobsData.push(job);
         }
       }
 
-      // Ordenar pela data de importação (mais recentes primeiro)
-      return importedJobsData.sort((a, b) => {
-        const aImported = importedJobs.find(
-          (item) =>
-            item.job_title === a.title && item.company_name === a.company
-        );
-        const bImported = importedJobs.find(
-          (item) =>
-            item.job_title === b.title && item.company_name === b.company
-        );
-
-        if (!aImported || !bImported) return 0;
-
-        return (
-          new Date(bImported.imported_at).getTime() -
-          new Date(aImported.imported_at).getTime()
-        );
-      });
+      return importedJobsData;
     } catch (error) {
       console.error("Erro ao buscar lista de vagas importadas:", error);
       return [];

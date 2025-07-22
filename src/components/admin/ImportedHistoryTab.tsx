@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
 import {
   Clock,
   Trash2,
@@ -74,6 +76,16 @@ export default function ImportedHistoryTab({
   useEffect(() => {
     loadImportedJobs();
   }, []);
+
+  // Cache para evitar re-renders desnecessários
+  const memoizedStats = useMemo(() => {
+    return {
+      total: importedJobs.length,
+      remote: importedJobs.filter((j) => j.isRemote).length,
+      featured: importedJobs.filter((j) => j.isFeatured).length,
+      active: importedJobs.filter((j) => j.isActive).length,
+    };
+  }, [importedJobs]);
 
   const loadImportedJobs = async () => {
     setLoading(true);
@@ -181,26 +193,42 @@ export default function ImportedHistoryTab({
     setSelectedJobForLinkedIn(job);
   };
 
-  const filteredJobs = importedJobs.filter((job) => {
-    if (filter === "all") return true;
-    if (filter === "category" && job.category) return true;
-    if (filter === "type" && job.type) return true;
-    if (filter === "remote" && job.isRemote) return true;
-    if (filter === "featured" && job.isFeatured) return true;
-    return false;
-  });
+  const filteredJobs = useMemo(() => {
+    return importedJobs.filter((job) => {
+      if (filter === "all") return true;
+      if (filter === "category" && job.category) return true;
+      if (filter === "type" && job.type) return true;
+      if (filter === "remote" && job.isRemote) return true;
+      if (filter === "featured" && job.isFeatured) return true;
+      return false;
+    });
+  }, [importedJobs, filter]);
 
-  const stats = {
-    total: importedJobs.length,
-    remote: importedJobs.filter((j) => j.isRemote).length,
-    featured: importedJobs.filter((j) => j.isFeatured).length,
-    active: importedJobs.filter((j) => j.isActive).length,
-  };
+  const stats = memoizedStats;
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <RefreshCw className="w-8 h-8 animate-spin text-[#0476D9]" />
+      <div className="space-y-4">
+        {/* Loading skeleton */}
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="bg-white rounded-xl p-6 animate-pulse">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1">
+                <div className="h-6 bg-gray-200 rounded-lg mb-2 w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded-lg w-1/2"></div>
+              </div>
+              <div className="flex gap-2">
+                <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 bg-gray-200 rounded w-full"></div>
+              <div className="h-3 bg-gray-200 rounded w-4/5"></div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -227,9 +255,10 @@ export default function ImportedHistoryTab({
           </button>
           <button
             onClick={loadImportedJobs}
-            className="btn-outline flex items-center gap-2"
+            disabled={loading}
+            className="btn-outline flex items-center gap-2 disabled:opacity-50"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </button>
         </div>

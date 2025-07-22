@@ -1,4 +1,3 @@
-import { checkAndNotifyAlerts } from "@/lib/jobAlerts";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -56,13 +55,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check and notify alerts (in background)
-    try {
-      await checkAndNotifyAlerts(job);
-    } catch (alertError) {
-      console.error("Error checking alerts:", alertError);
-      // Don't fail job creation due to alert errors
-    }
+    // Check and notify alerts (in background) - DISABLED FOR MANUAL CONTROL
+    // try {
+    //   await checkAndNotifyAlerts(job);
+    // } catch (alertError) {
+    //   console.error("Error checking alerts:", alertError);
+    //   // Don't fail job creation due to alert errors
+    // }
 
     return NextResponse.json({
       success: true,
