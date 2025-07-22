@@ -79,13 +79,13 @@ export default function JobMainContent({
                       height={80}
                       src={job.companyLogo}
                       alt={`${job.company} logo`}
-                      className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl object-cover border border-gray-200 group-hover:scale-105 transition-transform duration-300"
+                      className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-2xl object-cover border border-gray-200 group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-[#011640] via-[#0476D9] to-[#011640] bg-clip-text text-transparent leading-tight">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#011640] via-[#0476D9] to-[#011640] bg-clip-text text-transparent leading-tight">
                     {job.title}
                   </h1>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2">
