@@ -6,8 +6,6 @@ import Footer from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 import GoogleAnalytics from "./google-analytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
-
 import Schema from "./schema";
 
 const inter = Inter({
@@ -97,17 +95,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0476D9" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="TalentFlight" />
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/icon-152x152.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icon-192x192.png" />
-        <link rel="apple-touch-icon" sizes="167x167" href="/icon-152x152.png" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="application-name" content="TalentFlight" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=5"
@@ -155,38 +142,10 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
-        <PWAInstallPrompt />
         <Analytics />
         <GoogleAnalytics />
         <Schema />
         <SpeedInsights />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js', {
-                    scope: '/'
-                  })
-                  .then(function(registration) {
-                    console.log('SW registered successfully: ', registration);
-                  })
-                  .catch(function(registrationError) {
-                    console.log('SW registration failed: ', registrationError);
-                  });
-                });
-              }
-              
-              // PWA Install prompt
-              let deferredPrompt;
-              window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                console.log('PWA install prompt ready');
-              });
-            `,
-          }}
-        />
       </body>
     </html>
   );

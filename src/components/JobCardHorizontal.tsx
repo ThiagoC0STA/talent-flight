@@ -60,7 +60,7 @@ export default function JobCardHorizontal({
       <div className="flex items-start gap-8 p-8">
         {/* Company Logo */}
         <div className="flex-shrink-0">
-          <div className="relative">
+            <div className="relative">
             {(job.company_logo || job.companyLogo) && !imageError ? (
               <Image
                 width={80}
@@ -70,11 +70,11 @@ export default function JobCardHorizontal({
                 className="w-20 h-20 rounded-2xl object-cover border border-gray-100 bg-white"
                 onError={() => setImageError(true)}
               />
-            ) : (
-              <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                <Building2 className="w-10 h-10 text-gray-400" />
-              </div>
-            )}
+          ) : (
+            <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+              <Building2 className="w-10 h-10 text-gray-400" />
+            </div>
+          )}
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
           </div>
         </div>
