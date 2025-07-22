@@ -319,7 +319,7 @@ export async function sendJobAlertNotification(alert: JobAlert, job: any) {
     try {
       responseBody = await response.json();
     } catch (e) {
-      console.log("[EMAIL] Response não é JSON");
+      console.log("[EMAIL] Response não é JSON" + e);
     }
 
     if (!response.ok) {
