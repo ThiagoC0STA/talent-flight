@@ -38,7 +38,7 @@ export default function JobPagePreview({
           <JobMainContent job={job} onModalOpen={() => setIsModalOpen(true)} />
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-28 space-y-4 sm:space-y-6">
+            <div className="sticky top-[164px] space-y-4 sm:space-y-4">
               {/* Newsletter */}
 
               {/* Related Jobs Sidebar */}

@@ -17,10 +17,15 @@ export default function RelatedJobsSidebar({
 
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
-      <h3 className="text-lg sm:text-xl font-bold text-[#011640] mb-4">
-        Related Jobs
-      </h3>
-      <div className="max-h-96 overflow-y-auto scrollbar-hide">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg sm:text-xl font-bold text-[#011640]">
+          Related Jobs
+        </h3>
+        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+          {relatedJobs.length}
+        </span>
+      </div>
+      <div className="max-h-78 overflow-y-auto scrollbar-hide">
         <div className="space-y-3">
           {relatedJobs.map((relatedJob) => (
             <Link

@@ -74,6 +74,9 @@ export default function NewsletterSignup() {
             <p className="text-blue-100 text-sm">
               Get similar jobs in your inbox
             </p>
+            <p className="text-blue-200 text-xs mt-1">
+              Never miss the perfect opportunity!
+            </p>
           </div>
         </div>
 

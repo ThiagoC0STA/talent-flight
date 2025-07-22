@@ -15,6 +15,8 @@ import {
   Award,
   Share2,
   Earth,
+  Home,
+  Briefcase,
 } from "lucide-react";
 import { useState } from "react";
 import { Job } from "@/types/job";
@@ -24,6 +26,7 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import Image from "next/image";
 import DOMPurify from "isomorphic-dompurify";
+import Link from "next/link";
 
 interface JobMainContentProps {
   job: Job;
@@ -63,6 +66,26 @@ export default function JobMainContent({
 
   return (
     <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+      {/* Breadcrumbs Navigation */}
+      <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+        <Link
+          href="/"
+          className="flex items-center hover:text-[#0476D9] transition-colors"
+        >
+          <Home className="w-4 h-4 mr-1" />
+          Home
+        </Link>
+        <span className="text-gray-400">/</span>
+        <Link
+          href="/jobs"
+          className="flex items-center hover:text-[#0476D9] transition-colors"
+        >
+          <Briefcase className="w-4 h-4 mr-1" />
+          Jobs
+        </Link>
+        <span className="text-gray-400">/</span>
+        <span className="text-gray-900 font-medium truncate">{job.title}</span>
+      </nav>
       {/* Hero Section with Enhanced Design */}
       <div className="relative overflow-hidden bg-gradient-to-br rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm bg-white">
         {/* Background Pattern */}
@@ -229,7 +252,6 @@ export default function JobMainContent({
           </div>
         </div>
       </div>
-
       {/* Job Description with Enhanced Design */}
       <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 xl:p-10 shadow-sm transition-all duration-300">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
@@ -279,7 +301,7 @@ export default function JobMainContent({
           )}
         </div>
 
-        <div className="flex justify-center mt-4 sm:mt-6">
+        <div className="flex justify-center mt-4 sm:mt-2">
           <button
             onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
             className="flex items-center gap-2 bg-gradient-to-r from-[#0476D9] to-[#0487D9] text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-medium hover:from-[#0487D9] hover:to-[#0498D9] transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base"
@@ -298,7 +320,6 @@ export default function JobMainContent({
           </button>
         </div>
       </div>
-
       {/* Requirements with Enhanced Design */}
       {job.requirements && job.requirements.length > 0 && (
         <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 xl:p-10 shadow-xl border border-blue-100/50 hover:shadow-2xl transition-all duration-300">
@@ -327,7 +348,6 @@ export default function JobMainContent({
           </ul>
         </div>
       )}
-
       {/* Benefits with Enhanced Design */}
       {job.benefits && job.benefits.length > 0 && (
         <div className="bg-gradient-to-br from-white to-purple-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 xl:p-10 shadow-xl border border-purple-100/50 hover:shadow-2xl transition-all duration-300">
@@ -355,7 +375,6 @@ export default function JobMainContent({
         </div>
       )}
 
-      {/* Enhanced Apply Now Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#0476D9] via-[#0487D9] to-[#011640] rounded-2xl sm:rounded-3xl p-6 sm:p-8 py-8 sm:py-10 text-white shadow-2xl">
         {/* Background Effects */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
