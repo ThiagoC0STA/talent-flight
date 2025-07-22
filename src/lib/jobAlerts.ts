@@ -114,7 +114,7 @@ export function isJobCompatibleWithAlert(job: any, alert: JobAlert): boolean {
 }
 
 // Configuração dinâmica de rate limit
-const RATE_LIMIT_MINUTES = 120; // 1 email por 60 minutos
+const RATE_LIMIT_MINUTES = 60; // 1 email por 60 minutos
 const RATE_LIMIT_PER_DAY = 3; // máximo 3 emails por dia (exemplo, pode ajustar)
 
 // Cache simples de rate limit por request
