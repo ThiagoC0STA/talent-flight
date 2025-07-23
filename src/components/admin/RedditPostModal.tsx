@@ -1,32 +1,35 @@
 import { useState, useEffect } from "react";
-import { X, Linkedin, RefreshCw, Mail, CheckCircle } from "lucide-react";
+import { X, MessageSquare, RefreshCw, Mail, CheckCircle } from "lucide-react";
 import { Job } from "@/types/job";
-import { generateLinkedInPostVariations } from "@/lib/linkedin-variations";
+import { generateRedditPostVariations, generateRedditPostForSubreddit } from "@/lib/reddit-variations";
 import { checkAndNotifyAlerts } from "@/lib/jobAlerts";
+import { postHistoryManager } from "@/lib/post-history";
 import Image from "next/image";
 
-interface LinkedInPostModalProps {
+interface RedditPostModalProps {
   isOpen: boolean;
   onClose: () => void;
   job: Job | null;
 }
 
-export default function LinkedInPostModal({
+export default function RedditPostModal({
   isOpen,
   onClose,
   job,
-}: LinkedInPostModalProps) {
+}: RedditPostModalProps) {
   const [postText, setPostText] = useState("");
   const [showPreview, setShowPreview] = useState(true);
   const [currentVariation, setCurrentVariation] = useState(0);
   const [allVariations, setAllVariations] = useState<string[]>([]);
   const [isSendingAlerts, setIsSendingAlerts] = useState(false);
   const [alertsSent, setAlertsSent] = useState(false);
+  const [selectedSubreddit, setSelectedSubreddit] = useState<string>("");
+  const [showSubredditWarning, setShowSubredditWarning] = useState(false);
 
   // Gerar post quando job mudar
   useEffect(() => {
     if (job) {
-      const variations = generateLinkedInPostVariations(job);
+      const variations = generateRedditPostVariations(job);
       const randomIndex = Math.floor(Math.random() * variations.length);
       setAllVariations(variations);
       setCurrentVariation(randomIndex);
@@ -34,9 +37,26 @@ export default function LinkedInPostModal({
     }
   }, [job]);
 
+  // Verificar cooldown quando subreddit mudar
+  useEffect(() => {
+    if (selectedSubreddit && job) {
+      const hasCooldown = postHistoryManager.hasSubredditCooldown(selectedSubreddit);
+      const hasRecentPost = postHistoryManager.hasRecentPost(job, 'reddit', selectedSubreddit);
+      setShowSubredditWarning(hasCooldown || hasRecentPost);
+    } else {
+      setShowSubredditWarning(false);
+    }
+  }, [selectedSubreddit, job]);
+
   const handleCopyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(postText);
+      
+      // Registrar no histórico se tiver subreddit selecionado
+      if (job && selectedSubreddit) {
+        postHistoryManager.registerPost(job, 'reddit', selectedSubreddit);
+      }
+      
       // Mostrar feedback visual
       const button = document.querySelector(
         "[data-copy-button]"
@@ -74,6 +94,14 @@ export default function LinkedInPostModal({
     setPostText(allVariations[randomIndex]);
   };
 
+  const handleSubredditChange = (subreddit: string) => {
+    setSelectedSubreddit(subreddit);
+    if (job && subreddit) {
+      const post = generateRedditPostForSubreddit(job, subreddit);
+      setPostText(post);
+    }
+  };
+
   const handleSendAlerts = async () => {
     if (!job || isSendingAlerts) return;
     
@@ -90,16 +118,23 @@ export default function LinkedInPostModal({
     }
   };
 
+  // Função para converter markdown básico para HTML
+  const renderMarkdown = (text: string) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+  };
+
   if (!isOpen || !job) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-0 !m-0 z-50">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[98vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[98vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center gap-3">
-            <Linkedin className="w-6 h-6 text-blue-600" />
-            <h2 className="text-xl font-semibold">Post to LinkedIn</h2>
+            <MessageSquare className="w-6 h-6 text-orange-500" />
+            <h2 className="text-xl font-semibold">Post to Reddit</h2>
           </div>
           <button
             onClick={onClose}
@@ -143,7 +178,7 @@ export default function LinkedInPostModal({
               onClick={() => setShowPreview(true)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 showPreview
-                  ? "bg-blue-100 text-blue-700"
+                  ? "bg-orange-100 text-orange-700"
                   : "bg-gray-100 text-gray-600"
               }`}
             >
@@ -153,12 +188,41 @@ export default function LinkedInPostModal({
               onClick={() => setShowPreview(false)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 !showPreview
-                  ? "bg-blue-100 text-blue-700"
+                  ? "bg-orange-100 text-orange-700"
                   : "bg-gray-100 text-gray-600"
               }`}
             >
               Editar
             </button>
+          </div>
+
+          {/* Subreddit Selection */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Subreddit (optional):
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {["r/cscareerquestions", "r/forhire", "r/remotejobs", "r/webdev", "r/reactjs", "r/node", "r/python"].map((subreddit) => (
+                <button
+                  key={subreddit}
+                  onClick={() => handleSubredditChange(subreddit)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    selectedSubreddit === subreddit
+                      ? "bg-orange-100 text-orange-700"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {subreddit}
+                </button>
+              ))}
+            </div>
+            {showSubredditWarning && (
+              <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-xs text-yellow-800">
+                  ⚠️ Warning: This subreddit has active cooldown or recent similar post
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Variações Controls */}
@@ -195,29 +259,30 @@ export default function LinkedInPostModal({
           </div>
 
           {showPreview ? (
-            /* Preview do Post */
+            /* Preview do Post do Reddit */
             <div className="border rounded-xl p-4 bg-white">
               <div className="flex items-start gap-3 mb-4">
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold">TF</span>
+                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">TF</span>
                 </div>
                 <div>
-                  <p className="font-semibold">TalentFlight</p>
-                  <p className="text-sm text-gray-500">Agora</p>
+                  <p className="font-semibold text-sm">TalentFlight</p>
+                  <p className="text-xs text-gray-500">Posted by u/TalentFlight</p>
                 </div>
               </div>
 
-              <div className="whitespace-pre-wrap text-gray-900 mb-4">
-                {postText}
-              </div>
+              <div 
+                className="whitespace-pre-wrap text-gray-900 mb-4 prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(postText) }}
+              />
             </div>
           ) : (
-            /* Editor de Texto */
+            /* Text Editor */
             <textarea
               value={postText}
               onChange={(e) => setPostText(e.target.value)}
-              className="w-full h-64 p-4 border rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Digite seu post aqui..."
+              className="w-full h-64 p-4 border rounded-xl resize-none focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
+              placeholder="Type your Reddit post here... (Markdown supported)"
             />
           )}
 
@@ -228,7 +293,7 @@ export default function LinkedInPostModal({
               data-copy-button
               className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
             >
-              Copy Text
+              Copy Post
             </button>
             
             <button
@@ -238,7 +303,7 @@ export default function LinkedInPostModal({
                 alertsSent
                   ? "bg-green-100 text-green-700"
                   : isSendingAlerts
-                  ? "bg-blue-100 text-blue-700"
+                  ? "bg-orange-100 text-orange-700"
                   : "bg-orange-100 text-orange-700 hover:bg-orange-200"
               }`}
             >
@@ -264,4 +329,4 @@ export default function LinkedInPostModal({
       </div>
     </div>
   );
-}
+} 

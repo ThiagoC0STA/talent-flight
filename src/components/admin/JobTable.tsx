@@ -1,9 +1,20 @@
-import { Edit, Eye, Trash2, Linkedin, Globe, Building } from "lucide-react";
+import {
+  Edit,
+  Eye,
+  Trash2,
+  Linkedin,
+  Globe,
+  Building,
+  Twitter,
+  MessageSquare,
+} from "lucide-react";
 import { Job } from "@/types/job";
 import Image from "next/image";
 import { useState } from "react";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import LinkedInPostModal from "./LinkedInPostModal";
+import TwitterPostModal from "./TwitterPostModal";
+import RedditPostModal from "./RedditPostModal";
 
 function getExperienceColor(experience?: string) {
   const colors = {
@@ -69,6 +80,22 @@ export default function JobTable({
     job: null,
   });
 
+  const [twitterModal, setTwitterModal] = useState<{
+    isOpen: boolean;
+    job: Job | null;
+  }>({
+    isOpen: false,
+    job: null,
+  });
+
+  const [redditModal, setRedditModal] = useState<{
+    isOpen: boolean;
+    job: Job | null;
+  }>({
+    isOpen: false,
+    job: null,
+  });
+
   const handleDeleteClick = (job: Job) => {
     setDeleteModal({
       isOpen: true,
@@ -102,6 +129,20 @@ export default function JobTable({
 
   const handleLinkedInClick = (job: Job) => {
     setLinkedInModal({
+      isOpen: true,
+      job,
+    });
+  };
+
+  const handleTwitterClick = (job: Job) => {
+    setTwitterModal({
+      isOpen: true,
+      job,
+    });
+  };
+
+  const handleRedditClick = (job: Job) => {
+    setRedditModal({
       isOpen: true,
       job,
     });
@@ -265,7 +306,11 @@ export default function JobTable({
                             ? "text-green-600 hover:bg-green-50"
                             : "text-gray-600 hover:bg-gray-50"
                         }`}
-                        title={job.isRemote ? "Marcar como não-remote" : "Marcar como remote"}
+                        title={
+                          job.isRemote
+                            ? "Marcar como não-remote"
+                            : "Marcar como remote"
+                        }
                       >
                         {job.isRemote ? (
                           <Globe className="w-4 h-4" />
@@ -359,13 +404,31 @@ export default function JobTable({
                       <Linkedin className="w-4 h-4" />
                     </button>
                     <button
+                      onClick={() => handleTwitterClick(job)}
+                      className="p-2 text-blue-400 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                      title="Postar no Twitter/X"
+                    >
+                      <Twitter className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleRedditClick(job)}
+                      className="p-2 text-orange-500 hover:bg-orange-50 rounded-lg transition-colors cursor-pointer"
+                      title="Postar no Reddit"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                    </button>
+                    <button
                       onClick={() => onToggleRemote(job)}
                       className={`p-2 rounded-lg transition-colors cursor-pointer ${
                         job.isRemote
                           ? "text-green-600 hover:bg-green-50"
                           : "text-gray-600 hover:bg-gray-50"
                       }`}
-                      title={job.isRemote ? "Marcar como não-remote" : "Marcar como remote"}
+                      title={
+                        job.isRemote
+                          ? "Marcar como não-remote"
+                          : "Marcar como remote"
+                      }
                     >
                       {job.isRemote ? (
                         <Globe className="w-4 h-4" />
@@ -440,6 +503,30 @@ export default function JobTable({
           })
         }
         job={linkedInModal.job}
+      />
+
+      {/* Twitter Post Modal */}
+      <TwitterPostModal
+        isOpen={twitterModal.isOpen}
+        onClose={() =>
+          setTwitterModal({
+            isOpen: false,
+            job: null,
+          })
+        }
+        job={twitterModal.job}
+      />
+
+      {/* Reddit Post Modal */}
+      <RedditPostModal
+        isOpen={redditModal.isOpen}
+        onClose={() =>
+          setRedditModal({
+            isOpen: false,
+            job: null,
+          })
+        }
+        job={redditModal.job}
       />
     </>
   );

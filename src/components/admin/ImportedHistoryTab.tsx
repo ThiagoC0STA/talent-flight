@@ -16,12 +16,16 @@ import {
   Eye,
   Globe,
   AlertTriangle,
+  Twitter,
+  MessageSquare,
 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import { Job } from "@/types/job";
 import { jobsService, trackingService } from "@/lib/jobs";
 import Image from "next/image";
 import LinkedInPostModal from "./LinkedInPostModal";
+import TwitterPostModal from "./TwitterPostModal";
+import RedditPostModal from "./RedditPostModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 
 function slugify(str: string) {
@@ -50,6 +54,10 @@ export default function ImportedHistoryTab({
   const [filter, setFilter] = useState("all");
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [selectedJobForLinkedIn, setSelectedJobForLinkedIn] =
+    useState<Job | null>(null);
+  const [selectedJobForTwitter, setSelectedJobForTwitter] =
+    useState<Job | null>(null);
+  const [selectedJobForReddit, setSelectedJobForReddit] =
     useState<Job | null>(null);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -191,6 +199,14 @@ export default function ImportedHistoryTab({
 
   const handleLinkedInPost = (job: Job) => {
     setSelectedJobForLinkedIn(job);
+  };
+
+  const handleTwitterPost = (job: Job) => {
+    setSelectedJobForTwitter(job);
+  };
+
+  const handleRedditPost = (job: Job) => {
+    setSelectedJobForReddit(job);
   };
 
   const filteredJobs = useMemo(() => {
@@ -482,6 +498,20 @@ export default function ImportedHistoryTab({
                     <Linkedin className="w-4 h-4" />
                   </button>
                   <button
+                    onClick={() => handleTwitterPost(job)}
+                    className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                    title="Postar no Twitter/X"
+                  >
+                    <Twitter className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleRedditPost(job)}
+                    className="p-2 text-orange-500 hover:bg-orange-50 rounded-lg transition-colors cursor-pointer"
+                    title="Postar no Reddit"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                  </button>
+                  <button
                     onClick={() => handleToggleActive(job)}
                     className={`p-2 rounded-lg transition-colors cursor-pointer ${
                       job.isActive
@@ -602,6 +632,20 @@ export default function ImportedHistoryTab({
                         <Linkedin className="w-4 h-4" />
                         Post to LinkedIn
                       </button>
+                      <button
+                        onClick={() => handleTwitterPost(job)}
+                        className="btn-outline inline-flex items-center gap-2 px-4 py-2 text-blue-400 border-blue-400 hover:bg-blue-50"
+                      >
+                        <Twitter className="w-4 h-4" />
+                        Post to Twitter/X
+                      </button>
+                      <button
+                        onClick={() => handleRedditPost(job)}
+                        className="btn-outline inline-flex items-center gap-2 px-4 py-2 text-orange-500 border-orange-500 hover:bg-orange-50"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        Post to Reddit
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -617,6 +661,24 @@ export default function ImportedHistoryTab({
           job={selectedJobForLinkedIn}
           onClose={() => setSelectedJobForLinkedIn(null)}
           isOpen={!!selectedJobForLinkedIn}
+        />
+      )}
+
+      {/* Twitter Post Modal */}
+      {selectedJobForTwitter && (
+        <TwitterPostModal
+          job={selectedJobForTwitter}
+          onClose={() => setSelectedJobForTwitter(null)}
+          isOpen={!!selectedJobForTwitter}
+        />
+      )}
+
+      {/* Reddit Post Modal */}
+      {selectedJobForReddit && (
+        <RedditPostModal
+          job={selectedJobForReddit}
+          onClose={() => setSelectedJobForReddit(null)}
+          isOpen={!!selectedJobForReddit}
         />
       )}
 
