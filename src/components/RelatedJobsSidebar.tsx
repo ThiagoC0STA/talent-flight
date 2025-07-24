@@ -45,6 +45,7 @@ export default function RelatedJobsSidebar({
                     <Image
                       width={40}
                       height={40}
+                      unoptimized
                       src={relatedJob.companyLogo}
                       alt={`${relatedJob.company} logo`}
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg object-cover border border-[#E5EAF1] flex-shrink-0"

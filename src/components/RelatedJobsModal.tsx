@@ -112,6 +112,7 @@ export default function RelatedJobsModal({
                         <Image
                           width={56}
                           height={56}
+                          unoptimized
                           src={job.companyLogo}
                           alt={`${job.company} logo`}
                           className="w-14 h-14 rounded-xl object-cover border border-[#E5EAF1] flex-shrink-0 shadow-sm"
@@ -169,6 +170,7 @@ export default function RelatedJobsModal({
                     <Image
                       width={80}
                       height={80}
+                      unoptimized
                       src={selectedJob.companyLogo}
                       alt={`${selectedJob.company} logo`}
                       className="w-20 h-20 rounded-2xl object-cover border border-[#E5EAF1] shadow-lg"

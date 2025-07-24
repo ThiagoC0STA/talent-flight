@@ -100,6 +100,7 @@ export default function JobMainContent({
                     <Image
                       width={80}
                       height={80}
+                      unoptimized
                       src={job.companyLogo}
                       alt={`${job.company} logo`}
                       className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-2xl object-cover border border-gray-200 group-hover:scale-105 transition-transform duration-300"

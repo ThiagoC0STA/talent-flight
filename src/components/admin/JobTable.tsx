@@ -217,6 +217,7 @@ export default function JobTable({
                             alt={`${job.company} logo`}
                             width={40}
                             height={40}
+                            unoptimized
                             className="w-10 h-10 rounded-lg object-contain bg-white border border-gray-200"
                           />
                         </div>
@@ -350,6 +351,7 @@ export default function JobTable({
                           alt={`${job.company} logo`}
                           width={40}
                           height={40}
+                          unoptimized
                           className="w-10 h-10 rounded-lg object-contain bg-white border border-gray-200"
                         />
                       </div>

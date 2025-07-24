@@ -25,6 +25,7 @@ export default function AffiliateProduct() {
       {/* Product Image */}
       <div className="relative mb-4">
         <Image
+        unoptimized
           src="/product1.png"
           alt="10 Questions & Answers for the Cabin Crew interview"
           width={300}

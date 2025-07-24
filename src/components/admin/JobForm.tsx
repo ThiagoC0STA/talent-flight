@@ -173,6 +173,7 @@ export default function JobForm({
               <div className="mt-2">
                 <Image
                   src={formData.company_logo}
+                  unoptimized
                   alt="Logo Preview"
                   className="h-12 rounded-xl border border-[#E5EAF1] bg-white"
                   style={{ maxWidth: 120, objectFit: "contain" }}

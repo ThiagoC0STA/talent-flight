@@ -15,6 +15,7 @@ export default function Footer() {
                 alt="TalentFlight"
                 width={140}
                 height={200}
+                unoptimized
               />
             </Link>
             <p className="text-[#011640] max-w-lg leading-relaxed text-sm">

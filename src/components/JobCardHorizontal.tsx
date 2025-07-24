@@ -65,6 +65,7 @@ export default function JobCardHorizontal({
               <Image
                 width={80}
                 height={80}
+                unoptimized
                 src={(job.company_logo || job.companyLogo) as string}
                 alt={`${job.company} logo`}
                 className="w-20 h-20 rounded-2xl object-cover border border-gray-100 bg-white"

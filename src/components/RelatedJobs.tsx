@@ -129,6 +129,7 @@ export default function RelatedJobs({ relatedJobs }: RelatedJobsProps) {
                         <Image
                           width={56}
                           height={56}
+                          unoptimized
                           src={job.companyLogo}
                           alt={`${job.company} logo`}
                           className="w-14 h-14 rounded-2xl object-cover border-2 border-[#E5EAF1] group-hover:border-[#0476D9] transition-all duration-300 shadow-lg"

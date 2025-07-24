@@ -60,6 +60,7 @@ export default function JobCard({ job, className }: JobCardProps) {
               <Image
                 width={40}
                 height={40}
+                unoptimized
                 src={job.company_logo || job.companyLogo || ""}
                 alt={`${job.company} logo`}
                 className="w-10 h-10 rounded-lg object-cover border border-[#E5EAF1] bg-white"

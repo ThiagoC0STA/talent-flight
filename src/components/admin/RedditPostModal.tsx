@@ -153,6 +153,7 @@ export default function RedditPostModal({
                 <Image
                   src={job.companyLogo}
                   alt={`${job.company} logo`}
+                  unoptimized
                   width={48}
                   height={48}
                   className="w-12 h-12 rounded-lg object-contain bg-white border"
