@@ -18,6 +18,10 @@ Allow: /contact
 Allow: /terms
 Allow: /privacy
 
+# AdSense files
+Allow: /ads.txt
+Allow: /app-ads.txt
+
 # Crawl delay (optional)
 Crawl-delay: 1
 

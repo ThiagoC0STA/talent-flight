@@ -2,49 +2,49 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://talentflight.com/</loc>
-    <lastmod>2025-07-22T20:36:11.235Z</lastmod>
+    <lastmod>2025-07-24T15:18:09.717Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1</priority>
   </url>
   <url>
     <loc>https://talentflight.com/jobs</loc>
-    <lastmod>2025-07-22T20:36:11.236Z</lastmod>
+    <lastmod>2025-07-24T15:18:09.718Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://talentflight.com/alerts</loc>
-    <lastmod>2025-07-22T20:36:11.236Z</lastmod>
+    <lastmod>2025-07-24T15:18:09.718Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://talentflight.com/about</loc>
-    <lastmod>2025-07-22T20:36:11.236Z</lastmod>
+    <lastmod>2025-07-24T15:18:09.718Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://talentflight.com/contact</loc>
-    <lastmod>2025-07-22T20:36:11.236Z</lastmod>
+    <lastmod>2025-07-24T15:18:09.718Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://talentflight.com/terms</loc>
-    <lastmod>2025-07-22T20:36:11.236Z</lastmod>
+    <lastmod>2025-07-24T15:18:09.718Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://talentflight.com/privacy</loc>
-    <lastmod>2025-07-22T20:36:11.236Z</lastmod>
+    <lastmod>2025-07-24T15:18:09.718Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://talentflight.com/job/junior-front-end-developer-at-predictive-sales-ai-a-spectrum-communications-consulting-llc-brand</loc>
-    <lastmod>2025-07-16T13:50:06.029717+00:00</lastmod>
+    <loc>https://talentflight.com/job/sr-front-end-engineer-100-remote-nightshift-at-wesource-recruitment</loc>
+    <lastmod>2025-07-23T17:19:43.36+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -417,6 +417,42 @@
   <url>
     <loc>https://talentflight.com/job/front-end-developer-5-days-at-a-i-pacific-consultants</loc>
     <lastmod>2025-07-22T19:55:04.635+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-front-end-at-sim-it-sdn-bhd</loc>
+    <lastmod>2025-07-23T15:12:32.321+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-wordpress-at-primotech</loc>
+    <lastmod>2025-07-23T15:12:33.712+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-product-engineer-front-end-at-fuse-energy</loc>
+    <lastmod>2025-07-23T15:12:36.169+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-web-developer-at-howden-group</loc>
+    <lastmod>2025-07-23T15:12:39.587+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/sr-front-end-web-developer-at-bath-body-works</loc>
+    <lastmod>2025-07-23T15:12:41.186+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/wordpress-front-and-back-end-developer-at-presence-co</loc>
+    <lastmod>2025-07-23T15:12:42.153+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -1221,6 +1257,12 @@
   <url>
     <loc>https://talentflight.com/job/front-end-developer-react-at-jobs-via-dice</loc>
     <lastmod>2025-07-16T18:38:54.472849+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/junior-front-end-developer-at-predictive-sales-ai-a-spectrum-communications-consulting-llc-brand</loc>
+    <lastmod>2025-07-23T15:13:21.562832+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

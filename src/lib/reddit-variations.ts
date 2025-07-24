@@ -11,20 +11,6 @@ function slugify(str: string) {
     .replace(/-+/g, "-");
 }
 
-// Subreddits relevantes para tech jobs
-const relevantSubreddits = [
-  "r/cscareerquestions",
-  "r/forhire",
-  "r/jobbit",
-  "r/remotejobs",
-  "r/techjobs",
-  "r/programming",
-  "r/webdev",
-  "r/reactjs",
-  "r/node",
-  "r/python",
-];
-
 // Função para gerar subreddits baseados no job
 function generateSubreddits(job: Job): string[] {
   const subreddits = ["r/cscareerquestions", "r/forhire"];

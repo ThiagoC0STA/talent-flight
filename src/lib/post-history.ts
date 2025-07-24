@@ -62,7 +62,6 @@ export class PostHistoryManager {
     subreddit?: string,
     daysLimit: number = 7
   ): boolean {
-    const hash = this.generatePostHash(job, platform, subreddit);
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysLimit);
 
