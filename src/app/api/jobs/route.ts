@@ -87,58 +87,111 @@ export async function GET(request: NextRequest) {
     const location = searchParams.get("location") || "";
     const isRemote = searchParams.get("remote") || "";
     const technologies = searchParams.get("technologies") || "";
+    const experience = searchParams.get("experience") || "";
+    const type = searchParams.get("type") || "";
+    const category = searchParams.get("category") || "";
+    const featured = searchParams.get("featured") || "";
 
-    let query = supabase
+    // Build base query for counting total
+    let countQuery = supabase
+      .from("jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("is_active", true);
+
+    // Build query for fetching jobs
+    let jobsQuery = supabase
       .from("jobs")
       .select("*")
       .eq("is_active", true)
       .order("created_at", { ascending: false });
 
-    // Apply filters
+    // Apply filters to both queries
     if (search) {
-      query = query.or(
-        `title.ilike.%${search}%,description.ilike.%${search}%,company.ilike.%${search}%`
-      );
+      const searchFilter = `title.ilike.%${search}%,description.ilike.%${search}%,company.ilike.%${search}%`;
+      countQuery = countQuery.or(searchFilter);
+      jobsQuery = jobsQuery.or(searchFilter);
     }
 
     if (company) {
-      query = query.eq("company", company);
+      countQuery = countQuery.eq("company", company);
+      jobsQuery = jobsQuery.eq("company", company);
     }
 
     if (location) {
-      query = query.eq("location", location);
+      countQuery = countQuery.eq("location", location);
+      jobsQuery = jobsQuery.eq("location", location);
     }
 
     if (isRemote === "true") {
-      query = query.eq("is_remote", true);
+      countQuery = countQuery.eq("is_remote", true);
+      jobsQuery = jobsQuery.eq("is_remote", true);
     }
 
     if (technologies) {
       const techArray = technologies.split(",").map((t) => t.trim());
-      query = query.overlaps("technologies", techArray);
+      countQuery = countQuery.overlaps("technologies", techArray);
+      jobsQuery = jobsQuery.overlaps("technologies", techArray);
     }
 
-    // Apply pagination
+    // Apply additional filters if they exist in the database
+    if (experience) {
+      // Assuming experience is stored as a field in the jobs table
+      countQuery = countQuery.eq("experience", experience);
+      jobsQuery = jobsQuery.eq("experience", experience);
+    }
+
+    if (type) {
+      // Assuming type is stored as a field in the jobs table
+      countQuery = countQuery.eq("type", type);
+      jobsQuery = jobsQuery.eq("type", type);
+    }
+
+    if (category) {
+      // Assuming category is stored as a field in the jobs table
+      countQuery = countQuery.eq("category", category);
+      jobsQuery = jobsQuery.eq("category", category);
+    }
+
+    if (featured === "true") {
+      // Assuming featured is stored as a field in the jobs table
+      countQuery = countQuery.eq("is_featured", true);
+      jobsQuery = jobsQuery.eq("is_featured", true);
+    }
+
+    // Get total count first
+    const { count: total, error: countError } = await countQuery;
+
+    if (countError) {
+      console.error("Error counting jobs:", countError);
+      return NextResponse.json(
+        { error: "Error counting jobs" },
+        { status: 500 }
+      );
+    }
+
+    // Apply pagination to jobs query
     const from = (page - 1) * limit;
     const to = from + limit - 1;
-    query = query.range(from, to);
+    jobsQuery = jobsQuery.range(from, to);
 
-    const { data: jobs, error } = await query;
+    const { data: jobs, error: jobsError } = await jobsQuery;
 
-    if (error) {
-      console.error("Error fetching jobs:", error);
+    if (jobsError) {
+      console.error("Error fetching jobs:", jobsError);
       return NextResponse.json(
         { error: "Error fetching jobs" },
         { status: 500 }
       );
     }
 
+    const totalPages = Math.ceil((total || 0) / limit);
+
     return NextResponse.json({
       jobs: jobs || [],
-      total: 12, // Fixed value for now
+      total: total || 0,
       page,
       limit,
-      totalPages: Math.ceil(12 / limit),
+      totalPages,
     });
   } catch (error) {
     console.error("Error in jobs API:", error);

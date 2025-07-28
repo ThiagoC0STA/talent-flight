@@ -2,49 +2,349 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://talentflight.com/</loc>
-    <lastmod>2025-07-24T15:22:10.973Z</lastmod>
+    <lastmod>2025-07-28T01:38:03.917Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1</priority>
   </url>
   <url>
     <loc>https://talentflight.com/jobs</loc>
-    <lastmod>2025-07-24T15:22:10.973Z</lastmod>
+    <lastmod>2025-07-28T01:38:03.918Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://talentflight.com/alerts</loc>
-    <lastmod>2025-07-24T15:22:10.973Z</lastmod>
+    <lastmod>2025-07-28T01:38:03.918Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://talentflight.com/about</loc>
-    <lastmod>2025-07-24T15:22:10.973Z</lastmod>
+    <lastmod>2025-07-28T01:38:03.918Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://talentflight.com/contact</loc>
-    <lastmod>2025-07-24T15:22:10.973Z</lastmod>
+    <lastmod>2025-07-28T01:38:03.918Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://talentflight.com/terms</loc>
-    <lastmod>2025-07-24T15:22:10.973Z</lastmod>
+    <lastmod>2025-07-28T01:38:03.918Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://talentflight.com/privacy</loc>
-    <lastmod>2025-07-24T15:22:10.973Z</lastmod>
+    <lastmod>2025-07-28T01:38:03.918Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://talentflight.com/job/front-end-developer-remote-at-venture-alliance-integrated</loc>
+    <lastmod>2025-07-27T20:38:21.017+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-shri-ram-enterprise</loc>
+    <lastmod>2025-07-27T20:38:22.803+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/jr-front-end-react-developer-at-reflexions</loc>
+    <lastmod>2025-07-27T20:39:13.396+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-tag-support-services-limited</loc>
+    <lastmod>2025-07-27T20:39:14.847+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/fullstack-developer-golang-next-js-react-100-remote-possible-at-limango</loc>
+    <lastmod>2025-07-25T20:01:14.327+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-intone-networks</loc>
+    <lastmod>2025-07-27T20:38:40.782+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-diks-autoverhuur</loc>
+    <lastmod>2025-07-27T20:38:45.063+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-react-at-diks-autoverhuur</loc>
+    <lastmod>2025-07-25T20:00:34.696+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/lead-fullstack-developer-node-react-at-interactivated-solutions-europe</loc>
+    <lastmod>2025-07-25T20:00:39.292+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-react-js-developer-at-upsales</loc>
+    <lastmod>2025-07-25T20:00:46.301+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/lead-full-stack-engineer-python-react-typescript-at-ayuda-business-management-solutions-inc</loc>
+    <lastmod>2025-07-25T20:01:01.905+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/desenvolvedor-a-frontend-senior-react-angular-remoto-at-solutis</loc>
+    <lastmod>2025-07-25T20:01:05.125+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/react-senior-at-plexus</loc>
+    <lastmod>2025-07-25T20:01:10.103+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-react-js-developer-at-kadit-innovations</loc>
+    <lastmod>2025-07-25T20:03:21.353+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/react-developer-at-triedge-solutions</loc>
+    <lastmod>2025-07-25T20:03:23.168+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-software-engineer-at-leidos</loc>
+    <lastmod>2025-07-27T20:38:48.612+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-web-developer-at-davita</loc>
+    <lastmod>2025-07-27T20:38:52.834+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-engineer-remote-at-career-consulting-partners-llc</loc>
+    <lastmod>2025-07-27T20:38:59.699+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-aristocrat</loc>
+    <lastmod>2025-07-27T20:38:24.381+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-nextjs-reactjs-at-ultahost-inc</loc>
+    <lastmod>2025-07-27T20:38:27.249+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/pessoa-desenvolvedora-front-end-pleno-at-youx-group</loc>
+    <lastmod>2025-07-27T20:39:11.664+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-web-developer-at-aloes-tree-pvt-ltd</loc>
+    <lastmod>2025-07-27T20:38:37.513+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/lead-front-end-developer-at-progressive</loc>
+    <lastmod>2025-07-27T20:38:42.879+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-intern-at-inrec-productive-research-solutions-and-services-private-limited</loc>
+    <lastmod>2025-07-27T20:38:46.684+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-developer-at-arch-systems-llc</loc>
+    <lastmod>2025-07-27T20:38:49.965+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/junior-front-end-developer-at-rd-global-ltd</loc>
+    <lastmod>2025-07-27T20:38:55.531+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/full-stack-front-end-developer-at-osair-technologies</loc>
+    <lastmod>2025-07-27T20:39:01.131+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/9544172-pessoa-desenvolvedora-s-nior-front-end-at-quality-digital</loc>
+    <lastmod>2025-07-27T20:39:17.334+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-developer-at-techxot</loc>
+    <lastmod>2025-07-27T20:39:21.965+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/full-stack-engineer-front-end-leaning-at-elevenlabs</loc>
+    <lastmod>2025-07-27T20:39:27.198+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/staff-front-end-engineer-south-america-at-nerdy</loc>
+    <lastmod>2025-07-27T20:39:34.766+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/react-native-developer-at-techtheta-it-solution</loc>
+    <lastmod>2025-07-27T20:24:07.464+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/react-tailwind-developer-at-brilliantech-software</loc>
+    <lastmod>2025-07-27T20:24:09.53+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/tech-lead-full-stack-node-js-react-typescript-remote-at-coderio</loc>
+    <lastmod>2025-07-27T20:33:34.733+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/react-js-frontend-developer-intern-online-ordering-platform-at-zoozoo-technologies</loc>
+    <lastmod>2025-07-27T20:34:10.88+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/react-js-frontend-developer-for-web-ordering-system-at-zoozoo-technologies</loc>
+    <lastmod>2025-07-27T20:34:21.332+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/react-developer-intern-at-devintelle-consulting-service-pvt-ltd</loc>
+    <lastmod>2025-07-27T20:34:23.964+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-lokker-umg-at-randomtrees</loc>
+    <lastmod>2025-07-27T20:39:22.781+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-kognitive-sales-solutions</loc>
+    <lastmod>2025-07-27T20:39:29.765+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-developer-front-end-at-tommy-car-wash</loc>
+    <lastmod>2025-07-27T20:43:10.135+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-remote-mid-senior-level-angular-at-keyvoto</loc>
+    <lastmod>2025-07-27T20:43:13.246+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-software-engineer-contractor-at-red-hawk-technologies</loc>
+    <lastmod>2025-07-27T20:43:24.331+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-developer-i-front-end-at-cleveland-clinic</loc>
+    <lastmod>2025-07-27T20:43:33.13+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/desenvolvedor-front-end-angular-pleno-at-am53</loc>
+    <lastmod>2025-07-27T20:43:30.683+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/semi-senior-senior-angular-front-end-developer-sector-financiero-bancario-at-devsu</loc>
+    <lastmod>2025-07-27T20:43:34.531+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-allroomie-technology</loc>
+    <lastmod>2025-07-27T20:43:36.039+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://talentflight.com/job/sr-front-end-engineer-100-remote-nightshift-at-wesource-recruitment</loc>
     <lastmod>2025-07-23T17:19:43.36+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-developer-at-prama-innovations-india-pvt-ltd</loc>
+    <lastmod>2025-07-27T20:35:09.264+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-ui-ux-wfh-at-satellite-office-solutions</loc>
+    <lastmod>2025-07-27T20:35:18.466+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/7044-arquiteto-de-sistemas-ll-front-end-at-betha</loc>
+    <lastmod>2025-07-27T20:44:53.865+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-hireframe</loc>
+    <lastmod>2025-07-27T20:43:43.014+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -57,6 +357,12 @@
   <url>
     <loc>https://talentflight.com/job/software-engineer-front-end-10086-at-capitec</loc>
     <lastmod>2025-07-22T14:58:16.73+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/engineer-iii-front-end-remote-at-crowdstrike</loc>
+    <lastmod>2025-07-24T22:43:18.85+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -99,12 +405,6 @@
   <url>
     <loc>https://talentflight.com/job/senior-software-engineer-front-end-angular-with-java-at-beyond-key</loc>
     <lastmod>2025-07-22T14:58:06.851+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://talentflight.com/job/angular-front-end-developer-at-vantahire</loc>
-    <lastmod>2025-07-22T14:58:08.491+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -385,6 +685,42 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://talentflight.com/job/front-end-cross-platform-applications-dart-flutter-at-wame-sports</loc>
+    <lastmod>2025-07-24T22:43:17.619+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/remote-front-end-developer-at-24-seven</loc>
+    <lastmod>2025-07-24T22:43:21.083+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-software-engineer-at-trevipay</loc>
+    <lastmod>2025-07-24T22:43:24.901+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/sr-engineer-front-end-sdet-remote-at-crowdstrike</loc>
+    <lastmod>2025-07-24T22:43:26.273+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-software-engineer-full-stack-front-end-at-the-helper-bees</loc>
+    <lastmod>2025-07-24T22:43:27.334+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/web-developer-shopify-front-back-end-at-pytech</loc>
+    <lastmod>2025-07-24T22:43:28.216+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://talentflight.com/job/lead-front-end-developer-at-bioptimizers</loc>
     <lastmod>2025-07-22T19:55:02.118+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -453,6 +789,54 @@
   <url>
     <loc>https://talentflight.com/job/wordpress-front-and-back-end-developer-at-presence-co</loc>
     <lastmod>2025-07-23T15:12:42.153+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-software-engineer-at-angel-studios</loc>
+    <lastmod>2025-07-24T22:43:49.933+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/full-stack-engineer-front-end-backend-at-elfonze-technologies</loc>
+    <lastmod>2025-07-24T22:43:53.468+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-intern-at-inventura-tech</loc>
+    <lastmod>2025-07-24T22:43:58.403+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/pessoa-desenvolvedora-front-end-especialista-at-datum-software</loc>
+    <lastmod>2025-07-24T22:43:59.584+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-front-end-focus-at-kin-insurance</loc>
+    <lastmod>2025-07-24T22:44:00.637+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/desenvolvedor-front-end-jr-at-praxio</loc>
+    <lastmod>2025-07-24T22:44:02.263+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/dev-front-end-react-native-at-squadra-technology</loc>
+    <lastmod>2025-07-24T22:44:04.25+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-next-js-react-js-at-ultahost-inc</loc>
+    <lastmod>2025-07-24T22:44:05.807+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

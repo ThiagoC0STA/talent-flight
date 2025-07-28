@@ -176,6 +176,8 @@ export default function JobsPageClient({
   const [totalJobs, setTotalJobs] = useState(initialTotalJobs || 0);
   const jobsPerPage = 12;
 
+
+
   // Estado para controlar se a busca foi aplicada
   const [hasAppliedSearch, setHasAppliedSearch] = useState(false);
 
@@ -188,13 +190,11 @@ export default function JobsPageClient({
       const params: any = {
         page: page.toString(),
         limit: jobsPerPage.toString(),
-        sortBy: "date",
-        sortOrder: "desc",
       };
 
       // Adicionar filtros ativos à query apenas se solicitado
       if (includeFilters && hasAppliedSearch) {
-        if (filters.query) params.query = filters.query;
+        if (filters.query) params.search = filters.query;
         if (filters.location) params.location = filters.location;
         if (filters.experience?.length) {
           params.experience = filters.experience;
@@ -205,8 +205,8 @@ export default function JobsPageClient({
         if (filters.category?.length) {
           params.category = filters.category;
         }
-        if (filters.isRemote) params.isRemote = "true";
-        if (filters.isFeatured) params.isFeatured = "true";
+        if (filters.isRemote) params.remote = "true";
+        if (filters.isFeatured) params.featured = "true";
       }
 
       return params;
@@ -542,7 +542,7 @@ export default function JobsPageClient({
             )}
 
             {/* Paginação */}
-            {filteredJobs.length > 0 && !loading && (
+            {totalPages > 1 && (
               <div className="mt-8 sm:mt-12">
                 <Pagination
                   currentPage={currentPage}
