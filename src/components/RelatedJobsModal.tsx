@@ -27,7 +27,7 @@ export default function RelatedJobsModal({
   relatedJobs,
   currentJob,
 }: RelatedJobsModalProps) {
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(relatedJobs[0]);
 
   if (!isOpen) return null;
 
