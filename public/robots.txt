@@ -1,6 +1,10 @@
 # TalentFlight Robots.txt
 # Allow all crawlers
 
+# Host directive (must be at the top)
+Host: https://talentflight.com
+
+# Main crawler rules
 User-agent: *
 Allow: /
 
@@ -22,12 +26,6 @@ Allow: /privacy
 Allow: /ads.txt
 Allow: /app-ads.txt
 
-# Crawl delay (optional)
-Crawl-delay: 1
-
-# Host
-Host: https://talentflight.com
-
 # Sitemaps
 Sitemap: https://talentflight.com/sitemap.xml
 
@@ -38,4 +36,3 @@ Allow: /
 # Bing Bot
 User-agent: Bingbot
 Allow: /
-Crawl-delay: 1
