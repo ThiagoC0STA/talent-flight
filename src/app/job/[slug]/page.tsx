@@ -50,23 +50,28 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
 
   const title = `${job.title} at ${job.company} - ${job.location} | TalentFlight`;
   const description = createJobDescription(job);
+  const canonicalUrl = `https://talentflight.com/job/${slug}`;
 
   return {
     title,
     description,
     keywords: `${job.title}, ${job.company}, ${job.location}, ${job.type}, ${job.category}, ${job.experience}, jobs, careers, employment`,
+    metadataBase: new URL("https://talentflight.com"),
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
-      url: `https://talentflight.com/job/${slug}`,
+      url: canonicalUrl,
       siteName: "TalentFlight",
       images: [
-            {
+        {
           url: job.companyLogo || "/og-image.jpg",
           width: 1200,
           height: 630,
           alt: `${job.title} at ${job.company}`,
-            },
+        },
       ],
       locale: "en_US",
       type: "article",
@@ -77,8 +82,16 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       description,
       images: [job.companyLogo || "/og-image.jpg"],
     },
-    alternates: {
-      canonical: `https://talentflight.com/job/${slug}`,
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }

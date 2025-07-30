@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL("https://talentflight.com"),
   alternates: {
-    canonical: "/",
+    canonical: "https://talentflight.com",
   },
   openGraph: {
     title:

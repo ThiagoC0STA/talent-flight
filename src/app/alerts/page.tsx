@@ -14,28 +14,20 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Job Alerts - Get Email Notifications for New Tech Jobs | TalentFlight",
-  description: "Set up personalized job alerts and get email notifications when new tech jobs matching your skills are posted. Never miss the perfect opportunity with our intelligent job matching system.",
-  keywords: [
-    "job alerts",
-    "tech job notifications",
-    "developer job alerts",
-    "programmer job alerts",
-    "software engineer alerts",
-    "remote job notifications",
-    "tech career alerts",
-    "job matching",
-    "career opportunities",
-    "tech job search",
-    "developer opportunities",
-    "programming jobs",
-    "software development jobs",
-    "IT job alerts",
-    "tech industry jobs"
-  ],
+  title:
+    "Job Alerts - Get Notified About New Opportunities | TalentFlight",
+  description:
+    "Set up personalized job alerts and never miss the perfect opportunity. Get notified about new remote jobs, tech careers, and professional opportunities that match your skills and preferences.",
+  keywords:
+    "job alerts, job notifications, career alerts, remote job alerts, tech job alerts, software developer alerts, frontend developer alerts, backend developer alerts, fullstack developer alerts, IT career alerts, programming job alerts, remote work alerts, tech career alerts, job search alerts, career growth alerts, recruitment alerts, hiring alerts",
+  metadataBase: new URL("https://talentflight.com"),
+  alternates: {
+    canonical: "https://talentflight.com/alerts",
+  },
   openGraph: {
-    title: "Job Alerts - Get Email Notifications for New Tech Jobs",
-    description: "Set up personalized job alerts and get email notifications when new tech jobs matching your skills are posted. Never miss the perfect opportunity.",
+    title: "Job Alerts - Get Notified About New Opportunities | TalentFlight",
+    description:
+      "Set up personalized job alerts and never miss the perfect opportunity. Get notified about new remote jobs, tech careers, and professional opportunities.",
     url: "https://talentflight.com/alerts",
     siteName: "TalentFlight",
     images: [
@@ -43,7 +35,7 @@ export const metadata: Metadata = {
         url: "https://talentflight.com/og-job-alerts.jpg",
         width: 1200,
         height: 630,
-        alt: "Job Alerts - TalentFlight",
+        alt: "TalentFlight Job Alerts - Personalized job notifications",
       },
     ],
     locale: "en_US",
@@ -51,8 +43,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Job Alerts - Get Email Notifications for New Tech Jobs",
-    description: "Set up personalized job alerts and get email notifications when new tech jobs matching your skills are posted.",
+    title: "Job Alerts - Get Notified About New Opportunities | TalentFlight",
+    description:
+      "Set up personalized job alerts and never miss the perfect opportunity. Get notified about new remote jobs, tech careers, and professional opportunities.",
     images: ["https://talentflight.com/og-job-alerts.jpg"],
   },
   robots: {
@@ -65,9 +58,6 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },
-  alternates: {
-    canonical: "https://talentflight.com/alerts",
   },
   other: {
     "google-site-verification": "your-verification-code",
