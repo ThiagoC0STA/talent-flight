@@ -41,14 +41,14 @@ export default function JobForm({
     applicationUrl: editingJob?.applicationUrl || "",
     company_logo: editingJob?.companyLogo || "",
     tags: editingJob?.tags?.join(", ") || "",
-    created_at: editingJob?.createdAt 
+    created_at: editingJob?.createdAt
       ? (() => {
           const date = new Date(editingJob.createdAt);
-          return isNaN(date.getTime()) 
-            ? new Date().toISOString().split('T')[0]
-            : date.toISOString().split('T')[0];
+          return isNaN(date.getTime())
+            ? new Date().toISOString().split("T")[0]
+            : date.toISOString().split("T")[0];
         })()
-      : new Date().toISOString().split('T')[0],
+      : new Date().toISOString().split("T")[0],
   });
 
   const handleInputChange = (

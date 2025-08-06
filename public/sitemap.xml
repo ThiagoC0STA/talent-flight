@@ -2,45 +2,261 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://talentflight.com/</loc>
-    <lastmod>2025-07-30T22:43:39.911Z</lastmod>
+    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1</priority>
   </url>
   <url>
     <loc>https://talentflight.com/jobs</loc>
-    <lastmod>2025-07-30T22:43:39.914Z</lastmod>
+    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://talentflight.com/alerts</loc>
-    <lastmod>2025-07-30T22:43:39.914Z</lastmod>
+    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://talentflight.com/about</loc>
-    <lastmod>2025-07-30T22:43:39.914Z</lastmod>
+    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://talentflight.com/contact</loc>
-    <lastmod>2025-07-30T22:43:39.914Z</lastmod>
+    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://talentflight.com/terms</loc>
-    <lastmod>2025-07-30T22:43:39.914Z</lastmod>
+    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://talentflight.com/privacy</loc>
-    <lastmod>2025-07-30T22:43:39.914Z</lastmod>
+    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/product-owner-cloud-software-w-m-d-at-kardex</loc>
+    <lastmod>2025-08-04T16:49:53.378+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-at-admiral-group</loc>
+    <lastmod>2025-08-04T16:49:02.942+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-software-engineer-all-genders-at-gropyus</loc>
+    <lastmod>2025-08-04T16:49:04.769+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-c-net-x-f-m-at-doctolib</loc>
+    <lastmod>2025-08-04T16:49:08.391+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-software-engineer-at-datavant</loc>
+    <lastmod>2025-08-04T16:49:11.526+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/ingeniero-a-software-senior-remoto-at-irium-soluciones-y-sistemas</loc>
+    <lastmod>2025-08-04T16:49:13.191+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineering-manager-in-san-francisco-ca-at-u-s-bank</loc>
+    <lastmod>2025-08-04T16:49:14.218+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/lead-software-qa-automation-engineer-at-arcanys-network-sarl</loc>
+    <lastmod>2025-08-04T16:49:15.439+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/staff-software-engineer-insightidr-at-rapid7</loc>
+    <lastmod>2025-08-04T16:49:16.541+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-foreup-at-foreup</loc>
+    <lastmod>2025-08-04T16:49:17.293+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/archer-grc-software-engineer-at-soho-dragon</loc>
+    <lastmod>2025-08-04T16:49:17.963+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-quality-enablement-at-webstaurantstore</loc>
+    <lastmod>2025-08-04T16:49:49.126+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/junior-software-engineer-at-avvanz-pte-ltd</loc>
+    <lastmod>2025-08-04T16:49:49.977+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-developer-at-paradigm-shift-innovation-limited</loc>
+    <lastmod>2025-08-04T16:49:52.49+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-iii-1754-at-meridianlink</loc>
+    <lastmod>2025-08-04T16:50:03.194+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/junior-it-project-manager-software-projects-remote-at-coreproc-inc</loc>
+    <lastmod>2025-08-04T16:50:06.092+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-foreign-exchange-in-charlotte-north-carolina-at-u-s-bank</loc>
+    <lastmod>2025-08-04T16:50:03.87+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-developer-at-simpro</loc>
+    <lastmod>2025-08-05T04:39:22.079+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-software-developer-laravel-at-nemo-resourcing-limited</loc>
+    <lastmod>2025-08-05T04:39:22.744+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/research-software-engineer-f-r-ontologien-und-wissensgraphen-m-w-d-at-technische-informationsbibliothek-tib</loc>
+    <lastmod>2025-08-05T04:39:23.869+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/fullstack-software-engineer-av-maps-at-stack-av</loc>
+    <lastmod>2025-08-05T04:39:39.378+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/full-stack-software-developer-at-agilent-technologies</loc>
+    <lastmod>2025-08-05T04:39:40.341+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-software-engineer-full-stack-developer-at-hepmil-singapore-pte-ltd</loc>
+    <lastmod>2025-08-05T04:39:41.916+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/software-engineer-associate-manager-national-general-at-national-general-insurance</loc>
+    <lastmod>2025-08-05T04:39:42.792+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/ai-software-engineer-at-deepsense-ai</loc>
+    <lastmod>2025-08-05T04:39:44.717+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-software-developer-at-avr-technology-services-ltd</loc>
+    <lastmod>2025-08-05T04:39:46.181+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/full-stack-software-engineer-remote-at-frontdoor</loc>
+    <lastmod>2025-08-05T04:39:46.954+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-software-engineer-at-adevinta</loc>
+    <lastmod>2025-07-31T21:58:18.615+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/desenvolvedor-a-front-end-pleno-at-level-up</loc>
+    <lastmod>2025-07-31T21:58:41.538+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-software-engineer-front-end-ui-ux-at-ecs</loc>
+    <lastmod>2025-07-31T21:58:47.803+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-biera-corporation-sac</loc>
+    <lastmod>2025-07-31T21:58:49.367+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-react-js-remote-at-amagi</loc>
+    <lastmod>2025-07-31T21:58:51.312+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-software-engineer-front-end-developer-at-boeing</loc>
+    <lastmod>2025-07-31T21:59:00.869+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-engineer-interactive-payment-dashboards-vue-js-nuxt-js-typescript-at-nono-network-ltd</loc>
+    <lastmod>2025-07-31T21:59:03.413+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-grocito-online-private-limited</loc>
+    <lastmod>2025-07-31T21:58:55.16+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-middle-senior-at-proxima-group</loc>
+    <lastmod>2025-07-31T21:59:05.788+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://talentflight.com/job/senior-backend-software-engineer-node-js-at-mindera</loc>
@@ -409,6 +625,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://talentflight.com/job/desenvolvedor-a-front-end-pleno-framework-at-magazine-luiza</loc>
+    <lastmod>2025-07-31T21:54:22.433+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/aem-cloud-front-end-developer-at-zodiac-solutions</loc>
+    <lastmod>2025-07-31T21:54:44.202+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://talentflight.com/job/senior-front-end-developer-at-techxot</loc>
     <lastmod>2025-07-27T20:39:21.965+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -513,6 +741,12 @@
   <url>
     <loc>https://talentflight.com/job/front-end-developer-at-allroomie-technology</loc>
     <lastmod>2025-07-27T20:43:36.039+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/product-delivery-manager-ux-front-end-projects-pm-2-072025-at-koru-ux-design-llp</loc>
+    <lastmod>2025-07-31T21:55:05.918+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

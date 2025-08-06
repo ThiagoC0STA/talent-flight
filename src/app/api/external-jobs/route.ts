@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
 
           // Payload conforme documentação - precisa de pelo menos um filtro obrigatório
           const payload = {
-            limit: 50,
+            limit: 25,
             posted_at_max_age_days: 30, // Vagas dos últimos 30 dias (filtro obrigatório)
             job_title_or: query ? [query] : [], // Busca por título se query fornecida
             remote: true, // Apenas vagas remotas
