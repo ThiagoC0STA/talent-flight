@@ -2,45 +2,135 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://talentflight.com/</loc>
-    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
+    <lastmod>2025-08-07T15:59:43.716Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1</priority>
   </url>
   <url>
     <loc>https://talentflight.com/jobs</loc>
-    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
+    <lastmod>2025-08-07T15:59:43.717Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://talentflight.com/alerts</loc>
-    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
+    <lastmod>2025-08-07T15:59:43.717Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://talentflight.com/about</loc>
-    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
+    <lastmod>2025-08-07T15:59:43.717Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://talentflight.com/contact</loc>
-    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
+    <lastmod>2025-08-07T15:59:43.717Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://talentflight.com/terms</loc>
-    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
+    <lastmod>2025-08-07T15:59:43.717Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://talentflight.com/privacy</loc>
-    <lastmod>2025-08-06T12:16:14.013Z</lastmod>
+    <lastmod>2025-08-07T15:59:43.717Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/full-stack-front-end-engineer-angular-js-typescript-go-at-fico</loc>
+    <lastmod>2025-08-06T12:18:50.281+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/visual-designer-front-end-developer-at-numotion</loc>
+    <lastmod>2025-08-06T12:18:51.943+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/mid-front-end-developer-at-itj</loc>
+    <lastmod>2025-08-06T12:18:53.626+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-ai-engineer-at-jobs-by-allup</loc>
+    <lastmod>2025-08-06T12:18:55.317+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-developer-m-f-d-at-skycell-ag</loc>
+    <lastmod>2025-08-06T12:18:57.202+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/remote-front-end-developer-canvas-based-at-qlay</loc>
+    <lastmod>2025-08-06T12:19:05.685+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/est-gio-em-desenvolvimento-front-end-at-vockan</loc>
+    <lastmod>2025-08-06T12:19:07.919+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-precision-technologies-corp</loc>
+    <lastmod>2025-08-06T12:19:16.723+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/freelance-front-end-web-designer-developer-at-nj-graphica</loc>
+    <lastmod>2025-08-06T12:19:14.694+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/desenvolvedor-a-front-end-s-nior-at-verdant-rh</loc>
+    <lastmod>2025-08-06T12:19:20.767+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-bos-logistics</loc>
+    <lastmod>2025-08-06T12:19:22.156+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-engineer-shopify-at-lazer</loc>
+    <lastmod>2025-08-06T12:47:39.927+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-at-adsbot</loc>
+    <lastmod>2025-08-06T12:47:41.205+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/freelance-senior-front-end-web-developer-at-writer-s-house-collective</loc>
+    <lastmod>2025-08-06T12:47:42.335+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/react-front-end-developer-remote-working-from-india-at-planet-green-solutions</loc>
+    <lastmod>2025-08-06T12:47:43.667+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://talentflight.com/job/product-owner-cloud-software-w-m-d-at-kardex</loc>
@@ -189,6 +279,42 @@
   <url>
     <loc>https://talentflight.com/job/ai-software-engineer-at-deepsense-ai</loc>
     <lastmod>2025-08-05T04:39:44.717+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/full-stack-developer-back-end-front-end-ai-modern-web-focus-at-outrank-strategy</loc>
+    <lastmod>2025-08-06T12:47:46.252+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/full-stack-developer-front-end-focused-at-gamdom</loc>
+    <lastmod>2025-08-06T12:47:54.309+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/front-end-developer-react-js-at-beleb-software-solutions-corp</loc>
+    <lastmod>2025-08-06T12:47:58.769+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-engineer-at-h-company</loc>
+    <lastmod>2025-08-06T12:48:02.525+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/senior-front-end-developer-angular-typescript-at-codeless</loc>
+    <lastmod>2025-08-06T12:47:52.179+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://talentflight.com/job/alternance-d-veloppeur-se-front-end-react-nextjs-h-f-at-idun-group</loc>
+    <lastmod>2025-08-06T12:48:00.527+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
